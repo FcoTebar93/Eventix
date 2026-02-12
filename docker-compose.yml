@@ -1,15 +1,14 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:15-alpine
     container_name: ticket-marketplace-postgres
     environment:
-      POSTGRES_USER: ticketuser
-      POSTGRES_PASSWORD: ticketpass
-      POSTGRES_DB: ticketmarketplace
+      - POSTGRES_USER=ticketuser
+      - POSTGRES_PASSWORD=ticketpass
+      - POSTGRES_DB=ticketmarketplace
+    #Puerto en 5433 porque el 5432 lo estoy usando en otro proyecto con postgres
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:

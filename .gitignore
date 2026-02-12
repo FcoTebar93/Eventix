@@ -35,6 +35,9 @@ Thumbs.db
 *.db
 *.sqlite
 
+# Prisma (mantener init.sql pero ignorar migraciones automáticas)
+prisma/migrations/
+
 # Docker
 docker-compose.override.yml
 
