@@ -4,8 +4,12 @@ import helmet from 'helmet';
 import { env } from './config/env';
 import { errorHandler } from './middleware/errorHandler';
 import { notFoundHandler } from './middleware/notFound';
-import { connectRabbitMQ } from './lib/rabbitmq';
-import { getRedisClient } from './lib/redis';
+import { connectRabbitMQ, closeRabbitMQConnection } from './lib/rabbitmq';
+import { getRedisClient, closeRedisConnection } from './lib/redis';
+import { prisma } from './lib/prisma';
+import apiRoutes from './routes';
+import { logger } from './utils/logger';
+import { generalLimiter } from './middleware/rateLimiter';
 
 const app = express();
 
@@ -17,6 +21,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(generalLimiter);
 
 app.get('/health', (_req, res) => {
     res.status(200).json({
@@ -26,9 +31,7 @@ app.get('/health', (_req, res) => {
     });
 });
 
-app.use(env.API_PREFIX, (_req, res) => {
-    res.json({ message: 'API v1 - Routes coming soon...' });
-});
+app.use(env.API_PREFIX, apiRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
@@ -37,24 +40,32 @@ const startServer = async (): Promise<void> => {
     try {
         await connectRabbitMQ();
         getRedisClient();
+
         app.listen(env.PORT, () => {
-            console.log(`🚀 Server is running on port ${env.PORT}`);
-            console.log(`🔗 API docs: http://localhost:${env.PORT}${env.API_PREFIX}/docs`);
+            logger.info(`🚀 Server running on port ${env.PORT}`);
+            logger.info(`📡 Environment: ${env.NODE_ENV}`);
+            logger.info(`🔗 API: http://localhost:${env.PORT}${env.API_PREFIX}`);
         });
     } catch (error) {
-        console.error('Failed to start server:', error);
+        logger.error('Failed to start server:', error);
         process.exit(1);
     }
 };
 
-process.on('SIGTERM', async () => {
-    console.log('SIGTERM signal received. Shutting down gracefully...');
+const shutdown = async (signal: string): Promise<void> => {
+    logger.info(`${signal} signal received. Shutting down gracefully...`);
+    try {
+        await closeRabbitMQConnection();
+        await closeRedisConnection();
+        await prisma.$disconnect();
+        logger.info('All connections closed');
+    } catch (error) {
+        logger.error('Error closing connections:', error);
+    }
     process.exit(0);
-});
+};
 
-process.on('SIGINT', async () => {
-    console.log('SIGINT signal received. Shutting down gracefully...');
-    process.exit(0);
-});
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
 
 startServer();
