@@ -1,0 +1,276 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum UserRole {
+  BUYER      // Solo puede comprar
+  SELLER     // Puede vender tickets (reventa)
+  ORGANIZER  // Puede crear eventos y vender tickets primarios
+  ADMIN      // Acceso completo al sistema
+}
+
+enum EventStatus {
+  DRAFT      // Borrador, no visible públicamente
+  PUBLISHED  // Publicado y visible
+  CANCELLED  // Cancelado
+  COMPLETED  // Evento ya ocurrió
+}
+
+enum TicketStatus {
+  AVAILABLE  // Disponible para compra
+  RESERVED   // Reservado temporalmente (en proceso de checkout)
+  SOLD       // Vendido
+  TRANSFERRED // Transferido/reventido
+  CANCELLED  // Cancelado
+}
+
+enum OrderStatus {
+  PENDING    // Orden creada, esperando pago
+  CONFIRMED  // Pago confirmado
+  PROCESSING // Procesando envío/entrega
+  COMPLETED  // Orden completada
+  CANCELLED  // Orden cancelada
+  REFUNDED   // Reembolsada
+}
+
+enum PaymentStatus {
+  PENDING    // Pago pendiente
+  PROCESSING // Procesando
+  COMPLETED  // Completado
+  FAILED     // Fallido
+  REFUNDED   // Reembolsado
+}
+
+enum PaymentMethod {
+  CREDIT_CARD
+  DEBIT_CARD
+  PAYPAL
+  BANK_TRANSFER
+}
+
+// ============================================
+// MODELS
+// ============================================
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String   // Hash bcrypt
+  name      String
+  role      UserRole @default(BUYER)
+  
+  // Relaciones
+  organizedEvents Event[]      @relation("EventOrganizer")
+  soldTickets     Ticket[]     @relation("TicketSeller")
+  orders          Order[]
+  payments        Payment[]
+  reviews         Review[]
+  favorites       Favorite[]
+  
+  // Auditoría
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([email])
+  @@index([role])
+  @@map("users")
+}
+
+model Event {
+  id          String      @id @default(uuid())
+  title       String
+  description String?     @db.Text
+  venue       String      // Lugar del evento
+  address     String?     // Dirección completa
+  city        String?
+  country     String?
+  date        DateTime    // Fecha y hora del evento
+  imageUrl    String?     // URL de imagen del evento
+  category    String?     // Música, Deportes, Teatro, etc.
+  status      EventStatus @default(DRAFT)
+  
+  // Relaciones
+  organizerId String
+  organizer   User        @relation("EventOrganizer", fields: [organizerId], references: [id])
+  tickets     Ticket[]
+  orders      Order[]
+  reviews     Review[]
+  favorites   Favorite[]
+  
+  // Auditoría
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([organizerId])
+  @@index([status])
+  @@index([date])
+  @@index([category])
+  @@index([city])
+  @@map("events")
+}
+
+model Ticket {
+  id          String       @id @default(uuid())
+  eventId     String
+  event       Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  
+  // Información del asiento (opcional para eventos sin asientos asignados)
+  section     String?      // Sección del venue
+  row         String?      // Fila
+  seat        String?      // Asiento específico
+  
+  // Tipo y precio
+  type        String       // General, VIP, Early Bird, etc.
+  price       Decimal      @db.Decimal(10, 2)
+  originalPrice Decimal?   @db.Decimal(10, 2) // Precio original (para reventa)
+  
+  // Estado y venta
+  status      TicketStatus @default(AVAILABLE)
+  sellerId    String?      // null = venta primaria (organizador), != null = reventa
+  seller      User?        @relation("TicketSeller", fields: [sellerId], references: [id])
+  
+  // Reserva temporal (para manejar concurrencia)
+  reservedUntil DateTime?  // Timestamp de expiración de reserva
+  
+  // Orden asociada (cuando se vende)
+  orderId     String?
+  
+  // Relaciones
+  orderItems  OrderItem[]
+  
+  // Auditoría
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  
+  @@index([eventId])
+  @@index([status])
+  @@index([sellerId])
+  @@index([reservedUntil])
+  @@index([orderId])
+  @@map("tickets")
+}
+
+model Order {
+  id          String      @id @default(uuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id])
+  
+  status      OrderStatus @default(PENDING)
+  totalAmount Decimal     @db.Decimal(10, 2)
+  
+  // Información de envío/entrega
+  deliveryEmail String?   // Email para envío de tickets digitales
+  deliveryAddress String? // Dirección física si aplica
+  
+  // Relaciones
+  eventId     String?
+  event       Event?      @relation(fields: [eventId], references: [id])
+  items       OrderItem[]
+  payments    Payment[]
+  
+  // Auditoría
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  @@index([userId])
+  @@index([status])
+  @@index([eventId])
+  @@index([createdAt])
+  @@map("orders")
+}
+
+model OrderItem {
+  id          String   @id @default(uuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  ticketId    String
+  ticket      Ticket   @relation(fields: [ticketId], references: [id])
+  
+  quantity    Int      @default(1)
+  price       Decimal  @db.Decimal(10, 2) // Precio al momento de la compra
+  subtotal    Decimal  @db.Decimal(10, 2) // price * quantity
+  
+  createdAt   DateTime @default(now())
+  
+  @@index([orderId])
+  @@index([ticketId])
+  @@map("order_items")
+}
+
+model Payment {
+  id            String        @id @default(uuid())
+  orderId       String
+  order         Order         @relation(fields: [orderId], references: [id])
+  
+  userId        String
+  user          User          @relation(fields: [userId], references: [id])
+  
+  amount        Decimal       @db.Decimal(10, 2)
+  method        PaymentMethod
+  status        PaymentStatus @default(PENDING)
+  
+  // Información de transacción (simulada para portfolio)
+  transactionId String?       @unique // ID de transacción del procesador de pagos
+  failureReason String?       @db.Text // Razón del fallo si aplica
+  
+  // Auditoría
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  @@index([orderId])
+  @@index([userId])
+  @@index([status])
+  @@index([transactionId])
+  @@index([createdAt])
+  @@map("payments")
+}
+
+// ============================================
+// MODELOS OPCIONALES (para funcionalidades avanzadas)
+// ============================================
+
+model Review {
+  id        String   @id @default(uuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rating    Int      // 1-5 estrellas
+  comment   String?  @db.Text
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([eventId])
+  @@index([userId])
+  @@unique([eventId, userId]) // Un usuario solo puede reseñar un evento una vez
+  @@map("reviews")
+}
+
+model Favorite {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, eventId]) // Un usuario solo puede marcar un evento como favorito una vez
+  @@index([userId])
+  @@index([eventId])
+  @@map("favorites")
+}
