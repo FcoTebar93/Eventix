@@ -23,3 +23,15 @@ export const env = {
     RATE_LIMITING_WINDOW_MS: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10),
     RATE_LIMITING_MAX_REQUESTS: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100', 10),
 };
+
+if (!env.DATABASE_URL) {
+    throw new Error('DATABASE_URL is not set');
+}
+
+if (!env.JWT_SECRET) {
+    throw new Error('JWT_SECRET is not set');
+}
+
+if (!env.JWT_REFRESH_SECRET) {
+    throw new Error('JWT_REFRESH_SECRET is not set');
+}
