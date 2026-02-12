@@ -18,7 +18,7 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/health', (req, res) => {
+app.get('/health', (_req, res) => {
     res.status(200).json({
         status: 'ok',
         timestamp: new Date().toISOString(),
@@ -26,7 +26,7 @@ app.get('/health', (req, res) => {
     });
 });
 
-app.use(env.API_PREFIX, (req, res) => {
+app.use(env.API_PREFIX, (_req, res) => {
     res.json({ message: 'API v1 - Routes coming soon...' });
 });
 

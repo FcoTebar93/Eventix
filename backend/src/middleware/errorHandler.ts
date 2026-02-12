@@ -15,9 +15,9 @@ export class AppError extends Error {
 
 export const errorHandler = (
     err: Error | AppError | ZodError,
-    req: Request,
+    _req: Request,
     res: Response,
-    next: NextFunction,
+    _next: NextFunction,
 ): void => {
     if (err instanceof ZodError) {
         res.status(400).json({
