@@ -92,10 +92,10 @@ model Event {
   id          String      @id @default(uuid())
   title       String
   description String?     @db.Text
-  venue       String      // Lugar del evento
-  address     String?     // Dirección completa
-  city        String?
-  country     String?
+  venue       String      // Lugar del evento (puede ser "Online" para eventos virtuales)
+  address     String?     // Dirección completa (opcional, no aplica para eventos online)
+  city        String      // Ciudad (puede ser "Online" para eventos virtuales)
+  country     String      // País
   date        DateTime    // Fecha y hora del evento
   imageUrl    String?     // URL de imagen del evento
   category    String?     // Música, Deportes, Teatro, etc.
