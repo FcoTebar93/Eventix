@@ -1,0 +1,79 @@
+'use client';
+
+import Link from 'next/link';
+import { useAuthStore } from '../store/authStore';
+import { useRouter, usePathname } from 'next/navigation';
+
+export function Navbar() {
+    const router = useRouter();
+    const pathname = usePathname();
+    const user = useAuthStore((state) => state.user);
+    const logout = useAuthStore((state) => state.logout);
+
+    const handleLogout = () => {
+        logout();
+        router.push('/login');
+    };
+
+    return (
+        <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--bg-secondary)]/95 backdrop-blur">
+      <nav className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6">
+        <Link
+          href="/"
+          className="text-xl font-bold tracking-tight text-white hover:opacity-90"
+        >
+          TicketMonster
+        </Link>
+
+        <div className="flex items-center gap-4">
+          <Link
+            href="/"
+            className={`text-sm font-medium transition-colors ${
+              pathname === '/' ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)] hover:text-white'
+            }`}
+          >
+            Eventos
+        </Link>
+
+        {user ? (
+            <>
+              <Link
+                href="/orders"
+                className={`text-sm font-medium transition-colors ${
+                  pathname === '/orders' ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)] hover:text-white'
+                }`}
+              >
+                Mis órdenes
+              </Link>
+              <span className="text-sm text-[var(--text-secondary)]">
+                {user.name}
+              </span>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="rounded bg-[var(--accent)] px-3 py-1.5 text-sm font-medium text-white hover:bg-[var(--accent-hover)]"
+              >
+                Cerrar sesión
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="text-sm font-medium text-[var(--text-secondary)] hover:text-white"
+              >
+                Iniciar sesión
+              </Link>
+              <Link
+                href="/register"
+                className="text-sm font-medium text-[var(--text-secondary)] hover:text-white"
+              >
+                Registrarse
+              </Link>
+            </>
+          )}
+        </div>
+      </nav>
+    </header>
+    );
+}
