@@ -38,40 +38,24 @@ api.interceptors.response.use( (res) => res, async (err: AxiosError<{ error?: st
     return Promise.reject(err);
 });
 
-export async function authRegister(body: { email: string; password: string; role?: string }): Promise<ApiResponse<AuthTokens>> {
-    try {
-        const { data } = await api.post<ApiResponse<{ user: import('./types').User; tokens: import('./types').AuthTokens }>>('/auth/register', body);
-        return {
-            success: data.success,
-            data: data.data.tokens
-        };
-    } catch (error) {
-        throw error;
-    }
+export interface AuthData {
+  user: import('./types').User;
+  tokens: AuthTokens;
 }
 
-export async function authLogin(body: { email: string; password: string }) {
-  try {
-    const { data } = await api.post<ApiResponse<{ user: import('./types').User; tokens: import('./types').AuthTokens }>>('/auth/login', body);
-    return {
-      success: data.success,
-      data: data.data.tokens
-    };
-  } catch (error) {
-    throw error;
-  }
+export async function authRegister(body: { email: string; password: string; name: string; role?: string }): Promise<AuthData> {
+  const { data } = await api.post<ApiResponse<AuthData>>('/auth/register', body);
+  return data.data;
 }
 
-export async function authRefresh(refreshToken: string) {
-    try {
-        const { data } = await api.post<ApiResponse<{ tokens: import('./types').AuthTokens }>>('/auth/refresh', { refreshToken });
-        return {
-            success: data.success,
-            data: data.data.tokens
-        }
-    } catch (error) {
-        throw error;
-    }
+export async function authLogin(body: { email: string; password: string }): Promise<AuthData> {
+  const { data } = await api.post<ApiResponse<AuthData>>('/auth/login', body);
+  return data.data;
+}
+
+export async function authRefresh(refreshToken: string): Promise<AuthTokens> {
+  const { data } = await api.post<ApiResponse<{ tokens: AuthTokens }>>('/auth/refresh', { refreshToken });
+  return data.data.tokens;
 }
 
 export interface GetEventsParams {
@@ -91,12 +75,51 @@ export interface GetEventsResult {
 }
 
 export async function getEvents(params?: GetEventsParams): Promise<GetEventsResult> {
-    try {
-        const { data } = await api.get<ApiResponse<GetEventsResult>>('/events', { params });
-        return data.data;
-    } catch (error) {
-        throw error;
-    }
+  const { data } = await api.get<ApiResponse<GetEventsResult>>('/events', { params });
+  return data.data;
+}
+
+export async function getEventById(id: string) {
+  const { data } = await api.get<ApiResponse<{ event: Event }>>(`/events/${id}`);
+  return data.data.event;
+}
+
+export interface GetTicketsParams {
+  page?: number;
+  limit?: number;
+  status?: string;
+}
+
+export interface GetTicketsResult {
+  tickets: import('./types').Ticket[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+export async function getTicketsByEvent(eventId: string, params?: GetTicketsParams): Promise<GetTicketsResult> {
+  const { data } = await api.get<ApiResponse<GetTicketsResult>>(`/events/${eventId}/tickets`, { params });
+  return data.data;
+}
+
+export async function createOrder(body: { ticketIds: string[]; deliveryEmail?: string; deliveryAddress?: string }) {
+  const { data } = await api.post<ApiResponse<{ order: import('./types').Order }>>('/orders', body);
+  return data.data.order;
+}
+
+export async function getMyOrders() {
+  const { data } = await api.get<ApiResponse<{ orders: import('./types').Order[] }>>('/orders/me');
+  return data.data.orders;
+}
+
+export async function getOrderById(id: string) {
+  const { data } = await api.get<ApiResponse<{ order: import('./types').Order }>>(`/orders/${id}`);
+  return data.data.order;
+}
+
+export async function payOrder(orderId: string, method: import('./types').PaymentMethod) {
+  const { data } = await api.post<ApiResponse<{ order: import('./types').Order }>>(`/orders/${orderId}/pay`, { method });
+  return data.data.order;
 }
 
 export default api;
