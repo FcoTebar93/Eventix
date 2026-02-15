@@ -6,6 +6,7 @@ import {
     orderIdParamsSchema,
     getOrdersQuerySchema,
     cancelOrderSchema,
+    payOrderSchema,
 } from '../schemas/orders.schema';
 import * as ordersService from '../services/orders.service';
 import { logger } from '../utils/logger';
@@ -172,6 +173,37 @@ export const getMyOrders = async (
             success: true,
             data: {
                 orders,
+            },
+        });
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const payOrder = async (
+    req: AuthenticatedRequest,
+    res: Response,
+): Promise<void> => {
+    try {
+        if (!req.user) {
+            throw new Error('User not authenticated');
+        }
+
+        const { id } = orderIdParamsSchema.parse(req.params);
+        const validatedData = payOrderSchema.parse(req.body);
+        const order = await ordersService.payOrder(
+            id,
+            req.user.userId,
+            validatedData,
+        );
+
+        logger.info(`Pago realizado para orden: ${id} por usuario: ${req.user.userId}`);
+
+        res.status(200).json({
+            success: true,
+            message: 'Pago realizado correctamente',
+            data: {
+                order,
             },
         });
     } catch (error) {

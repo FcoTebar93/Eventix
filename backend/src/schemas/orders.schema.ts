@@ -54,8 +54,15 @@ export const cancelOrderSchema = z.object({
     reason: z.string().min(1, 'El motivo es requerido').max(255, 'El motivo no puede exceder 255 caracteres').trim().optional(),
 });
 
+export const payOrderSchema = z.object({
+    method: z.nativeEnum(PaymentMethod, {
+        errorMap: () => ({ message: 'Método de pago no válido' }),
+    }),
+});
+
 export type CreateOrderInput = z.infer<typeof createOrderSchema>;
 export type UpdateOrderInput = z.infer<typeof updateOrderSchema>;
 export type OrderIdParams = z.infer<typeof orderIdParamsSchema>;
 export type GetOrdersQuery = z.infer<typeof getOrdersQuerySchema>;
 export type CancelOrderInput = z.infer<typeof cancelOrderSchema>;
+export type PayOrderInput = z.infer<typeof payOrderSchema>;

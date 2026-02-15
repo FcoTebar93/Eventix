@@ -1,19 +1,14 @@
 import { Router } from 'express';
-import * as eventsController from '../controllers/events.controller';
-import ticketsRoutes from './tickets.routes';
+import * as ticketsController from '../controllers/tickets.controller';
 import { authenticate, requireRole } from '../middleware/auth.middleware';
 
 const router = Router();
 
-router.get('/', authenticate, eventsController.getEvents);
-router.get('/organizer/me', authenticate, eventsController.getMyEvents);
-router.post('/', authenticate, requireRole('ORGANIZER', 'ADMIN'), eventsController.createEvent);
-
-router.use('/:eventId/tickets', ticketsRoutes);
-
-router.get('/:id', authenticate, eventsController.getEventById);
-router.patch('/:id', authenticate, requireRole('ORGANIZER', 'ADMIN'), eventsController.updateEvent);
-router.delete('/:id', authenticate, requireRole('ORGANIZER', 'ADMIN'), eventsController.deleteEvent);
-router.post('/:id/publish', authenticate, requireRole('ORGANIZER', 'ADMIN'), eventsController.publishEvent);
+router.get('/', authenticate, ticketsController.getTicketsByEvent);
+router.post('/', authenticate, requireRole('ORGANIZER', 'ADMIN'), ticketsController.createTicket);
+router.post('/bulk', authenticate, requireRole('ORGANIZER', 'ADMIN'), ticketsController.createTicketsBulk);
+router.get('/:ticketId', authenticate, ticketsController.getTicketById);
+router.patch('/:ticketId', authenticate, requireRole('ORGANIZER', 'ADMIN'), ticketsController.updateTicket);
+router.delete('/:ticketId', authenticate, requireRole('ORGANIZER', 'ADMIN'), ticketsController.deleteTicket);
 
 export default router;

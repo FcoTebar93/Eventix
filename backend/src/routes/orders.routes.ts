@@ -12,5 +12,6 @@ router.get('/:id', authenticate, requireRole('ADMIN'), ordersController.getOrder
 router.patch('/:id', authenticate, requireRole('ADMIN'), ordersController.updateOrder);
 router.delete('/:id', authenticate, requireRole('ADMIN'), ordersController.cancelOrder);
 router.get('/me', authenticate, ordersController.getMyOrders);
+router.post('/:id/pay', authenticate, ordersController.payOrder);
 
 export default router;

@@ -1,11 +1,7 @@
-import { OrderStatus, TicketStatus, Prisma, EventStatus } from '@prisma/client';
+import { OrderStatus, TicketStatus, Prisma, EventStatus, PaymentStatus } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 import { AppError } from '../middleware/errorHandler';
-import {
-    CreateOrderInput,
-    UpdateOrderInput,
-    GetOrdersQuery,
-    CancelOrderInput,
+import { CreateOrderInput, UpdateOrderInput, GetOrdersQuery, CancelOrderInput, PayOrderInput
 } from '../schemas/orders.schema';
 
 export const createOrder = async (
@@ -487,4 +483,76 @@ export const getMyOrders = async (userId: string) => {
     });
 
     return orders;
+};
+
+export const payOrder = async (orderId: string, userId: string, data: PayOrderInput) => {
+    const order = await prisma.order.findUnique({
+        where: { id: orderId },
+        include: {
+            items: true,
+        },
+    });
+
+    if (!order) {
+        throw new AppError('Pedido no encontrado', 404);
+    }
+
+    if (order.userId !== userId) {
+        throw new AppError('No tienes permisos para pagar este pedido', 403);
+    }
+
+    if (order.status !== OrderStatus.PENDING) {
+        throw new AppError('Solo se pueden pagar pedidos pendientes', 400);
+    }
+
+    const updatedOrder = await prisma.$transaction(async (tx) => {
+        await tx.payment.create({
+            data: {
+                orderId,
+                userId,
+                amount: order.totalAmount,
+                method: data.method,
+                status: PaymentStatus.COMPLETED,
+                transactionId: `tx-${Date.now()}-${orderId.slice(0, 8)}`,
+            },
+        });
+
+        const orderUpdated = await tx.order.update({
+            where: { id: orderId },
+            data: { status: OrderStatus.CONFIRMED },
+            include: {
+                event: {
+                    select: {
+                        id: true,
+                        title: true,
+                        date: true,
+                    },
+                },
+                items: {
+                    include: {
+                        ticket: {
+                            select: {
+                                id: true,
+                                type: true,
+                                price: true,
+                            },
+                        },
+                    },
+                },
+                payments: {
+                    orderBy: { createdAt: 'desc' },
+                    take: 1,
+                },
+            },
+        });
+
+        await tx.ticket.updateMany({
+            where: { orderId },
+            data: { status: TicketStatus.SOLD, reservedUntil: null },
+        });
+
+        return orderUpdated;
+    });
+
+    return updatedOrder;
 };
