@@ -6,11 +6,11 @@ const router = Router();
 
 router.use(authenticate);
 
-router.post('/orders', authenticate, ordersController.createOrder);
-router.get('/orders', authenticate, requireRole('ADMIN'), ordersController.getOrders);
-router.get('/orders/:id', authenticate, requireRole('ADMIN'), ordersController.getOrderById);
-router.patch('/orders/:id', authenticate, requireRole('ADMIN'), ordersController.updateOrder);
-router.delete('/orders/:id', authenticate, requireRole('ADMIN'), ordersController.cancelOrder);
-router.get('/orders/me', authenticate, ordersController.getMyOrders);
+router.post('/', authenticate, ordersController.createOrder);
+router.get('/', authenticate, requireRole('ADMIN'), ordersController.getOrders);
+router.get('/:id', authenticate, requireRole('ADMIN'), ordersController.getOrderById);
+router.patch('/:id', authenticate, requireRole('ADMIN'), ordersController.updateOrder);
+router.delete('/:id', authenticate, requireRole('ADMIN'), ordersController.cancelOrder);
+router.get('/me', authenticate, ordersController.getMyOrders);
 
 export default router;
