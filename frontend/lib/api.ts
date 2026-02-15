@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import { ApiResponse } from './types';
+import type { ApiResponse, AuthTokens, Event } from './types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -40,17 +40,60 @@ api.interceptors.response.use( (res) => res, async (err: AxiosError<{ error?: st
 
 export async function authRegister(body: { email: string; password: string; role?: string }): Promise<ApiResponse<AuthTokens>> {
     try {
-        const { data } = await api.post<ApiResponse<{ user: import('./types').User; tokens: import('./types').AuthTokens }>>('/auth/login', body);
-        return data;
+        const { data } = await api.post<ApiResponse<{ user: import('./types').User; tokens: import('./types').AuthTokens }>>('/auth/register', body);
+        return {
+            success: data.success,
+            data: data.data.tokens
+        };
     } catch (error) {
         throw error;
     }
 }
 
+export async function authLogin(body: { email: string; password: string }) {
+  try {
+    const { data } = await api.post<ApiResponse<{ user: import('./types').User; tokens: import('./types').AuthTokens }>>('/auth/login', body);
+    return {
+      success: data.success,
+      data: data.data.tokens
+    };
+  } catch (error) {
+    throw error;
+  }
+}
+
 export async function authRefresh(refreshToken: string) {
     try {
         const { data } = await api.post<ApiResponse<{ tokens: import('./types').AuthTokens }>>('/auth/refresh', { refreshToken });
-        return data.data.tokens;
+        return {
+            success: data.success,
+            data: data.data.tokens
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
+export interface GetEventsParams {
+    page?: number;
+    limit?: number;
+    status?: string;
+    category?: string;
+    city?: string;
+    search?: string;
+}
+  
+export interface GetEventsResult {
+    events: Event[];
+    total: number;
+    page: number;
+    totalPages: number;
+}
+
+export async function getEvents(params?: GetEventsParams): Promise<GetEventsResult> {
+    try {
+        const { data } = await api.get<ApiResponse<GetEventsResult>>('/events', { params });
+        return data.data;
     } catch (error) {
         throw error;
     }
