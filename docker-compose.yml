@@ -1,22 +1,17 @@
-version: '3.8'
-
 services:
-  postgres:
-    image: postgres:15-alpine
-    container_name: ticket-marketplace-postgres
+  mysql:
+    image: mysql:8.0
+    container_name: ticket-marketplace-mysql
     environment:
-      POSTGRES_USER: ticketuser
-      POSTGRES_PASSWORD: ticketpass
-      POSTGRES_DB: ticketmarketplace
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ticketmarketplace
+      MYSQL_USER: ticketuser
+      MYSQL_PASSWORD: ticketpass
     ports:
-      - "5432:5432"
+      - "3306:3306"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ticketuser"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
 
   redis:
     image: redis:7-alpine
@@ -49,6 +44,6 @@ services:
       retries: 5
 
 volumes:
-  postgres_data:
+  mysql_data:
   redis_data:
   rabbitmq_data:
