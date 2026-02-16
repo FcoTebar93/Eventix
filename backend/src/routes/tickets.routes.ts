@@ -2,7 +2,7 @@ import { Router } from 'express';
 import * as ticketsController from '../controllers/tickets.controller';
 import { authenticate, requireRole } from '../middleware/auth.middleware';
 
-const router = Router();
+const router = Router({ mergeParams: true });
 
 router.get('/', authenticate, ticketsController.getTicketsByEvent);
 router.post('/', authenticate, requireRole('ORGANIZER', 'ADMIN'), ticketsController.createTicket);
