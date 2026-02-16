@@ -16,15 +16,24 @@ export const startReservationsWorker = () => {
     const run = async () => {
         try {
             const result = await releaseExpiredReservations();
-            logger.info(`Reservas expiradas liberadas: ${result.released}`);
-        } catch (error) {
-            logger.error('Error al liberar reservas expiradas:', error);
+            if (result.released > 0 || result.ordersCancelled > 0) {
+                logger.info(`Reservas expiradas liberadas: ${result.released} tickets, ${result.ordersCancelled} órdenes canceladas`);
+            }
+        } catch (error: any) {
+            // No loguear errores de conexión como errores críticos
+            if (error?.message?.includes('Authentication failed') || error?.message?.includes('connect')) {
+                logger.debug('Worker: Base de datos aún no disponible, reintentará en el próximo ciclo');
+            } else {
+                logger.error('Error al liberar reservas expiradas:', error);
+            }
         }
     };
 
-    run();
-
-    intervalID = setInterval(run, INTERVAL_MS);
+    // Esperar 10 segundos antes de la primera ejecución para dar tiempo a que la BD se conecte
+    setTimeout(() => {
+        run();
+        intervalID = setInterval(run, INTERVAL_MS);
+    }, 10000);
 }
 
 export function stopReservationsWorker() {

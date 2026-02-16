@@ -51,7 +51,7 @@ export async function setCache(key: string, value: unknown, ttlSeconds: number =
         const redis = getRedisClient();
         await redis.set(key, JSON.stringify(value), 'EX', ttlSeconds);
     } catch (error) {
-        // Controlaremos más adelante
+        logger.error('Error al guardar en cache:', error);
     }
 }
 
@@ -63,6 +63,6 @@ export async function deleteCache(pattern: string): Promise<void> {
             await redis.del(...keys);
         }
     } catch (error) {
-        // Controlaremos más adelante
+        logger.error('Error al eliminar del cache:', error);
     }
 }
