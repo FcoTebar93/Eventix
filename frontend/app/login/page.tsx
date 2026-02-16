@@ -2,17 +2,22 @@
 
 import { useState } from 'react'
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { authLogin } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 
 export default function LoginPage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const redirect = searchParams.get('redirect');
+    
     const setAuth = useAuthStore((state) => state.setAuth);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+
+    
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -21,7 +26,7 @@ export default function LoginPage() {
         try {
             const { user, tokens } = await authLogin({ email, password });
             setAuth(user, tokens);
-            router.push('/');
+            router.push(redirect || '/');
         } catch (error) {
             const message = error && typeof error === 'object' && 'response' in error ? (error as { response?: { data?: { error?: string } } }).response?.data?.error : 'Error al iniciar sesión';
             setError(message || 'Error al iniciar sesión');
