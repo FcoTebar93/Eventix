@@ -2,6 +2,37 @@ import { EventStatus, Prisma } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 import { AppError } from '../middleware/errorHandler';
 import { CreateEventInput, UpdateEventInput, GetEventsQuery } from '../schemas/events.schema';
+import { getEventsListCacheKey, getEventCacheKey, getFromCache, setCache, deleteCache } from '../utils/cache';
+
+type GetEventsResult = {
+    events: Array<{
+        id: string;
+        title: string;
+        description: string | null;
+        venue: string;
+        address: string | null;
+        city: string;
+        country: string;
+        date: Date;
+        status: EventStatus;
+        imageUrl: string | null;
+        category: string | null;
+        organizerId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        organizer: {
+            id: string;
+            name: string;
+        };
+        _count: {
+            tickets: number;
+            reviews: number;
+        };
+    }>;
+    total: number;
+    page: number;
+    totalPages: number;
+};
 
 
 export const createEvent = async (
@@ -43,6 +74,8 @@ export const createEvent = async (
             },
         },
     });
+
+    await deleteCache('events:list:*');
 
     return event;
 };
@@ -101,6 +134,22 @@ export const getEvents = async (query: GetEventsQuery) => {
         where.date = dateFilter;
     }
 
+    const cacheKey = getEventsListCacheKey({
+        page: validPage,
+        limit: validLimit,
+        status: where.status as EventStatus | undefined,
+        category: category,
+        city: city,
+        search: query.search,
+        dateFrom: query.dateFrom,
+        dateTo: query.dateTo,
+    });
+      
+    const cached = await getFromCache<GetEventsResult>(cacheKey);
+    if (cached) {
+        return cached;
+    }
+
     const [events, total] = await Promise.all([
         prisma.event.findMany({
             where,
@@ -127,6 +176,13 @@ export const getEvents = async (query: GetEventsQuery) => {
         prisma.event.count({ where }),
     ]);
 
+    await setCache(cacheKey, {
+        events,
+        total,
+        page: validPage,
+        totalPages: Math.ceil(total / validLimit),
+    });
+
     return {
         events,
         total,
@@ -136,6 +192,17 @@ export const getEvents = async (query: GetEventsQuery) => {
 };
 
 export const getEventById = async (eventId: string, userId?: string) => {
+    const cacheKey = getEventCacheKey(eventId);
+    
+    const cached = await getFromCache(cacheKey);
+    if (cached) {
+        const event = cached as any;
+        if (event.status === EventStatus.DRAFT && event.organizerId !== userId) {
+            throw new AppError('Evento no encontrado', 404);
+        }
+        return event;
+    }
+
     const event = await prisma.event.findUnique({
         where: { id: eventId },
         include: {
@@ -163,6 +230,8 @@ export const getEventById = async (eventId: string, userId?: string) => {
     if (event.status === EventStatus.DRAFT && event.organizerId !== userId) {
         throw new AppError('Evento no encontrado', 404);
     }
+
+    await setCache(cacheKey, event);
 
     return event;
 };
@@ -222,6 +291,11 @@ export const updateEvent = async (
         },
     });
 
+    await Promise.all([
+        deleteCache(getEventCacheKey(eventId)),
+        deleteCache('events:list:*'),
+    ]);
+
     return event;
 };
 
@@ -244,6 +318,11 @@ export const deleteEvent = async (eventId: string, organizerId: string) => {
             status: EventStatus.CANCELLED,
         },
     });
+
+    await Promise.all([
+        deleteCache(getEventCacheKey(eventId)),
+        deleteCache('events:list:*'),
+    ]);
 };
 
 export const publishEvent = async (eventId: string, organizerId: string) => {
@@ -280,6 +359,11 @@ export const publishEvent = async (eventId: string, organizerId: string) => {
             },
         },
     });
+
+    await Promise.all([
+        deleteCache(getEventCacheKey(eventId)),
+        deleteCache('events:list:*'),
+    ]);
 
     return publishedEvent;
 };

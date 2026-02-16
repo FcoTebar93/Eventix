@@ -3,6 +3,7 @@ import { prisma } from "../lib/prisma";
 import { Prisma } from "@prisma/client";
 import { AppError } from "../middleware/errorHandler";
 import { CreateTicketInput, CreateTicketsBulkInput, UpdateTicketInput, GetTicketsQuery } from '../schemas/tickets.schema';
+import { getEventCacheKey, deleteCache } from '../utils/cache';
 
 async function assertEventDraftAndOwned(eventId: string, userId: string, userRole: string) {
     const event = await prisma.event.findUnique({
@@ -43,6 +44,11 @@ export const createTicket = async ( eventId: string, organizerId: string, userRo
         },
     });
 
+    await Promise.all([
+        deleteCache(getEventCacheKey(eventId)),
+        deleteCache('events:list:*'),
+    ]);
+
     return ticket;
 }
 
@@ -62,6 +68,11 @@ export const createTicketsBulk = async ( eventId: string, organizerId: string, u
             })
         ),
     );
+
+    await Promise.all([
+        deleteCache(getEventCacheKey(eventId)),
+        deleteCache('events:list:*'),
+    ]);
 
      return created;
 };
@@ -173,6 +184,12 @@ export const updateTicket = async ( eventId: string, ticketId: string, userId: s
         where: { id: ticketId },
         data: updateData,
     });
+
+    await Promise.all([
+        deleteCache(getEventCacheKey(eventId)),
+        deleteCache('events:list:*'),
+    ]);
+
     return updated;
 };
 
@@ -196,4 +213,9 @@ export const deleteTicket = async ( eventId: string, ticketId: string, userId: s
     await prisma.ticket.delete({
         where: { id: ticketId },
     });
+
+    await Promise.all([
+        deleteCache(getEventCacheKey(eventId)),
+        deleteCache('events:list:*'),
+    ]);
 };

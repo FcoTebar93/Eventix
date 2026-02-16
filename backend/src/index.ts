@@ -10,6 +10,8 @@ import { prisma } from './lib/prisma';
 import apiRoutes from './routes';
 import { logger } from './utils/logger';
 import { generalLimiter } from './middleware/rateLimiter';
+import { startReservationsWorker, stopReservationsWorker } from './workers/reservations.worker';
+
 
 const app = express();
 
@@ -41,6 +43,8 @@ const startServer = async (): Promise<void> => {
         await connectRabbitMQ();
         getRedisClient();
 
+        startReservationsWorker();
+
         app.listen(env.PORT, () => {
             logger.info(`🚀 Server running on port ${env.PORT}`);
             logger.info(`📡 Environment: ${env.NODE_ENV}`);
@@ -48,6 +52,7 @@ const startServer = async (): Promise<void> => {
         });
     } catch (error) {
         logger.error('Failed to start server:', error);
+        stopReservationsWorker();
         process.exit(1);
     }
 };
@@ -57,10 +62,13 @@ const shutdown = async (signal: string): Promise<void> => {
     try {
         await closeRabbitMQConnection();
         await closeRedisConnection();
+        stopReservationsWorker();
         await prisma.$disconnect();
         logger.info('All connections closed');
     } catch (error) {
         logger.error('Error closing connections:', error);
+        stopReservationsWorker();
+        process.exit(1);
     }
     process.exit(0);
 };
