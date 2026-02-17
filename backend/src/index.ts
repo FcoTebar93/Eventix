@@ -1,48 +1,15 @@
-import express from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
+import { app } from './app';
 import { env } from './config/env';
-import { errorHandler } from './middleware/errorHandler';
-import { notFoundHandler } from './middleware/notFound';
 import { connectRabbitMQ, closeRabbitMQConnection } from './lib/rabbitmq';
 import { getRedisClient, closeRedisConnection } from './lib/redis';
 import { prisma } from './lib/prisma';
-import apiRoutes from './routes';
 import { logger } from './utils/logger';
-import { generalLimiter } from './middleware/rateLimiter';
 import { startReservationsWorker, stopReservationsWorker } from './workers/reservations.worker';
-
-
-const app = express();
-
-app.use(helmet());
-app.use(cors({
-    origin: env.CORS_ORIGIN,
-    credentials: true,
-}));
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(generalLimiter);
-
-app.get('/health', (_req, res) => {
-    res.status(200).json({
-        status: 'ok',
-        timestamp: new Date().toISOString(),
-        uptime: process.uptime(),
-    });
-});
-
-app.use(env.API_PREFIX, apiRoutes);
-
-app.use(notFoundHandler);
-app.use(errorHandler);
 
 const startServer = async (): Promise<void> => {
     try {
         await connectRabbitMQ();
         getRedisClient();
-
         startReservationsWorker();
 
         app.listen(env.PORT, () => {
