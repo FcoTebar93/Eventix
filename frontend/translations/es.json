@@ -133,6 +133,13 @@
       "maxTickets": "No se pueden seleccionar más de 5 tickets",
       "zeroPrice": "El precio total es 0",
       "goToCheckout": "Ir al checkout",
-      "total": "Total"
+      "total": "Total",
+      "available": "Disponible",
+      "soldOut": "Agotado",
+      "today": "Hoy",
+      "tomorrow": "Mañana",
+      "daysAway": "{count} días",
+      "past": "Pasado",
+      "viewDetails": "Ver detalles"
     }
   }
