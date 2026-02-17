@@ -108,6 +108,7 @@ model Event {
   orders      Order[]
   reviews     Review[]
   favorites   Favorite[]
+  tags        EventTag[]  // Relación many-to-many con tags
   
   // Auditoría
   createdAt DateTime @default(now())
@@ -273,4 +274,33 @@ model Favorite {
   @@index([userId])
   @@index([eventId])
   @@map("favorites")
+}
+
+model Tag {
+  id        String     @id @default(uuid())
+  name      String     @unique // Nombre único del tag (ej: "rock", "deportes", "teatro")
+  slug      String     @unique // Slug para URLs (ej: "rock", "deportes", "teatro")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  
+  events    EventTag[] // Relación many-to-many con eventos
+  
+  @@index([name])
+  @@index([slug])
+  @@map("tags")
+}
+
+model EventTag {
+  id        String   @id @default(uuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  tagId     String
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  
+  @@unique([eventId, tagId]) // Un evento no puede tener el mismo tag dos veces
+  @@index([eventId])
+  @@index([tagId])
+  @@map("event_tags")
 }
