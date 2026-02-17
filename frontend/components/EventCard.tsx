@@ -33,7 +33,7 @@ function TicketIcon() {
 }
 
 export function EventCard({ event }: { event: Event }) {
-    const translate = useTranslations('events');
+    const t = useTranslations('events');
     const locale = useLocale();
     const [imageLoaded, setImageLoaded] = useState(false);
     const [imageError, setImageError] = useState(false);
@@ -64,10 +64,10 @@ export function EventCard({ event }: { event: Event }) {
     }, [eventDate, locale]);
 
     const getDaysText = () => {
-        if (daysUntilEvent < 0) return translate('past');
-        if (daysUntilEvent === 0) return translate('today');
-        if (daysUntilEvent === 1) return translate('tomorrow');
-        return translate('daysAway', { count: daysUntilEvent });
+        if (daysUntilEvent < 0) return t('past');
+        if (daysUntilEvent === 0) return t('today');
+        if (daysUntilEvent === 1) return t('tomorrow');
+        return t('daysAway', { count: daysUntilEvent });
     };
 
     const imageUrl = imageError ? DEFAULT_IMAGE : (event.imageUrl || DEFAULT_IMAGE);
@@ -102,7 +102,7 @@ export function EventCard({ event }: { event: Event }) {
                                     ? 'bg-red-500/90 text-white' 
                                     : 'bg-green-500/90 text-white'
                             }`}>
-                                {isSoldOut ? translate('soldOut') : translate('available')}
+                                {isSoldOut ? t('soldOut') : t('available')}
                             </span>
                         </div>
                     )}
@@ -110,7 +110,7 @@ export function EventCard({ event }: { event: Event }) {
                     {event.category && (
                         <div className="absolute top-3 left-3">
                             <span className="px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-[var(--accent)]/90 text-white backdrop-blur-sm">
-                                {translate('category')}
+                                {event.category}
                             </span>
                         </div>
                     )}
@@ -133,25 +133,25 @@ export function EventCard({ event }: { event: Event }) {
 
                 <div className="p-5">
                     <h2 className="line-clamp-2 text-xl font-bold text-white group-hover:text-[var(--accent)] transition-colors mb-3">
-                        {translate('title')}
+                        {event.title}
                     </h2>
 
                     <div className="space-y-2">
                         <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
                             <CalendarIcon />
-                            <span>{translate('date')}</span>
+                            <span>{formattedDate}</span>
                         </div>
 
                         <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
                             <LocationIcon />
-                            <span className="line-clamp-1">{translate('venue')} · {translate('city')}</span>
+                            <span className="line-clamp-1">{event.venue} · {event.city}</span>
                         </div>
 
                         {hasTickets && (
                             <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
                                 <TicketIcon />
                                 <span>
-                                    {event._count!.tickets} {event._count!.tickets === 1 ? translate('ticket') : translate('tickets')}
+                                    {event._count!.tickets} {event._count!.tickets === 1 ? t('ticket') : t('tickets')}
                                 </span>
                             </div>
                         )}
@@ -160,7 +160,7 @@ export function EventCard({ event }: { event: Event }) {
                     <div className="mt-4 pt-4 border-t border-[var(--border)]">
                         <div className="flex items-center justify-between">
                             <span className="text-xs text-[var(--text-secondary)] uppercase tracking-wider">
-                                {translate('viewDetails')}
+                                {t('viewDetails')}
                             </span>
                             <svg className="w-5 h-5 text-[var(--accent)] transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
