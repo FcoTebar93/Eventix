@@ -269,11 +269,11 @@ export const getOrderById = async (orderId: string, userId: string, userRole: st
     });
 
     if (!order) {
-        throw new AppError('Orden no encontrada', 404);
+        throw new AppError('Pedido no encontrada', 404);
     }
 
     if (userRole !== 'ADMIN' && order.userId !== userId) {
-        throw new AppError('No tienes permisos para ver esta orden', 403);
+        throw new AppError('No tienes permisos para ver este pedido', 403);
     }
 
     return order;
@@ -290,11 +290,11 @@ export const updateOrder = async (
     });
 
     if (!existingOrder) {
-        throw new AppError('Orden no encontrada', 404);
+        throw new AppError('Pedido no encontrado', 404);
     }
 
     if (userRole !== 'ADMIN' && existingOrder.userId !== userId) {
-        throw new AppError('No tienes permisos para actualizar esta orden', 403);
+        throw new AppError('No tienes permisos para actualizar este pedido', 403);
     }
 
     if (
@@ -418,7 +418,7 @@ export const confirmOrder = async (orderId: string) => {
     });
 
     if (!order) {
-        throw new AppError('Orden no encontrada', 404);
+        throw new AppError('Pedido no encontrado', 404);
     }
 
     if (order.status !== OrderStatus.PENDING) {

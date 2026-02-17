@@ -72,7 +72,7 @@ export default function OrdersPage() {
                                             <div className="flex flex-wrap items-center justify-between gap-4">
                                                 <div className="flex-1">
                                                     <p className="font-semibold text-white">
-                                                        {order.event?.title || 'Orden #' + order.id.slice(0, 8)}
+                                                        {order.event?.title || 'Pedido #' + order.id.slice(0, 8)}
                                                     </p>
                                                     <p className="text-sm text-[var(--text-secondary)]">{formattedDate}</p>
                                                     {order.event?.date && (

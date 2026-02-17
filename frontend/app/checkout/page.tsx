@@ -53,8 +53,8 @@ export default function CheckoutPage() {
             const order = await createOrder({ ticketIds, deliveryEmail: email });
             router.push(`/orders/${order.id}`);
         } catch (error) {
-            const msg = error && typeof error === 'object' && 'response' in error ? (error as { response?: { data?: { error?: string } } }).response?.data?.error : 'Error al crear la orden';
-            setError(msg || 'Error al crear la orden');
+            const msg = error && typeof error === 'object' && 'response' in error ? (error as { response?: { data?: { error?: string } } }).response?.data?.error : 'Error al crear el pedido';
+            setError(msg || 'Error al crear el pedido');
         } finally {
             setLoading(false);
         }

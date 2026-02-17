@@ -37,7 +37,7 @@ export const updateOrderSchema = z.object({
 });
 
 export const orderIdParamsSchema = z.object({
-    id: z.string().uuid('El ID de la orden no es válido'),
+    id: z.string().uuid('El ID del pedido no es válido'),
 });
 
 export const getOrdersQuerySchema = z.object({

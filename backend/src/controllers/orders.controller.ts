@@ -27,12 +27,12 @@ export const createOrder = async (
         );
 
         logger.info(
-            `Orden creada: ${order.id} por usuario: ${req.user.userId}`,
+            `Pedido creado: ${order.id} por usuario: ${req.user.userId}`,
         );
 
         res.status(201).json({
             success: true,
-            message: 'Orden creada exitosamente',
+            message: 'Pedido creado exitosamente',
             data: {
                 order,
             },
@@ -112,11 +112,11 @@ export const updateOrder = async (
             validatedData,
         );
 
-        logger.info(`Orden actualizada: ${id} por usuario: ${req.user.userId}`);
+        logger.info(`Pedido actualizado: ${id} por usuario: ${req.user.userId}`);
 
         res.status(200).json({
             success: true,
-            message: 'Orden actualizada exitosamente',
+            message: 'Pedido actualizado exitosamente',
             data: {
                 order,
             },
@@ -144,11 +144,11 @@ export const cancelOrder = async (
             validatedData,
         );
 
-        logger.info(`Orden cancelada: ${id} por usuario: ${req.user.userId}`);
+        logger.info(`Pedido cancelado: ${id} por usuario: ${req.user.userId}`);
 
         res.status(200).json({
             success: true,
-            message: 'Orden cancelada exitosamente',
+            message: 'Pedido cancelado exitosamente',
             data: {
                 order,
             },
@@ -197,7 +197,7 @@ export const payOrder = async (
             validatedData,
         );
 
-        logger.info(`Pago realizado para orden: ${id} por usuario: ${req.user.userId}`);
+        logger.info(`Pago realizado para pedido: ${id} por usuario: ${req.user.userId}`);
 
         res.status(200).json({
             success: true,

@@ -105,7 +105,7 @@ export default function OrderDetailPage() {
 
           <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6">
             <div className="mb-6 flex items-center justify-between">
-              <h1 className="text-2xl font-bold text-white">Orden #{order.id.slice(0, 8)}</h1>
+              <h1 className="text-2xl font-bold text-white">Pedido #{order.id.slice(0, 8)}</h1>
               <span className={`font-medium ${statusColors[order.status]}`}>
                 {statusLabels[order.status]}
               </span>
