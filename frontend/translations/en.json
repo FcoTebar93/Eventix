@@ -65,22 +65,36 @@
       }
     },
     "orders": {
-      "title": "My Orders",
-      "noOrders": "You don't have any orders yet.",
-      "error": "Error loading orders",
-      "order": "Order",
-      "event": "Event",
-      "date": "Date",
-      "total": "Total",
-      "status": {
+    "title": "My Orders",
+    "noOrders": "You don't have any orders yet.",
+    "error": "Error loading orders",
+    "order": "Order",
+    "event": "Event",
+    "date": "Date",
+    "total": "Total",
+    "tickets": "Tickets",
+    "ticket": "Ticket",
+    "notFound": "Order not found.",
+    "backToOrders": "Back to my orders",
+    "purchaseDate": "Purchase date",
+    "deliveryEmail": "Delivery email",
+    "status": {
         "pending": "Pending",
         "confirmed": "Confirmed",
         "processing": "Processing",
         "completed": "Completed",
         "cancelled": "Cancelled",
         "refunded": "Refunded"
-      }
     },
+    "payment": {
+      "notPending": "This order is not pending payment",
+      "error": "Error processing payment",
+      "processing": "Processing payment...",
+      "payNow": "Pay now",
+      "confirmed": "Payment confirmed",
+      "confirmedMessage": "Your order has been confirmed. You will receive the tickets by email."
+    }
+  },
     "location": {
       "select": "Select location",
       "all": "All",

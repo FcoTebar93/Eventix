@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import Providers from '@/providers';
 import { Navbar } from '@/components/Navbar';
-import '../globals.css';
+import './globals.css';
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));

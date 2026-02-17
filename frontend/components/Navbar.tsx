@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/routing';
 import { useAuthStore } from '../store/authStore';
 import { useRouter } from '@/i18n/routing';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 export function Navbar() {
     const t = useTranslations('nav');
@@ -20,6 +21,7 @@ export function Navbar() {
     return (
         <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--bg-secondary)]/95 backdrop-blur">
             <nav className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6">
+                <LanguageSwitcher />
                 <Link
                     href="/"
                     className="text-xl font-bold tracking-tight text-white hover:opacity-90"
