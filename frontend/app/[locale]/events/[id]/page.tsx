@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Link, useParams, useRouter } from '@/i18n/routing';
+import { useParams } from 'next/navigation';
+import { Link, useRouter } from '@/i18n/routing';
 import { useQuery } from '@tanstack/react-query';
 import { getEventById, getTicketsByEvent } from '@/lib/api';
 import type { Ticket } from '@/lib/types';

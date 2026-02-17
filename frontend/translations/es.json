@@ -140,6 +140,12 @@
       "tomorrow": "Mañana",
       "daysAway": "{count} días",
       "past": "Pasado",
-      "viewDetails": "Ver detalles"
+      "viewDetails": "Ver detalles",
+      "description": "Descripción",
+      "orderSummary": "Resumen del pedido",
+      "noTicketsSelected": "No has seleccionado ninguna entrada",
+      "selectTickets": "Selecciona al menos una entrada",
+      "row": "Fila",
+      "seat": "Asiento"
     }
   }

@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react'
-import { Link, useRouter, useSearchParams } from '@/i18n/routing';
+import { useSearchParams } from 'next/navigation';
+import { Link, useRouter } from '@/i18n/routing';
 import { authLogin } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { useTranslations } from 'next-intl';
