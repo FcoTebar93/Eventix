@@ -1,11 +1,11 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { verifyAccessToken } from '../utils/jwt';
 import { AuthenticatedRequest } from '../types';
 import { AppError } from './errorHandler';
 
 export const authenticate = (
     req: AuthenticatedRequest,
-    res: Response,
+    _res: Response,
     next: NextFunction
 ): void => {
     try {
@@ -27,7 +27,7 @@ export const authenticate = (
 };
 
 export const requireRole = (...allowedRoles: string[]) => {
-    return (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
+    return (req: AuthenticatedRequest, _res: Response, next: NextFunction): void => {
         if (!req.user) {
             throw new AppError('Authentication required', 401);
         }

@@ -8,7 +8,7 @@ router.post(
     '/release-expired-reservations',
     authenticate,
     requireRole('ADMIN'),
-    async (req, res) => {
+    async (_req, res) => {
         try {
             const result = await reservationsService.releaseExpiredReservations();
             res.status(200).json({

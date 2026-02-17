@@ -15,7 +15,6 @@ export const register = async (data: RegisterInput): Promise<{
         role: UserRole;
     };
 }> => {
-    // Verificar si el email ya existe
     const existingUser = await prisma.user.findUnique({
         where: { email: data.email },
     });

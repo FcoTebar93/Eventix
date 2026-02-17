@@ -84,11 +84,9 @@ export async function releaseExpiredReservations(): Promise<{
 
     return result;
   } catch (error: any) {
-    // Si es un error de conexión, relanzar para que el worker lo maneje
     if (error?.message?.includes('Authentication failed') || error?.message?.includes('connect')) {
       throw error;
     }
-    // Para otros errores, loguear y retornar valores por defecto
     logger.error('Error inesperado al liberar reservas expiradas:', error);
     return { released: 0, ordersCancelled: 0 };
   }

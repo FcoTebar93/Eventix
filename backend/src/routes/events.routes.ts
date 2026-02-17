@@ -9,8 +9,7 @@ router.get('/', authenticate, eventsController.getEvents);
 router.get('/organizer/me', authenticate, eventsController.getMyEvents);
 router.post('/', authenticate, requireRole('ORGANIZER', 'ADMIN'), eventsController.createEvent);
 
-router.use('/:eventId/tickets', (req, res, next) => {
-    // Asegurar que eventId esté disponible en los params de las rutas anidadas
+router.use('/:eventId/tickets', (req, _res, next) => {
     req.params.eventId = req.params.eventId;
     next();
 }, ticketsRoutes);
