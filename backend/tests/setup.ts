@@ -1,4 +1,4 @@
-jest.mock('../../src/lib/prisma', () => ({
+jest.mock('../src/lib/prisma', () => ({
     prisma: {
         user: {
             findUnique: jest.fn(),
@@ -36,7 +36,7 @@ jest.mock('../../src/lib/prisma', () => ({
     $disconnect: jest.fn()
 }));
 
-jest.mock('../../src/utils/logger', () => ({
+jest.mock('../src/utils/logger', () => ({
     logger: {
         info: jest.fn(),
         error: jest.fn(),
@@ -45,17 +45,17 @@ jest.mock('../../src/utils/logger', () => ({
     }
 }));
 
-jest.mock('../../src/lib/redis', () => ({
-    redis: {
-        get: jest.fn(),
-        set: jest.fn(),
-        del: jest.fn(),
-        keys: jest.fn()
-    },
-    closeRedisConnection: jest.fn()
+jest.mock('../src/lib/redis', () => ({
+    getRedisClient: jest.fn(() => ({
+        get: jest.fn().mockResolvedValue(null),
+        set: jest.fn().mockResolvedValue('OK'),
+        del: jest.fn().mockResolvedValue(1),
+        keys: jest.fn().mockResolvedValue([]),
+    })),
+    closeRedisConnection: jest.fn(),
 }));
 
-jest.mock('../../src/lib/rabbitmq', () => ({
+jest.mock('../src/lib/rabbitmq', () => ({
     connectRabbitMQ: jest.fn(),
     closeRabbitMQConnection: jest.fn(),
     publishMessage: jest.fn()
