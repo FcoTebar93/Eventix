@@ -1,4 +1,3 @@
-import { UserRole } from "@prisma/client";
 import { prisma } from "../../../src/lib/prisma";
 import * as authService from "../../../src/services/auth.service";
 import { hashPassword, comparePassword } from "../../../src/utils/password";

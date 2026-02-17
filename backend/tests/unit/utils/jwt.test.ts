@@ -3,11 +3,14 @@ import { generateTokens, verifyAccessToken, verifyRefreshToken } from '../../../
 import { AppError } from '../../../src/middleware/errorHandler';
 import { UserRole } from '@prisma/client';
 
+jest.mock('jsonwebtoken');
 jest.mock('../../../src/config/env', () => ({
-    JWT_SECRET: 'test-secret',
-    JWT_REFRESH_SECRET: 'test-refresh-secret',
-    JWT_EXPIRES_IN: '1h',
-    JWT_REFRESH_EXPIRES_IN: '7d',
+    env: {
+        JWT_SECRET: 'test-secret',
+        JWT_REFRESH_SECRET: 'test-refresh-secret',
+        JWT_EXPIRES_IN: '1h',
+        JWT_REFRESH_EXPIRES_IN: '7d',
+    },
 }));
 
 describe('jwt utils', () => {

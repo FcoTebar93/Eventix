@@ -113,21 +113,21 @@ describe('Events Service', () => {
 
     describe('publishEvent', () => {
         it('should throw AppError when event is not DRAFT', async () => {
-            const mockEvent = createMockEvent({ status: EventStatus.DRAFT, organizerId: 'org-1' });
+            const mockEvent = createMockEvent({ status: EventStatus.PUBLISHED, organizerId: 'org-1' });
             (prisma.event.findUnique as jest.Mock).mockResolvedValue(mockEvent);
 
             await expect(eventsService.publishEvent(mockEvent.id, 'org-1')).rejects.toThrow(AppError);
+        });
 
-            it('should update status to PUBLISHED when authorized', async () => {
-                const mockEvent = createMockEvent({ status: EventStatus.DRAFT, organizerId: 'org-1' });
-                const published = { ...mockEvent, status: EventStatus.PUBLISHED };
-                (prisma.event.findUnique as jest.Mock).mockResolvedValue(mockEvent);
-                (prisma.event.update as jest.Mock).mockResolvedValue(published);
-    
-                const result = await eventsService.publishEvent(mockEvent.id, 'org-1');
-    
-                expect(result.status).toBe(EventStatus.PUBLISHED);
-            });
+        it('should update status to PUBLISHED when authorized', async () => {
+            const mockEvent = createMockEvent({ status: EventStatus.DRAFT, organizerId: 'org-1' });
+            const published = { ...mockEvent, status: EventStatus.PUBLISHED };
+            (prisma.event.findUnique as jest.Mock).mockResolvedValue(mockEvent);
+            (prisma.event.update as jest.Mock).mockResolvedValue(published);
+
+            const result = await eventsService.publishEvent(mockEvent.id, 'org-1');
+
+            expect(result.status).toBe(EventStatus.PUBLISHED);
         });
     });
 });

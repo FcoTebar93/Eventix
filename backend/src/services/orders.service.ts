@@ -395,7 +395,7 @@ export const cancelOrder = async (
     orderId: string,
     userId: string,
     userRole: string,
-    data: CancelOrderInput,
+    _data: CancelOrderInput,
 ) => {
     return updateOrder(
         orderId,

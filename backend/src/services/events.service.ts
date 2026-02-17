@@ -112,14 +112,14 @@ export const getEvents = async (query: GetEventsQuery) => {
         where.city = {
             contains: city,
             mode: 'insensitive',
-        };
+        } as Prisma.StringFilter<'Event'>;
     }
 
     if (search) {
         where.OR = [
-            { title: { contains: search, mode: 'insensitive' } },
-            { description: { contains: search, mode: 'insensitive' } },
-            { venue: { contains: search, mode: 'insensitive' } },
+            { title: { contains: search, mode: 'insensitive' } as Prisma.StringFilter<'Event'> },
+            { description: { contains: search, mode: 'insensitive' } as Prisma.StringNullableFilter<'Event'> },
+            { venue: { contains: search, mode: 'insensitive' } as Prisma.StringFilter<'Event'> },
         ];
     }
 
