@@ -1,0 +1,100 @@
+{
+    "common": {
+      "appName": "Eventix",
+      "welcome": "Welcome",
+      "loading": "Loading...",
+      "error": "Error",
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "search": "Search",
+      "filter": "Filter",
+      "all": "All",
+      "location": "Location",
+      "language": "Language",
+      "profile": "My Profile",
+      "redirecting": "Redirecting to login..."
+    },
+    "nav": {
+      "events": "Events",
+      "myOrders": "My Orders",
+      "login": "Sign In",
+      "register": "Sign Up",
+      "logout": "Sign Out",
+      "profile": "My Profile"
+    },
+    "auth": {
+      "login": {
+        "title": "Sign In",
+        "email": "Email",
+        "password": "Password",
+        "emailPlaceholder": "your@email.com",
+        "submit": "Sign In",
+        "submitting": "Signing in...",
+        "noAccount": "Don't have an account?",
+        "registerLink": "Sign Up",
+        "error": "Error signing in"
+      },
+      "register": {
+        "title": "Create Account",
+        "name": "Name",
+        "email": "Email",
+        "password": "Password",
+        "namePlaceholder": "Your name",
+        "emailPlaceholder": "your@email.com",
+        "passwordPlaceholder": "Minimum 8 characters",
+        "submit": "Sign Up",
+        "submitting": "Creating account...",
+        "hasAccount": "Already have an account?",
+        "loginLink": "Sign In",
+        "error": "Error creating account"
+      }
+    },
+    "home": {
+      "hero": {
+        "title": "Find tickets for the best events",
+        "subtitle": "Concerts, sports, theater and more. Buy safely and in just a few clicks.",
+        "cta": "View Events"
+      },
+      "events": {
+        "title": "Upcoming Events",
+        "noEvents": "No published events yet.",
+        "error": "Error loading events",
+        "tickets": "tickets"
+      }
+    },
+    "orders": {
+      "title": "My Orders",
+      "noOrders": "You don't have any orders yet.",
+      "error": "Error loading orders",
+      "order": "Order",
+      "event": "Event",
+      "date": "Date",
+      "total": "Total",
+      "status": {
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "processing": "Processing",
+        "completed": "Completed",
+        "cancelled": "Cancelled",
+        "refunded": "Refunded"
+      }
+    },
+    "location": {
+      "select": "Select location",
+      "all": "All",
+      "madrid": "Madrid",
+      "barcelona": "Barcelona",
+      "valencia": "Valencia",
+      "sevilla": "Seville",
+      "bilbao": "Bilbao"
+    },
+    "language": {
+      "spanish": "Español",
+      "english": "English",
+      "portuguese": "Português",
+      "french": "Français",
+      "italian": "Italiano"
+    }
+  }

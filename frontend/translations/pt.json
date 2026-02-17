@@ -1,0 +1,100 @@
+{
+    "common": {
+      "appName": "Eventix",
+      "welcome": "Bem-vindo",
+      "loading": "Carregando...",
+      "error": "Erro",
+      "save": "Salvar",
+      "cancel": "Cancelar",
+      "delete": "Excluir",
+      "edit": "Editar",
+      "search": "Pesquisar",
+      "filter": "Filtrar",
+      "all": "Todas",
+      "location": "Localização",
+      "language": "Idioma",
+      "profile": "Meu Perfil",
+      "redirecting": "Redirecionando para login..."
+    },
+    "nav": {
+      "events": "Eventos",
+      "myOrders": "Meus Pedidos",
+      "login": "Entrar",
+      "register": "Registrar",
+      "logout": "Sair",
+      "profile": "Meu Perfil"
+    },
+    "auth": {
+      "login": {
+        "title": "Entrar",
+        "email": "Email",
+        "password": "Senha",
+        "emailPlaceholder": "seu@email.com",
+        "submit": "Entrar",
+        "submitting": "Entrando...",
+        "noAccount": "Não tem uma conta?",
+        "registerLink": "Registre-se",
+        "error": "Erro ao entrar"
+      },
+      "register": {
+        "title": "Criar Conta",
+        "name": "Nome",
+        "email": "Email",
+        "password": "Senha",
+        "namePlaceholder": "Seu nome",
+        "emailPlaceholder": "seu@email.com",
+        "passwordPlaceholder": "Mínimo 8 caracteres",
+        "submit": "Registrar",
+        "submitting": "Criando conta...",
+        "hasAccount": "Já tem uma conta?",
+        "loginLink": "Entre",
+        "error": "Erro ao criar conta"
+      }
+    },
+    "home": {
+      "hero": {
+        "title": "Encontre ingressos para os melhores eventos",
+        "subtitle": "Concertos, esportes, teatro e muito mais. Compre com segurança em poucos cliques.",
+        "cta": "Ver Eventos"
+      },
+      "events": {
+        "title": "Próximos Eventos",
+        "noEvents": "Ainda não há eventos publicados.",
+        "error": "Erro ao carregar eventos",
+        "tickets": "ingressos"
+      }
+    },
+    "orders": {
+      "title": "Meus Pedidos",
+      "noOrders": "Você ainda não tem pedidos.",
+      "error": "Erro ao carregar pedidos",
+      "order": "Pedido",
+      "event": "Evento",
+      "date": "Data",
+      "total": "Total",
+      "status": {
+        "pending": "Pendente",
+        "confirmed": "Confirmado",
+        "processing": "Em processamento",
+        "completed": "Concluído",
+        "cancelled": "Cancelado",
+        "refunded": "Reembolsado"
+      }
+    },
+    "location": {
+      "select": "Selecionar localização",
+      "all": "Todas",
+      "madrid": "Madrid",
+      "barcelona": "Barcelona",
+      "valencia": "Valência",
+      "sevilla": "Sevilha",
+      "bilbao": "Bilbau"
+    },
+    "language": {
+      "spanish": "Español",
+      "english": "English",
+      "portuguese": "Português",
+      "french": "Français",
+      "italian": "Italiano"
+    }
+  }

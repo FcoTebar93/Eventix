@@ -1,14 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from '@/i18n/routing';
 import { useQuery } from '@tanstack/react-query';
 import { createOrder, getTicketsByEvent, getEventById } from '@/lib/api';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import { useTranslations } from 'next-intl';
 
 export default function CheckoutPage() {   
     const router = useRouter();
     const searchParams = useSearchParams();
+    const t = useTranslations('checkout');
     const eventId = searchParams.get('eventId');
     const ticketIdsParams = searchParams.get('ticketIds');
 
@@ -53,8 +55,8 @@ export default function CheckoutPage() {
             const order = await createOrder({ ticketIds, deliveryEmail: email });
             router.push(`/orders/${order.id}`);
         } catch (error) {
-            const msg = error && typeof error === 'object' && 'response' in error ? (error as { response?: { data?: { error?: string } } }).response?.data?.error : 'Error al crear el pedido';
-            setError(msg || 'Error al crear el pedido');
+            const msg = error && typeof error === 'object' && 'response' in error ? (error as { response?: { data?: { error?: string } } }).response?.data?.error : t('error');
+            setError(msg || t('error'));
         } finally {
             setLoading(false);
         }
@@ -67,24 +69,24 @@ export default function CheckoutPage() {
     return (
       <ProtectedRoute>
         <div className="mx-auto max-w-lg px-4 py-8">
-          <h1 className="text-2xl font-bold text-white">Checkout</h1>
+          <h1 className="text-2xl font-bold text-white">{t('title')}</h1>
           {event && (
             <p className="mt-1 text-[var(--text-secondary)]">{event.title}</p>
           )}
           <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
             <p className="text-[var(--text-secondary)]">
-              {ticketIds.length} entrada{ticketIds.length !== 1 ? 's' : ''} · Total: <span className="font-semibold text-white">{total.toFixed(2)} €</span>
+              {ticketIds.length} {ticketIds.length !== 1 ? t('tickets') : t('ticket')} · {t('total')}: <span className="font-semibold text-white">{total.toFixed(2)} €</span>
             </p>
             <form onSubmit={handleConfirm} className="mt-4 flex flex-col gap-4">
               <div>
-                <label htmlFor="email" className="block text-sm text-[var(--text-secondary)]">Email al que enviaremos las entradas</label>
+                <label htmlFor="email" className="block text-sm text-[var(--text-secondary)]">{t('emailLabel')}</label>
                 <input
                   id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="mt-1 w-full rounded border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 text-white"
-                  placeholder="tu@email.com"
+                  placeholder={t('emailPlaceholder')}
                 />
               </div>
               {error && <p className="text-sm text-red-400">{error}</p>}
@@ -93,7 +95,7 @@ export default function CheckoutPage() {
                 disabled={loading}
                 className="rounded bg-[var(--accent)] py-3 font-semibold text-white hover:bg-[var(--accent-hover)] disabled:opacity-50"
               >
-                {loading ? 'Procesando...' : 'Confirmar compra'}
+                {loading ? t('processing') : t('confirm')}
               </button>
             </form>
           </div>
@@ -102,4 +104,4 @@ export default function CheckoutPage() {
     );
 }
     
-    
+     

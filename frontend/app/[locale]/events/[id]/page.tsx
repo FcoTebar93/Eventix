@@ -1,17 +1,19 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
+import { Link, useParams, useRouter } from '@/i18n/routing';
 import { useQuery } from '@tanstack/react-query';
 import { getEventById, getTicketsByEvent } from '@/lib/api';
 import type { Ticket } from '@/lib/types';
+import { useTranslations, useLocale } from 'next-intl';
 
 const DEFAULT_IMAGE_URL = 'https://via.placeholder.com/600x400';
 
 export default function EventDetailPage() {
     const params = useParams();
     const router = useRouter();
+    const t = useTranslations('events');
+    const locale = useLocale();
 
     const id = params?.id as string;
 
@@ -69,11 +71,11 @@ export default function EventDetailPage() {
             return;
         }
         if (totalSelected > 5) {
-            setError('No se pueden seleccionar más de 5 tickets');
+            setError(t('maxTickets'));
             return;
         }
         if (totalPrice === 0) {
-            setError('El precio total es 0');
+            setError(t('zeroPrice'));
             return;
         }
 
@@ -92,14 +94,14 @@ export default function EventDetailPage() {
     if (errorEvent || !event) {
         return (
             <div className="mx-auto max-w-4xl px-4 py-12">
-                <p className="text-red-500">El evento no ha sido encontrado</p>
-                <Link href="/" className="mt-4 inline-block text-[var(--accent)] hover:underline">Volver a la lista de eventos</Link>
+                <p className="text-red-500">{t('notFound')}</p>
+                <Link href="/" className="mt-4 inline-block text-[var(--accent)] hover:underline">{t('backToList')}</Link>
             </div>
         );
     }
 
     const date = new Date(event.date);
-    const formattedDate = date.toLocaleDateString('es-ES', {
+    const formattedDate = date.toLocaleDateString(locale, {
         weekday: 'long',
         day: 'numeric',
         month: 'long',
@@ -112,7 +114,7 @@ export default function EventDetailPage() {
 
     return (
         <div className="mx-auto max-w-4xl px-4 py-8">
-      <Link href="/" className="text-sm text-[var(--text-secondary)] hover:text-white">← Volver a eventos</Link>
+      <Link href="/" className="text-sm text-[var(--text-secondary)] hover:text-white">← {t('backToEvents')}</Link>
 
       <div className="mt-6 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)]">
         <div className="aspect-video w-full overflow-hidden bg-[var(--bg-secondary)]">
@@ -132,7 +134,7 @@ export default function EventDetailPage() {
       </div>
 
       <div className="mt-8">
-        <h2 className="text-lg font-bold text-white">Entradas disponibles</h2>
+        <h2 className="text-lg font-bold text-white">{t('availableTickets')}</h2>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {tickets.map((ticket) => (
             <div key={ticket.id} className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-4">
@@ -144,7 +146,7 @@ export default function EventDetailPage() {
       </div>
 
       <section className="mt-8">
-        <h2 className="text-xl font-bold text-white">Entradas</h2>
+        <h2 className="text-xl font-bold text-white">{t('tickets')}</h2>
         {loadingTickets ? (
           <div className="mt-4 space-y-3">
             {[1, 2, 3].map((i) => (
@@ -152,7 +154,7 @@ export default function EventDetailPage() {
             ))}
           </div>
         ) : tickets.length === 0 ? (
-          <p className="mt-4 text-[var(--text-secondary)]">No hay entradas disponibles.</p>
+          <p className="mt-4 text-[var(--text-secondary)]">{t('noTicketsAvailable')}</p>
         ) : (
           <ul className="mt-4 space-y-3">
             {tickets.map((ticket: Ticket) => {
@@ -195,15 +197,16 @@ export default function EventDetailPage() {
 
 {totalSelected > 0 && (
           <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
+            {error && <p className="mb-2 text-sm text-red-400">{error}</p>}
             <p className="text-[var(--text-secondary)]">
-              {totalSelected} entrada{totalSelected !== 1 ? 's' : ''} · Total: <span className="font-semibold text-white">{totalPrice.toFixed(2)} €</span>
+              {totalSelected} {t('ticket', { count: totalSelected })} · {t('total')}: <span className="font-semibold text-white">{totalPrice.toFixed(2)} €</span>
             </p>
             <button
               type="button"
               onClick={handleBuy}
               className="mt-4 w-full rounded bg-[var(--accent)] py-3 font-semibold text-white hover:bg-[var(--accent-hover)]"
             >
-              Ir al checkout
+              {t('goToCheckout')}
             </button>
           </div>
         )}

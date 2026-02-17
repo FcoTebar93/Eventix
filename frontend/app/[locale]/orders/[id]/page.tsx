@@ -1,22 +1,11 @@
 'use client';
 
 import { useState } from "react";
-import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { Link, useParams, useRouter } from "@/i18n/routing";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getOrderById, payOrder } from "@/lib/api";
-import type { PaymentMethod } from "@/lib/types";
 import ProtectedRoute from '@/components/ProtectedRoute';
-
-
-const statusLabels: Record<string, string> = {
-    PENDING: 'Pendiente de pago',
-    CONFIRMED: 'Confirmada',
-    PROCESSING: 'En proceso',
-    COMPLETED: 'Completada',
-    CANCELLED: 'Cancelada',
-    REFUNDED: 'Reembolsada',
-};
+import { useTranslations, useLocale } from 'next-intl';
 
 const statusColors: Record<string, string> = {
     PENDING: 'text-yellow-400',
@@ -31,6 +20,8 @@ export default function OrderDetailPage() {
     const params = useParams();
     const router = useRouter();
     const queryClient = useQueryClient();
+    const t = useTranslations('orders');
+    const locale = useLocale();
     const id= params.id as string;
 
     const [paying, setPaying] = useState(false);
@@ -42,9 +33,14 @@ export default function OrderDetailPage() {
         enabled: !!id,
     });
 
+    const getStatusLabel = (status: string): string => {
+        if (status === 'PENDING') return t('status.pending');
+        return t(`status.${status.toLowerCase()}`);
+    };
+
     const handlePay = async () => {
         if (!order || order.status !== 'PENDING') {
-            setPaymentError('Este pedido no está pendiente de pago');
+            setPaymentError(t('payment.notPending'));
             return;
         }
         setPaymentError('');
@@ -54,8 +50,8 @@ export default function OrderDetailPage() {
             await queryClient.invalidateQueries({ queryKey: ['order', id] });
             await queryClient.invalidateQueries({ queryKey: ['myOrders'] });
         } catch (error: unknown) {
-            const msg = error && typeof error === 'object' && 'response' in error ? (error as { response?: { data?: { error?: string } } }).response?.data?.error : 'Error al procesar el pago';
-            setPaymentError(msg || 'Error al procesar el pago');
+            const msg = error && typeof error === 'object' && 'response' in error ? (error as { response?: { data?: { error?: string } } }).response?.data?.error : t('payment.error');
+            setPaymentError(msg || t('payment.error'));
         } finally {
             setPaying(false);
         }
@@ -76,9 +72,9 @@ export default function OrderDetailPage() {
         return (
           <ProtectedRoute>
             <div className="mx-auto max-w-4xl px-4 py-8">
-                <p className="text-red-400">Pedido no encontrado.</p>
+                <p className="text-red-400">{t('notFound')}</p>
                 <Link href="/orders" className="mt-4 inline-block text-[var(--accent)] hover:underline">
-                Volver a mis pedidos
+                {t('backToOrders')}
                 </Link>
             </div>
           </ProtectedRoute>
@@ -87,7 +83,7 @@ export default function OrderDetailPage() {
 
     const total = typeof order.totalAmount === 'string' ? parseFloat(order.totalAmount) : order.totalAmount;
     const createdAt = order.createdAt ? new Date(order.createdAt) : null;
-    const formattedDate = createdAt ? createdAt.toLocaleDateString('es-ES', {
+    const formattedDate = createdAt ? createdAt.toLocaleDateString(locale, {
         weekday: 'long',
         day: 'numeric',
         month: 'long',
@@ -100,14 +96,14 @@ export default function OrderDetailPage() {
         <ProtectedRoute>
           <div className="mx-auto max-w-4xl px-4 py-8">
           <Link href="/orders" className="text-sm text-[var(--text-secondary)] hover:text-white">
-            ← Volver a mis órdenes
+            ← {t('backToOrders')}
           </Link>
 
           <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6">
             <div className="mb-6 flex items-center justify-between">
-              <h1 className="text-2xl font-bold text-white">Pedido #{order.id.slice(0, 8)}</h1>
+              <h1 className="text-2xl font-bold text-white">{t('order')} #{order.id.slice(0, 8)}</h1>
               <span className={`font-medium ${statusColors[order.status]}`}>
-                {statusLabels[order.status]}
+                {getStatusLabel(order.status)}
               </span>
             </div>
 
@@ -116,7 +112,7 @@ export default function OrderDetailPage() {
                 <h2 className="font-semibold text-white">{order.event.title}</h2>
                 {order.event.date && (
                   <p className="text-sm text-[var(--text-secondary)]">
-                    {new Date(order.event.date).toLocaleDateString('es-ES', {
+                    {new Date(order.event.date).toLocaleDateString(locale, {
                       weekday: 'long',
                       day: 'numeric',
                       month: 'long',
@@ -134,14 +130,14 @@ export default function OrderDetailPage() {
 
               {order.items && order.items.length > 0 && (
                 <div className="mb-6 border-b border-[var(--border)] pb-6">
-                  <h3 className="mb-3 font-semibold text-white">Entradas</h3>
+                  <h3 className="mb-3 font-semibold text-white">{t('tickets')}</h3>
                   <ul className="space-y-2">
                     {order.items.map((item) => {
                       const itemPrice = typeof item.price === 'string' ? parseFloat(item.price) : item.price;
                       return (
                         <li key={item.id} className="flex justify-between text-sm">
                           <span className="text-[var(--text-secondary)]">
-                            {item.ticket?.type || 'Entrada'} × {item.quantity}
+                            {item.ticket?.type || t('ticket')} × {item.quantity}
                           </span>
                           <span className="text-white">{itemPrice.toFixed(2)} €</span>
                         </li>
@@ -152,19 +148,19 @@ export default function OrderDetailPage() {
               )}
       
               <div className="mb-6 flex justify-between border-b border-[var(--border)] pb-6">
-                <span className="text-lg font-semibold text-white">Total</span>
+                <span className="text-lg font-semibold text-white">{t('total')}</span>
                 <span className="text-lg font-semibold text-white">{total.toFixed(2)} €</span>
               </div>
 
               {formattedDate && (
               <p className="mb-4 text-sm text-[var(--text-secondary)]">
-                Fecha de compra: {formattedDate}
+                {t('purchaseDate')}: {formattedDate}
               </p>
             )}
 
             {order.deliveryEmail && (
               <p className="mb-4 text-sm text-[var(--text-secondary)]">
-                Email de envío: {order.deliveryEmail}
+                {t('deliveryEmail')}: {order.deliveryEmail}
               </p>
             )}
 
@@ -177,16 +173,16 @@ export default function OrderDetailPage() {
                   disabled={paying}
                   className="w-full rounded bg-[var(--accent)] py-3 font-semibold text-white hover:bg-[var(--accent-hover)] disabled:opacity-50"
                 >
-                  {paying ? 'Procesando pago...' : 'Pagar ahora'}
+                  {paying ? t('payment.processing') : t('payment.payNow')}
                 </button>
               </div>
             )}
 
             {order.status === 'CONFIRMED' && (
                 <div className="mt-6 rounded bg-green-500/10 border border-green-500/20 p-4">
-                    <p className="text-green-400 font-medium">✓ Pago confirmado</p>
+                    <p className="text-green-400 font-medium">✓ {t('payment.confirmed')}</p>
                     <p className="text-sm text-[var(--text-secondary)] mt-1">
-                    Tu pedido ha sido confirmado. Recibirás las entradas por email.
+                    {t('payment.confirmedMessage')}
                     </p>
                 </div>
             )}

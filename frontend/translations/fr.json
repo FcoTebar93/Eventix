@@ -1,0 +1,100 @@
+{
+    "common": {
+      "appName": "Eventix",
+      "welcome": "Bienvenue",
+      "loading": "Chargement...",
+      "error": "Erreur",
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "delete": "Supprimer",
+      "edit": "Modifier",
+      "search": "Rechercher",
+      "filter": "Filtrer",
+      "all": "Toutes",
+      "location": "Localisation",
+      "language": "Langue",
+      "profile": "Mon Profil",
+      "redirecting": "Redirection vers la connexion..."
+    },
+    "nav": {
+      "events": "Événements",
+      "myOrders": "Mes Commandes",
+      "login": "Se connecter",
+      "register": "S'inscrire",
+      "logout": "Se déconnecter",
+      "profile": "Mon Profil"
+    },
+    "auth": {
+      "login": {
+        "title": "Se connecter",
+        "email": "Email",
+        "password": "Mot de passe",
+        "emailPlaceholder": "votre@email.com",
+        "submit": "Se connecter",
+        "submitting": "Connexion...",
+        "noAccount": "Vous n'avez pas de compte ?",
+        "registerLink": "Inscrivez-vous",
+        "error": "Erreur de connexion"
+      },
+      "register": {
+        "title": "Créer un compte",
+        "name": "Nom",
+        "email": "Email",
+        "password": "Mot de passe",
+        "namePlaceholder": "Votre nom",
+        "emailPlaceholder": "votre@email.com",
+        "passwordPlaceholder": "Minimum 8 caractères",
+        "submit": "S'inscrire",
+        "submitting": "Création du compte...",
+        "hasAccount": "Vous avez déjà un compte ?",
+        "loginLink": "Connectez-vous",
+        "error": "Erreur lors de l'inscription"
+      }
+    },
+    "home": {
+      "hero": {
+        "title": "Trouvez des billets pour les meilleurs événements",
+        "subtitle": "Concerts, sports, théâtre et plus encore. Achetez en toute sécurité en quelques clics.",
+        "cta": "Voir les événements"
+      },
+      "events": {
+        "title": "Événements à venir",
+        "noEvents": "Aucun événement publié pour le moment.",
+        "error": "Erreur lors du chargement des événements",
+        "tickets": "billets"
+      }
+    },
+    "orders": {
+      "title": "Mes Commandes",
+      "noOrders": "Vous n'avez pas encore de commandes.",
+      "error": "Erreur lors du chargement des commandes",
+      "order": "Commande",
+      "event": "Événement",
+      "date": "Date",
+      "total": "Total",
+      "status": {
+        "pending": "En attente",
+        "confirmed": "Confirmée",
+        "processing": "En traitement",
+        "completed": "Terminée",
+        "cancelled": "Annulée",
+        "refunded": "Remboursée"
+      }
+    },
+    "location": {
+      "select": "Sélectionner la localisation",
+      "all": "Toutes",
+      "madrid": "Madrid",
+      "barcelona": "Barcelone",
+      "valencia": "Valence",
+      "sevilla": "Séville",
+      "bilbao": "Bilbao"
+    },
+    "language": {
+      "spanish": "Español",
+      "english": "English",
+      "portuguese": "Português",
+      "french": "Français",
+      "italian": "Italiano"
+    }
+  }

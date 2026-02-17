@@ -1,14 +1,16 @@
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter } from '@/i18n/routing';
 import { useEffect } from 'react';
 import { useAuthStore } from '@/store/authStore';
+import { useTranslations } from 'next-intl';
 
 export default function ProtectedRouter({ children }: { children: React.ReactNode }) {
     const router = useRouter();
     const user = useAuthStore((state) => state.user);
     const pathName = usePathname();
     const loadFromStorage = useAuthStore((state) => state.loadFromStorage);
+    const t = useTranslations('common');
 
     useEffect(() => {
         loadFromStorage();
@@ -27,7 +29,7 @@ export default function ProtectedRouter({ children }: { children: React.ReactNod
     if (user === null) {
         return (
             <div className="flex min-h-[50vh] items-center justify-center">
-              <p className="text-[var(--text-secondary)]">Redirigiendo al login...</p>
+              <p className="text-[var(--text-secondary)]">{t('redirecting')}</p>
             </div>
         );
     }

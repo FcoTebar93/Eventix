@@ -1,0 +1,100 @@
+{
+    "common": {
+      "appName": "Eventix",
+      "welcome": "Benvenuto",
+      "loading": "Caricamento...",
+      "error": "Errore",
+      "save": "Salva",
+      "cancel": "Annulla",
+      "delete": "Elimina",
+      "edit": "Modifica",
+      "search": "Cerca",
+      "filter": "Filtra",
+      "all": "Tutte",
+      "location": "Posizione",
+      "language": "Lingua",
+      "profile": "Il Mio Profilo",
+      "redirecting": "Reindirizzamento al login..."
+    },
+    "nav": {
+      "events": "Eventi",
+      "myOrders": "I Miei Ordini",
+      "login": "Accedi",
+      "register": "Registrati",
+      "logout": "Esci",
+      "profile": "Il Mio Profilo"
+    },
+    "auth": {
+      "login": {
+        "title": "Accedi",
+        "email": "Email",
+        "password": "Password",
+        "emailPlaceholder": "tua@email.com",
+        "submit": "Accedi",
+        "submitting": "Accesso in corso...",
+        "noAccount": "Non hai un account?",
+        "registerLink": "Registrati",
+        "error": "Errore durante l'accesso"
+      },
+      "register": {
+        "title": "Crea Account",
+        "name": "Nome",
+        "email": "Email",
+        "password": "Password",
+        "namePlaceholder": "Il tuo nome",
+        "emailPlaceholder": "tua@email.com",
+        "passwordPlaceholder": "Minimo 8 caratteri",
+        "submit": "Registrati",
+        "submitting": "Creazione account...",
+        "hasAccount": "Hai già un account?",
+        "loginLink": "Accedi",
+        "error": "Errore durante la registrazione"
+      }
+    },
+    "home": {
+      "hero": {
+        "title": "Trova biglietti per i migliori eventi",
+        "subtitle": "Concerti, sport, teatro e altro ancora. Acquista in sicurezza con pochi clic.",
+        "cta": "Visualizza Eventi"
+      },
+      "events": {
+        "title": "Prossimi Eventi",
+        "noEvents": "Nessun evento pubblicato ancora.",
+        "error": "Errore nel caricamento degli eventi",
+        "tickets": "biglietti"
+      }
+    },
+    "orders": {
+      "title": "I Miei Ordini",
+      "noOrders": "Non hai ancora ordini.",
+      "error": "Errore nel caricamento degli ordini",
+      "order": "Ordine",
+      "event": "Evento",
+      "date": "Data",
+      "total": "Totale",
+      "status": {
+        "pending": "In attesa",
+        "confirmed": "Confermato",
+        "processing": "In elaborazione",
+        "completed": "Completato",
+        "cancelled": "Annullato",
+        "refunded": "Rimborsato"
+      }
+    },
+    "location": {
+      "select": "Seleziona posizione",
+      "all": "Tutte",
+      "madrid": "Madrid",
+      "barcelona": "Barcellona",
+      "valencia": "Valencia",
+      "sevilla": "Siviglia",
+      "bilbao": "Bilbao"
+    },
+    "language": {
+      "spanish": "Español",
+      "english": "English",
+      "portuguese": "Português",
+      "french": "Français",
+      "italian": "Italiano"
+    }
+  }

@@ -1,0 +1,138 @@
+{
+    "common": {
+      "appName": "Eventix",
+      "welcome": "Bienvenido",
+      "loading": "Cargando...",
+      "error": "Error",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "delete": "Eliminar",
+      "edit": "Editar",
+      "search": "Buscar",
+      "filter": "Filtrar",
+      "all": "Todas",
+      "location": "Ubicación",
+      "language": "Idioma",
+      "profile": "Mi perfil",
+      "redirecting": "Redirigiendo al login..."
+    },
+    "nav": {
+      "events": "Eventos",
+      "myOrders": "Mis órdenes",
+      "login": "Iniciar sesión",
+      "register": "Registrarse",
+      "logout": "Cerrar sesión",
+      "profile": "Mi perfil"
+    },
+    "auth": {
+      "login": {
+        "title": "Iniciar sesión",
+        "email": "Email",
+        "password": "Contraseña",
+        "emailPlaceholder": "tu@email.com",
+        "submit": "Entrar",
+        "submitting": "Entrando...",
+        "noAccount": "¿No tienes cuenta?",
+        "registerLink": "Regístrate",
+        "error": "Error al iniciar sesión"
+      },
+      "register": {
+        "title": "Crear cuenta",
+        "name": "Nombre",
+        "email": "Email",
+        "password": "Contraseña",
+        "namePlaceholder": "Tu nombre",
+        "emailPlaceholder": "tu@email.com",
+        "passwordPlaceholder": "Mínimo 8 caracteres",
+        "submit": "Registrarse",
+        "submitting": "Creando cuenta...",
+        "hasAccount": "¿Ya tienes cuenta?",
+        "loginLink": "Inicia sesión",
+        "error": "Error al registrar"
+      }
+    },
+    "home": {
+      "hero": {
+        "title": "Encuentra entradas para los mejores eventos",
+        "subtitle": "Conciertos, deportes, teatro y más. Compra de forma segura y en pocos clics.",
+        "cta": "Ver eventos"
+      },
+      "events": {
+        "title": "Próximos eventos",
+        "noEvents": "No hay eventos publicados todavía.",
+        "error": "Error al cargar eventos",
+        "tickets": "entradas"
+      }
+    },
+    "orders": {
+      "title": "Mis pedidos",
+      "noOrders": "No tienes pedidos todavía.",
+      "error": "Error al cargar los pedidos",
+      "order": "Pedido",
+      "event": "Evento",
+      "date": "Fecha",
+      "total": "Total",
+      "tickets": "Entradas",
+      "ticket": "Entrada",
+      "notFound": "Pedido no encontrado.",
+      "backToOrders": "Volver a mis pedidos",
+      "purchaseDate": "Fecha de compra",
+      "deliveryEmail": "Email de envío",
+      "status": {
+        "pending": "Pendiente",
+        "confirmed": "Confirmada",
+        "processing": "En proceso",
+        "completed": "Completada",
+        "cancelled": "Cancelada",
+        "refunded": "Reembolsada"
+      },
+      "payment": {
+        "notPending": "Este pedido no está pendiente de pago",
+        "error": "Error al procesar el pago",
+        "processing": "Procesando pago...",
+        "payNow": "Pagar ahora",
+        "confirmed": "Pago confirmado",
+        "confirmedMessage": "Tu pedido ha sido confirmado. Recibirás las entradas por email."
+      }
+    },
+    "location": {
+      "select": "Seleccionar ubicación",
+      "all": "Todas",
+      "madrid": "Madrid",
+      "barcelona": "Barcelona",
+      "valencia": "Valencia",
+      "sevilla": "Sevilla",
+      "bilbao": "Bilbao"
+    },
+    "language": {
+      "spanish": "Español",
+      "english": "English",
+      "portuguese": "Português",
+      "french": "Français",
+      "italian": "Italiano"
+    },
+    "checkout": {
+      "title": "Checkout",
+      "ticket": "entrada",
+      "tickets": "entradas",
+      "total": "Total",
+      "emailLabel": "Email al que enviaremos las entradas",
+      "emailPlaceholder": "tu@email.com",
+      "processing": "Procesando...",
+      "confirm": "Confirmar compra",
+      "error": "Error al crear el pedido"
+    },
+    "events": {
+      "notFound": "El evento no ha sido encontrado",
+      "backToList": "Volver a la lista de eventos",
+      "backToEvents": "Volver a eventos",
+      "availableTickets": "Entradas disponibles",
+      "tickets": "Entradas",
+      "ticket": "entrada",
+      "noTicketsAvailable": "No hay entradas disponibles.",
+      "maxTickets": "No se pueden seleccionar más de 5 tickets",
+      "zeroPrice": "El precio total es 0",
+      "goToCheckout": "Ir al checkout",
+      "total": "Total"
+    }
+  }
