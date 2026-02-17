@@ -5,7 +5,7 @@ import { authenticate, requireRole } from '../middleware/auth.middleware';
 
 const router = Router();
 
-router.get('/', authenticate, eventsController.getEvents);
+router.get('/', eventsController.getEvents);
 router.get('/organizer/me', authenticate, eventsController.getMyEvents);
 router.post('/', authenticate, requireRole('ORGANIZER', 'ADMIN'), eventsController.createEvent);
 
@@ -14,7 +14,7 @@ router.use('/:eventId/tickets', (req, _res, next) => {
     next();
 }, ticketsRoutes);
 
-router.get('/:id', authenticate, eventsController.getEventById);
+router.get('/:id', eventsController.getEventById);
 router.patch('/:id', authenticate, requireRole('ORGANIZER', 'ADMIN'), eventsController.updateEvent);
 router.delete('/:id', authenticate, requireRole('ORGANIZER', 'ADMIN'), eventsController.deleteEvent);
 router.post('/:id/publish', authenticate, requireRole('ORGANIZER', 'ADMIN'), eventsController.publishEvent);
