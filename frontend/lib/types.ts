@@ -30,9 +30,19 @@ export interface Event {
   status: EventStatus;
   organizerId?: string;
   organizer?: { id: string; name: string; email: string };
+  tags?: EventTagItem[];
   _count?: { tickets: number; reviews: number; favorites: number };
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface EventTagItem {
+  id: string;
+  tag: {
+    id: string;
+    name: string;
+    slug: string;
+  };
 }
 
 export interface Ticket {

@@ -157,6 +157,24 @@ export function EventCard({ event }: { event: Event }) {
                         )}
                     </div>
 
+                    {event.tags && event.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5">
+                                {event.tags.slice(0, 4).map((et) => (
+                                    <span
+                                        key={et.id}
+                                        className="rounded-md bg-[var(--bg-secondary)] px-2 py-0.5 text-xs text-[var(--text-secondary)]"
+                                    >
+                                        {et.tag.name}
+                                    </span>
+                                ))}
+                                {event.tags.length > 4 && (
+                                    <span className="text-xs text-[var(--text-secondary)]">
+                                        +{event.tags.length - 4}
+                                    </span>
+                                )}
+                            </div>
+                    )}
+
                     <div className="mt-4 pt-4 border-t border-[var(--border)]">
                         <div className="flex items-center justify-between">
                             <span className="text-xs text-[var(--text-secondary)] uppercase tracking-wider">

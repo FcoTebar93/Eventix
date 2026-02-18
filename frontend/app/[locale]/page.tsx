@@ -5,13 +5,36 @@ import { useQuery } from '@tanstack/react-query';
 import type { Event } from '@/lib/types';
 import { getEvents } from '@/lib/api';
 import { EventCard } from '@/components/EventCard';
+import { EventSearch, type EventSearchFilters } from '@/components/EventSearch';
 import { useTranslations } from 'next-intl';
+import { useMemo, useState } from 'react';
+
+const DEFAULT_FILTERS: EventSearchFilters = {
+  search: '',
+  category: '',
+  city: '',
+  tags: '',
+};
 
 export default function HomePage() {
   const t = useTranslations('home');
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['events', { page: 1, limit: 12 }],
-    queryFn: () => getEvents({ page: 1, limit: 12 }),
+  const [filters, setFilters] = useState<EventSearchFilters>(DEFAULT_FILTERS);
+
+  const params = useMemo(
+    () => ({
+      page: 1,
+      limit: 12,
+      search: filters.search || undefined,
+      category: filters.category || undefined,
+      city: filters.city || undefined,
+      tags: filters.tags || undefined,
+    }),
+    [filters]
+  );
+
+  const { data, isLoading, isError, error, refetch } = useQuery({
+    queryKey: ['events', params],
+    queryFn: () => getEvents(params),
   });
 
   return (
@@ -38,12 +61,20 @@ export default function HomePage() {
           {t('events.title')}
         </h2>
 
+        <div className="mt-6">
+          <EventSearch
+            filters={filters}
+            onFiltersChange={setFilters}
+            onSearch={() => refetch()}
+          />
+        </div>
+
         {isLoading && (
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[...Array(6)].map((_, i) => (
               <div
                 key={i}
-                className="h-80 animate-pulse rounded-xl bg-[var(--bg-card)] border border-[var(--border)]"
+                className="h-80 animate-pulse rounded-xl border border-[var(--border)] bg-[var(--bg-card)]"
               />
             ))}
           </div>

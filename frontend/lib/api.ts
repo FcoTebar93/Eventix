@@ -65,6 +65,7 @@ export interface GetEventsParams {
     category?: string;
     city?: string;
     search?: string;
+    tags?: string;
 }
   
 export interface GetEventsResult {
