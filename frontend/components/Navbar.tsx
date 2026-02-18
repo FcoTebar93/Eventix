@@ -42,9 +42,17 @@ export function Navbar() {
                     {user ? (
                         <>
                             <Link
+                                href="/favorites"
+                                className={`text-sm font-medium transition-colors ${
+                                    pathname === '/favorites' || pathname?.startsWith('/favorites') ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)] hover:text-white'
+                                }`}
+                            >
+                                {t('favorites')}
+                            </Link>
+                            <Link
                                 href="/orders"
                                 className={`text-sm font-medium transition-colors ${
-                                    pathname === '/orders' ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)] hover:text-white'
+                                    pathname === '/orders' || pathname?.startsWith('/orders') ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)] hover:text-white'
                                 }`}
                             >
                                 {t('myOrders')}
