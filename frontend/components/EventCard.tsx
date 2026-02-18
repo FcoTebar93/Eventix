@@ -4,6 +4,7 @@ import { Link } from '@/i18n/routing';
 import { useTranslations, useLocale } from 'next-intl';
 import { Event } from '../lib/types';
 import { useState, useMemo } from 'react';
+import { FavoriteButton } from './FavoriteButton';
 
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=600&fit=crop';
 
@@ -95,8 +96,9 @@ export function EventCard({ event }: { event: Event }) {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-70 transition-opacity" />
                     
-                    {event.status === 'PUBLISHED' && (
-                        <div className="absolute top-3 right-3">
+                    <div className="absolute top-3 right-3 flex items-center gap-2">
+                        <FavoriteButton eventId={event.id} initialIsFavorite={event.isFavorite} size="sm" />
+                        {event.status === 'PUBLISHED' && (
                             <span className={`px-2.5 py-1 rounded-full text-xs font-semibold backdrop-blur-sm ${
                                 isSoldOut 
                                     ? 'bg-red-500/90 text-white' 
@@ -104,8 +106,8 @@ export function EventCard({ event }: { event: Event }) {
                             }`}>
                                 {isSoldOut ? t('soldOut') : t('available')}
                             </span>
-                        </div>
-                    )}
+                        )}
+                    </div>
 
                     {event.category && (
                         <div className="absolute top-3 left-3">

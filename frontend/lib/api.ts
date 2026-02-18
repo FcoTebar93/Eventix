@@ -123,4 +123,37 @@ export async function payOrder(orderId: string, method: import('./types').Paymen
   return data.data.order;
 }
 
+// Favorites API
+export interface GetFavoritesParams {
+  page?: number;
+  limit?: number;
+}
+
+export interface GetFavoritesResult {
+  favorites: Event[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+export async function getFavorites(params?: GetFavoritesParams): Promise<GetFavoritesResult> {
+  const { data } = await api.get<ApiResponse<GetFavoritesResult>>('/favorites', { params });
+  return data.data;
+}
+
+export async function addFavorite(eventId: string) {
+  const { data } = await api.post<ApiResponse<unknown>>(`/favorites/${eventId}`);
+  return data.data;
+}
+
+export async function removeFavorite(eventId: string) {
+  const { data } = await api.delete<ApiResponse<unknown>>(`/favorites/${eventId}`);
+  return data.data;
+}
+
+export async function checkFavorite(eventId: string): Promise<{ isFavorite: boolean }> {
+  const { data } = await api.get<ApiResponse<{ isFavorite: boolean }>>(`/favorites/${eventId}/check`);
+  return data.data;
+}
+
 export default api;

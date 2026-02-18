@@ -19,6 +19,7 @@
     "nav": {
       "events": "Eventos",
       "myOrders": "Mis órdenes",
+      "favorites": "Mis favoritos",
       "login": "Iniciar sesión",
       "register": "Registrarse",
       "logout": "Cerrar sesión",
@@ -159,5 +160,22 @@
       "selectTickets": "Selecciona al menos una entrada",
       "row": "Fila",
       "seat": "Asiento"
+    },
+    "favorites": {
+      "title": "Mis favoritos",
+      "subtitle": "Eventos que has guardado para más tarde",
+      "noFavorites": "No tienes eventos favoritos todavía",
+      "noFavoritesHint": "Explora eventos y marca tus favoritos con el corazón ❤️",
+      "error": "Error al cargar favoritos",
+      "add": "Agregar a favoritos",
+      "remove": "Quitar de favoritos",
+      "addToFavorites": "Agregar a favoritos",
+      "removeFromFavorites": "Quitar de favoritos",
+      "addError": "Error al agregar a favoritos",
+      "removeError": "Error al quitar de favoritos",
+      "loginRequired": "Debes iniciar sesión para agregar eventos a favoritos",
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "page": "Página {current} de {total}"
     }
   }

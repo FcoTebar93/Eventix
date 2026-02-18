@@ -3,6 +3,7 @@ import authRoutes from './auth.routes';
 import usersRoutes from './users.routes';
 import eventsRoutes from './events.routes';
 import ordersRoutes from './orders.routes';
+import favoritesRoutes from './favorites.routes';
 import adminRoutes from './admin.routes';
 
 const router = Router();
@@ -14,6 +15,8 @@ router.use('/users', usersRoutes);
 router.use('/events', eventsRoutes);
 
 router.use('/orders', ordersRoutes);
+
+router.use('/favorites', favoritesRoutes);
 
 router.use('/admin', adminRoutes);
 

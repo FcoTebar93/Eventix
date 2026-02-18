@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getEventById, getTicketsByEvent } from '@/lib/api';
 import type { Ticket } from '@/lib/types';
 import { useTranslations, useLocale } from 'next-intl';
+import { FavoriteButton } from '@/components/FavoriteButton';
 
 const DEFAULT_IMAGE_URL = 'https://via.placeholder.com/600x400';
 
@@ -122,12 +123,17 @@ export default function EventDetailPage() {
           <img src={imageUrl} alt={event.title} className="h-full w-full object-cover" />
         </div>
         <div className="p-6">
-          {event.category && (
-            <span className="text-xs font-medium uppercase tracking-wider text-[var(--accent)]">{event.category}</span>
-          )}
-          <h1 className="mt-1 text-2xl font-bold text-white sm:text-3xl">{event.title}</h1>
-          <p className="mt-2 text-[var(--text-secondary)]">{formattedDate}</p>
-          <p className="text-[var(--text-secondary)]">{event.venue} · {event.city}, {event.country}</p>
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1">
+              {event.category && (
+                <span className="text-xs font-medium uppercase tracking-wider text-[var(--accent)]">{event.category}</span>
+              )}
+              <h1 className="mt-1 text-2xl font-bold text-white sm:text-3xl">{event.title}</h1>
+              <p className="mt-2 text-[var(--text-secondary)]">{formattedDate}</p>
+              <p className="text-[var(--text-secondary)]">{event.venue} · {event.city}, {event.country}</p>
+            </div>
+            <FavoriteButton eventId={event.id} initialIsFavorite={event.isFavorite} size="lg" />
+          </div>
           {event.description && (
             <p className="mt-4 text-[var(--text-secondary)]">{event.description}</p>
           )}

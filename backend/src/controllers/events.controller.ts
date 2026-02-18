@@ -7,6 +7,7 @@ import {
     getEventsQuerySchema,
 } from '../schemas/events.schema';
 import * as eventsService from '../services/events.service';
+import * as favoritesService from '../services/favorites.service';
 import { logger } from '../utils/logger';
 
 export const createEvent = async (
@@ -45,6 +46,20 @@ export const getEvents = async (
     try {
         const query = getEventsQuerySchema.parse(req.query);
         const result = await eventsService.getEvents(query);
+        const userId = (req as AuthenticatedRequest).user?.userId;
+
+        // Si hay un usuario autenticado, agregar información de favoritos
+        if (userId) {
+            const eventIds = result.events.map(e => e.id);
+            const favorites = await Promise.all(
+                eventIds.map(eventId => favoritesService.isFavorite(userId, eventId))
+            );
+            
+            result.events = result.events.map((event, index) => ({
+                ...event,
+                isFavorite: favorites[index],
+            }));
+        }
 
         res.status(200).json({
             success: true,
@@ -64,10 +79,20 @@ export const getEventById = async (
         const userId = (req as AuthenticatedRequest).user?.userId;
         const event = await eventsService.getEventById(id, userId);
 
+        // Si hay un usuario autenticado, agregar información de favorito
+        let eventWithFavorite = event;
+        if (userId) {
+            const isFavorite = await favoritesService.isFavorite(userId, id);
+            eventWithFavorite = {
+                ...event,
+                isFavorite,
+            };
+        }
+
         res.status(200).json({
             success: true,
             data: {
-                event,
+                event: eventWithFavorite,
             },
         });
     } catch (error) {

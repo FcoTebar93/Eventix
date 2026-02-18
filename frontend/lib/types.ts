@@ -31,6 +31,7 @@ export interface Event {
   organizerId?: string;
   organizer?: { id: string; name: string; email: string };
   tags?: EventTagItem[];
+  isFavorite?: boolean;
   _count?: { tickets: number; reviews: number; favorites: number };
   createdAt?: string;
   updatedAt?: string;
