@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import type { ApiResponse, AuthTokens, Event } from './types';
+import { useAuthStore } from '@/store/authStore';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -24,18 +25,16 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use( (res) => res, async (err: AxiosError<{ error?: string }>) => {
-    const status = err.response?.status;
+  const status = err.response?.status;
 
-    if (status === 401 && typeof window !== 'undefined') {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('user');
-        window.dispatchEvent(new Event('auth-logout'));
+  if (status === 401 && typeof window !== 'undefined') {
+      useAuthStore.getState().logout();
+      window.dispatchEvent(new Event('auth-logout'));
 
-        return Promise.reject(err);
-    }
+      return Promise.reject(err);
+  }
 
-    return Promise.reject(err);
+  return Promise.reject(err);
 });
 
 export interface AuthData {

@@ -3,6 +3,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
 import { useAuthStore } from './store/authStore';
+import { useRouter } from '@/i18n/routing';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
     const [queryClient] = useState(() => new QueryClient());
@@ -11,6 +12,16 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         loadFromStorage();
     }, [loadFromStorage]);
+
+    const router = useRouter();
+
+    useEffect(() => {
+        const handleAuthLogout = () => {
+            router.push('/login');
+        };
+        window.addEventListener('auth-logout', handleAuthLogout);
+        return () => window.removeEventListener('auth-logout', handleAuthLogout);
+    }, [router]);
 
     return (
         <QueryClientProvider client={queryClient}>
