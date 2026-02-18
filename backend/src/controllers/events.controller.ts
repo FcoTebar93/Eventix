@@ -48,13 +48,10 @@ export const getEvents = async (
         const result = await eventsService.getEvents(query);
         const userId = (req as AuthenticatedRequest).user?.userId;
 
-        // Si hay un usuario autenticado, agregar información de favoritos
         if (userId) {
             const eventIds = result.events.map(e => e.id);
-            const favorites = await Promise.all(
-                eventIds.map(eventId => favoritesService.isFavorite(userId, eventId))
-            );
             
+            const favorites = await favoritesService.getFavoritesBatch(userId, eventIds);
             result.events = result.events.map((event, index) => ({
                 ...event,
                 isFavorite: favorites[index],
@@ -79,7 +76,6 @@ export const getEventById = async (
         const userId = (req as AuthenticatedRequest).user?.userId;
         const event = await eventsService.getEventById(id, userId);
 
-        // Si hay un usuario autenticado, agregar información de favorito
         let eventWithFavorite = event;
         if (userId) {
             const isFavorite = await favoritesService.isFavorite(userId, id);
