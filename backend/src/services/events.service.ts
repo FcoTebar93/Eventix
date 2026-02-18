@@ -3,6 +3,7 @@ import { prisma } from '../lib/prisma';
 import { AppError } from '../middleware/errorHandler';
 import { CreateEventInput, UpdateEventInput, GetEventsQuery } from '../schemas/events.schema';
 import { getEventsListCacheKey, getEventCacheKey, getFromCache, setCache, deleteCache } from '../utils/cache';
+import { parsePagination } from '../utils/pagination';
 
 type GetEventsResult = {
     events: Array<{
@@ -88,21 +89,8 @@ export const createEvent = async (
 };
 
 export const getEvents = async (query: GetEventsQuery) => {
-    const {
-        page = 1,
-        limit = 10,
-        status,
-        category,
-        city,
-        search,
-        dateFrom,
-        dateTo,
-        tags,
-    } = query;
-
-    const skip = (page - 1) * limit;
-    const validLimit = Math.min(Math.max(limit, 1), 100);
-    const validPage = Math.max(page, 1);
+    const { status, category, city, search, dateFrom, dateTo, tags, ...paginationParams } = query;
+    const { skip, take: validLimit, page: validPage } = parsePagination(paginationParams);
 
     const where: Prisma.EventWhereInput = {};
 

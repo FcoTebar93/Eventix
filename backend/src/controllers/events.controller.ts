@@ -48,13 +48,12 @@ export const getEvents = async (
         const result = await eventsService.getEvents(query);
         const userId = (req as AuthenticatedRequest).user?.userId;
 
-        if (userId) {
+        if (userId && result.events.length > 0) {
             const eventIds = result.events.map(e => e.id);
-            
-            const favorites = await favoritesService.getFavoritesBatch(userId, eventIds);
-            result.events = result.events.map((event, index) => ({
+            const favoritesMap = await favoritesService.getFavoritesBatch(userId, eventIds);
+            result.events = result.events.map(event => ({
                 ...event,
-                isFavorite: favorites[index],
+                isFavorite: favoritesMap[event.id] ?? false,
             }));
         }
 
