@@ -97,7 +97,7 @@ export const getEvents = async (query: GetEventsQuery) => {
         search,
         dateFrom,
         dateTo,
-        tags, // Nuevo parámetro
+        tags,
     } = query;
 
     const skip = (page - 1) * limit;
@@ -181,7 +181,14 @@ export const getEvents = async (query: GetEventsQuery) => {
       
     const cached = await getFromCache<GetEventsResult>(cacheKey);
     if (cached) {
-        return cached;
+        const hasTags = cached.events.every(event => 
+            event.tags && Array.isArray(event.tags)
+        );
+        if (!hasTags) {
+            await deleteCache(cacheKey);
+        } else {
+            return cached;
+        }
     }
 
     const [events, total] = await Promise.all([
@@ -242,10 +249,14 @@ export const getEventById = async (eventId: string, userId?: string) => {
     const cached = await getFromCache(cacheKey);
     if (cached) {
         const event = cached as any;
-        if (event.status === EventStatus.DRAFT && event.organizerId !== userId) {
-            throw new AppError('Evento no encontrado', 404);
+        if (!event.tags || !Array.isArray(event.tags)) {
+            await deleteCache(cacheKey);
+        } else {
+            if (event.status === EventStatus.DRAFT && event.organizerId !== userId) {
+                throw new AppError('Evento no encontrado', 404);
+            }
+            return event;
         }
-        return event;
     }
 
     const event = await prisma.event.findUnique({
@@ -256,6 +267,17 @@ export const getEventById = async (eventId: string, userId?: string) => {
                     id: true,
                     name: true,
                     email: true,
+                },
+            },
+            tags: {
+                include: {
+                    tag: {
+                        select: {
+                            id: true,
+                            name: true,
+                            slug: true,
+                        },
+                    },
                 },
             },
             _count: {

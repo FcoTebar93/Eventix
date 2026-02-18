@@ -131,6 +131,19 @@ export default function EventDetailPage() {
           {event.description && (
             <p className="mt-4 text-[var(--text-secondary)]">{event.description}</p>
           )}
+          
+          {event.tags && event.tags.length > 0 && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {event.tags.map((et) => (
+                <span
+                  key={et.id}
+                  className="rounded-md bg-[var(--bg-secondary)] px-3 py-1 text-sm text-[var(--text-secondary)] border border-[var(--border)] hover:border-[var(--accent)] transition-colors"
+                >
+                  {et.tag.name}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
