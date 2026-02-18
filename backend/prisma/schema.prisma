@@ -120,6 +120,7 @@ model Event {
   @@index([date])
   @@index([category])
   @@index([city])
+  @@index([status, date])
   @@map("events")
 }
 
