@@ -18,7 +18,7 @@ export const addFavorite = async (userId: string, eventId: string) => {
         throw new AppError('Solo se pueden agregar eventos publicados a favoritos', 400);
     }
 
-    // Verificar si ya es favorito
+    // Verificar si ya es favorito - hacer idempotente
     const existingFavorite = await prisma.favorite.findUnique({
         where: {
             userId_eventId: {
@@ -26,10 +26,41 @@ export const addFavorite = async (userId: string, eventId: string) => {
                 eventId,
             },
         },
+        include: {
+            event: {
+                include: {
+                    organizer: {
+                        select: {
+                            id: true,
+                            name: true,
+                        },
+                    },
+                    tags: {
+                        include: {
+                            tag: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    slug: true,
+                                },
+                            },
+                        },
+                    },
+                    _count: {
+                        select: {
+                            tickets: true,
+                            reviews: true,
+                            favorites: true,
+                        },
+                    },
+                },
+            },
+        },
     });
 
+    // Si ya existe, retornarlo en lugar de lanzar error (idempotente)
     if (existingFavorite) {
-        throw new AppError('El evento ya está en tus favoritos', 400);
+        return existingFavorite;
     }
 
     // Crear el favorito
@@ -83,8 +114,9 @@ export const removeFavorite = async (userId: string, eventId: string) => {
         },
     });
 
+    // Si no existe, retornar éxito de todas formas (idempotente)
     if (!favorite) {
-        throw new AppError('El evento no está en tus favoritos', 404);
+        return { message: 'Favorito eliminado correctamente' };
     }
 
     await prisma.favorite.delete({
@@ -154,7 +186,10 @@ export const getFavorites = async (userId: string, query: GetFavoritesQuery) => 
     ]);
 
     return {
-        favorites: favorites.map((f) => f.event),
+        favorites: favorites.map((f) => ({
+            ...f.event,
+            isFavorite: true, // Asegurar que todos los eventos de favoritos tengan isFavorite: true
+        })),
         total,
         page: validPage,
         totalPages: Math.ceil(total / validLimit),
