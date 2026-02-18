@@ -60,7 +60,15 @@ export async function setCache(key: string, value: unknown, ttlSeconds: number =
 export async function deleteCache(pattern: string): Promise<void> {
     try {
         const redis = getRedisClient();
-        const keys = await redis.keys(pattern);
+        const keys: string[] = [];
+        let cursor = '0';
+        
+        do {
+            const result = await redis.scan(cursor, 'MATCH', pattern, 'COUNT', 100);
+            cursor = result[0];
+            keys.push(...result[1]);
+        } while (cursor !== '0');
+        
         if (keys.length > 0) {
             await redis.del(...keys);
         }
@@ -72,11 +80,22 @@ export async function deleteCache(pattern: string): Promise<void> {
 export async function clearEventsCache(): Promise<void> {
     try {
         const redis = getRedisClient();
-        // Limpiar cache de listas de eventos
-        const listKeys = await redis.keys('events:list:*');
-        // Limpiar cache de eventos individuales
-        const eventKeys = await redis.keys('event:*');
-        const allKeys = [...listKeys, ...eventKeys];
+        const allKeys: string[] = [];
+        let cursor = '0';
+        
+        do {
+            const result = await redis.scan(cursor, 'MATCH', 'events:*', 'COUNT', 100);
+            cursor = result[0];
+            allKeys.push(...result[1]);
+        } while (cursor !== '0');
+        
+        cursor = '0';
+        do {
+            const result = await redis.scan(cursor, 'MATCH', 'event:*', 'COUNT', 100);
+            cursor = result[0];
+            allKeys.push(...result[1]);
+        } while (cursor !== '0');
+        
         if (allKeys.length > 0) {
             await redis.del(...allKeys);
             logger.info(`Cache de eventos limpiado: ${allKeys.length} claves eliminadas`);

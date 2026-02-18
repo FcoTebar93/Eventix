@@ -3,7 +3,7 @@
 import { Link } from '@/i18n/routing';
 import { useTranslations, useLocale } from 'next-intl';
 import { Event } from '../lib/types';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback, memo } from 'react';
 import { FavoriteButton } from './FavoriteButton';
 
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=600&fit=crop';
@@ -33,7 +33,7 @@ function TicketIcon() {
     );
 }
 
-export function EventCard({ event }: { event: Event }) {
+export const EventCard = memo(function EventCard({ event }: { event: Event }) {
     const t = useTranslations('events');
     const locale = useLocale();
     const [imageLoaded, setImageLoaded] = useState(false);
@@ -64,12 +64,12 @@ export function EventCard({ event }: { event: Event }) {
         return eventDate.toLocaleDateString(locale, { month: 'short' });
     }, [eventDate, locale]);
 
-    const getDaysText = () => {
+    const getDaysText = useCallback(() => {
         if (daysUntilEvent < 0) return t('past');
         if (daysUntilEvent === 0) return t('today');
         if (daysUntilEvent === 1) return t('tomorrow');
         return t('daysAway', { count: daysUntilEvent });
-    };
+    }, [daysUntilEvent, t]);
 
     const imageUrl = imageError ? DEFAULT_IMAGE : (event.imageUrl || DEFAULT_IMAGE);
     const hasTickets = event._count && event._count.tickets > 0;
@@ -191,4 +191,4 @@ export function EventCard({ event }: { event: Event }) {
             </article>
         </Link>
     );
-}
+});

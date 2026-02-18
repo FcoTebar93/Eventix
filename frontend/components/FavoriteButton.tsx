@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useMemo, useCallback } from 'react';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { addFavorite, removeFavorite, checkFavorite } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
@@ -50,12 +50,14 @@ export function FavoriteButton({
     const isAuthenticated = !!user;
     const queryClient = useQueryClient();
 
-    const { data: favoriteStatus, isLoading: isLoadingStatus } = useQuery({
+    const shouldFetch = isAuthenticated && initialIsFavorite === undefined;
+    const { data: favoriteStatus } = useQuery({
         queryKey: ['favorite', eventId],
         queryFn: () => checkFavorite(eventId),
-        enabled: isAuthenticated && initialIsFavorite === undefined,
+        enabled: shouldFetch,
         initialData: initialIsFavorite !== undefined ? { isFavorite: initialIsFavorite } : undefined,
-        staleTime: 5 * 60 * 1000, 
+        staleTime: 10 * 60 * 1000,
+        gcTime: 30 * 60 * 1000,
     });
 
     const isFavorite = favoriteStatus?.isFavorite ?? (initialIsFavorite ?? false);
@@ -103,7 +105,7 @@ export function FavoriteButton({
         },
     });
 
-    const handleToggle = (e: React.MouseEvent) => {
+    const handleToggle = useCallback((e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
 
@@ -119,9 +121,9 @@ export function FavoriteButton({
         } else {
             addFavoriteMutation.mutate();
         }
-    };
+    }, [isAuthenticated, isFavorite, removeFavoriteMutation, addFavoriteMutation, router, t]);
 
-    const isLoading = isLoadingStatus || addFavoriteMutation.isPending || removeFavoriteMutation.isPending;
+    const isLoading = addFavoriteMutation.isPending || removeFavoriteMutation.isPending;
 
     const sizeClasses = {
         sm: 'p-1.5',
@@ -135,11 +137,14 @@ export function FavoriteButton({
         lg: 'text-lg',
     };
 
-    const isFavoriteAndAuth = isFavorite && isAuthenticated;
+    const isFavoriteAndAuth = useMemo(() => isFavorite && isAuthenticated, [isFavorite, isAuthenticated]);
     
-    const iconButtonClasses = isFavoriteAndAuth
-        ? `rounded-full border-2 border-red-500 bg-red-500/90 backdrop-blur-md text-white shadow-lg shadow-red-500/50 transition-all hover:border-red-400 hover:bg-red-600 hover:shadow-xl hover:shadow-red-500/60 hover:scale-110 disabled:opacity-50 ${sizeClasses[size]}`
-        : `rounded-full border-2 border-white/90 bg-black/60 backdrop-blur-md text-white shadow-lg shadow-black/50 transition-all hover:border-[var(--accent)] hover:bg-black/80 hover:text-[var(--accent)] hover:shadow-xl hover:shadow-black/60 hover:scale-110 disabled:opacity-50 ${sizeClasses[size]}`;
+    const iconButtonClasses = useMemo(() => 
+        isFavoriteAndAuth
+            ? `rounded-full border-2 border-red-500 bg-red-500/90 backdrop-blur-md text-white shadow-lg shadow-red-500/50 transition-all hover:border-red-400 hover:bg-red-600 hover:shadow-xl hover:shadow-red-500/60 hover:scale-110 disabled:opacity-50 ${sizeClasses[size]}`
+            : `rounded-full border-2 border-white/90 bg-black/60 backdrop-blur-md text-white shadow-lg shadow-black/50 transition-all hover:border-[var(--accent)] hover:bg-black/80 hover:text-[var(--accent)] hover:shadow-xl hover:shadow-black/60 hover:scale-110 disabled:opacity-50 ${sizeClasses[size]}`,
+        [isFavoriteAndAuth, size]
+    );
 
     if (variant === 'text') {
         return (
