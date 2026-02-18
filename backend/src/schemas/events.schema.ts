@@ -126,6 +126,7 @@ export const getEventsQuerySchema = z.object({
     search: z.string().trim().optional(),
     dateFrom: z.string().datetime().optional(),
     dateTo: z.string().datetime().optional(),
+    tags: z.string().optional(),
 });
 
 export type CreateEventInput = z.infer<typeof createEventSchema>;

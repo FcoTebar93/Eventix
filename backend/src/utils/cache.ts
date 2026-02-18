@@ -12,6 +12,7 @@ export function getEventsListCacheKey(params: {
     search?: string;
     dateFrom?: string;
     dateTo?: string;
+    tags?: string;
     }): string {
         const parts = ['events:list'];
         if (params.page) parts.push(`page:${params.page}`);
@@ -22,8 +23,9 @@ export function getEventsListCacheKey(params: {
         if (params.search) parts.push(`search:${params.search}`);
         if (params.dateFrom) parts.push(`dateFrom:${params.dateFrom}`);
         if (params.dateTo) parts.push(`dateTo:${params.dateTo}`);
+        if (params.tags) parts.push(`tags:${params.tags}`);
+        
         return parts.join(':');
-    
 }
 
 export function getEventCacheKey(eventId: string): string {

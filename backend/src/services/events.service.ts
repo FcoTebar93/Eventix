@@ -24,6 +24,14 @@ type GetEventsResult = {
             id: string;
             name: string;
         };
+        tags: Array<{
+            id: string;
+            tag: {
+                id: string;
+                name: string;
+                slug: string;
+            };
+        }>;
         _count: {
             tickets: number;
             reviews: number;
@@ -33,7 +41,6 @@ type GetEventsResult = {
     page: number;
     totalPages: number;
 };
-
 
 export const createEvent = async (
     organizerId: string,
@@ -90,6 +97,7 @@ export const getEvents = async (query: GetEventsQuery) => {
         search,
         dateFrom,
         dateTo,
+        tags, // Nuevo parámetro
     } = query;
 
     const skip = (page - 1) * limit;
@@ -123,6 +131,32 @@ export const getEvents = async (query: GetEventsQuery) => {
         ];
     }
 
+    if (tags) {
+        const tagArray = tags.split(',').map(t => t.trim().toLowerCase()).filter(Boolean);
+        if (tagArray.length > 0) {
+            const matchingTags = await prisma.tag.findMany({
+                where: {
+                    slug: {
+                        in: tagArray,
+                    },
+                },
+                select: {
+                    id: true,
+                },
+            });
+
+            if (matchingTags.length > 0) {
+                where.tags = {
+                    some: {
+                        tagId: {
+                            in: matchingTags.map(t => t.id),
+                        },
+                    },
+                };
+            }
+        }
+    }
+
     if (dateFrom || dateTo) {
         const dateFilter: Prisma.DateTimeFilter = {};
         if (dateFrom) {
@@ -143,6 +177,7 @@ export const getEvents = async (query: GetEventsQuery) => {
         search: query.search,
         dateFrom: query.dateFrom,
         dateTo: query.dateTo,
+        tags: tags,
     });
       
     const cached = await getFromCache<GetEventsResult>(cacheKey);
@@ -160,6 +195,17 @@ export const getEvents = async (query: GetEventsQuery) => {
                     select: {
                         id: true,
                         name: true,
+                    },
+                },
+                tags: {
+                    include: {
+                        tag: {
+                            select: {
+                                id: true,
+                                name: true,
+                                slug: true,
+                            },
+                        },
                     },
                 },
                 _count: {
