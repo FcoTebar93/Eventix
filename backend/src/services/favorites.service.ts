@@ -6,6 +6,7 @@ import { EventStatus } from '@prisma/client';
 export const addFavorite = async (userId: string, eventId: string) => {
     const event = await prisma.event.findUnique({
         where: { id: eventId },
+        select: { id: true, status: true },
     });
 
     if (!event) {
