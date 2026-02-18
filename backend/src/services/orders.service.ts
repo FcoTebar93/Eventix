@@ -3,6 +3,7 @@ import { prisma } from '../lib/prisma';
 import { AppError } from '../middleware/errorHandler';
 import { CreateOrderInput, UpdateOrderInput, GetOrdersQuery, CancelOrderInput, PayOrderInput
 } from '../schemas/orders.schema';
+import { parsePagination } from '../utils/pagination';
 
 export const createOrder = async (
     userId: string,
@@ -155,11 +156,8 @@ export const getOrders = async (
     userId: string,
     userRole: string,
 ) => {
-    const { page = 1, limit = 10, status, eventId } = query;
-
-    const skip = (page - 1) * limit;
-    const validLimit = Math.min(Math.max(limit, 1), 100);
-    const validPage = Math.max(page, 1);
+    const { status, eventId, ...paginationParams } = query;
+    const { skip, take: validLimit, page: validPage } = parsePagination(paginationParams);
 
     const where: Prisma.OrderWhereInput = {};
 
