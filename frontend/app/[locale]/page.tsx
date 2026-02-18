@@ -7,7 +7,7 @@ import { getEvents } from '@/lib/api';
 import { EventCard } from '@/components/EventCard';
 import { EventSearch, type EventSearchFilters } from '@/components/EventSearch';
 import { useTranslations } from 'next-intl';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 
 const DEFAULT_FILTERS: EventSearchFilters = {
   search: '',
@@ -19,23 +19,33 @@ const DEFAULT_FILTERS: EventSearchFilters = {
 export default function HomePage() {
   const t = useTranslations('home');
   const [filters, setFilters] = useState<EventSearchFilters>(DEFAULT_FILTERS);
+  const [appliedFilters, setAppliedFilters] = useState<EventSearchFilters>(DEFAULT_FILTERS);
 
   const params = useMemo(
     () => ({
       page: 1,
       limit: 12,
-      search: filters.search || undefined,
-      category: filters.category || undefined,
-      city: filters.city || undefined,
-      tags: filters.tags || undefined,
+      search: appliedFilters.search || undefined,
+      category: appliedFilters.category || undefined,
+      city: appliedFilters.city || undefined,
+      tags: appliedFilters.tags || undefined,
     }),
-    [filters]
+    [appliedFilters]
   );
 
-  const { data, isLoading, isError, error, refetch } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ['events', params],
     queryFn: () => getEvents(params),
   });
+
+  const onSearch = useCallback((applied: EventSearchFilters) => {
+    setFilters(applied);
+    setAppliedFilters(applied);
+  }, []);
+  const onClear = useCallback(() => {
+    setFilters(DEFAULT_FILTERS);
+    setAppliedFilters(DEFAULT_FILTERS);
+  }, []);
 
   return (
     <div>
@@ -65,7 +75,8 @@ export default function HomePage() {
           <EventSearch
             filters={filters}
             onFiltersChange={setFilters}
-            onSearch={() => refetch()}
+            onSearch={onSearch}
+            onClear={onClear}
           />
         </div>
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 
 export interface EventSearchFilters {
   search: string;
@@ -20,14 +20,16 @@ const DEFAULT_FILTERS: EventSearchFilters = {
 interface EventSearchProps {
   filters: EventSearchFilters;
   onFiltersChange: (f: EventSearchFilters) => void;
-  onSearch: () => void;
+  onSearch: (applied: EventSearchFilters) => void;
+  onClear?: () => void;
 }
 
 const CATEGORIES = ['Música', 'Deportes', 'Teatro', 'Conferencia'];
 
-export function EventSearch({ filters, onFiltersChange, onSearch }: EventSearchProps) {
+export function EventSearch({ filters, onFiltersChange, onSearch, onClear }: EventSearchProps) {
   const t = useTranslations('home.search');
   const [local, setLocal] = useState<EventSearchFilters>(filters);
+  useEffect(() => setLocal(filters), [filters]);
 
   const update = useCallback(
     (field: keyof EventSearchFilters, value: string) => {
@@ -38,16 +40,13 @@ export function EventSearch({ filters, onFiltersChange, onSearch }: EventSearchP
     [local, onFiltersChange]
   );
 
-  const handleSearch = () => {
-    onFiltersChange(local);
-    onSearch();
-  };
+  const handleSearch = useCallback(() => onSearch(local), [local, onSearch]);
 
-  const handleClear = () => {
+  const handleClear = useCallback(() => {
     setLocal(DEFAULT_FILTERS);
     onFiltersChange(DEFAULT_FILTERS);
-    onSearch();
-  };
+    onClear?.();
+  }, [onFiltersChange, onClear]);
 
   return (
     <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 sm:p-6">
