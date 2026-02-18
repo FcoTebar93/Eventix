@@ -19,6 +19,7 @@
     "nav": {
       "events": "Eventos",
       "myOrders": "Meus Pedidos",
+      "favorites": "Meus Favoritos",
       "login": "Entrar",
       "register": "Registrar",
       "logout": "Sair",
@@ -96,5 +97,22 @@
       "portuguese": "Português",
       "french": "Français",
       "italian": "Italiano"
+    },
+    "favorites": {
+      "title": "Meus Favoritos",
+      "subtitle": "Eventos que você salvou para mais tarde",
+      "noFavorites": "Você ainda não tem eventos favoritos",
+      "noFavoritesHint": "Explore eventos e marque seus favoritos com o coração ❤️",
+      "error": "Erro ao carregar favoritos",
+      "add": "Adicionar a favoritos",
+      "remove": "Remover dos favoritos",
+      "addToFavorites": "Adicionar a favoritos",
+      "removeFromFavorites": "Remover dos favoritos",
+      "addError": "Erro ao adicionar a favoritos",
+      "removeError": "Erro ao remover dos favoritos",
+      "loginRequired": "Você precisa estar logado para adicionar eventos aos favoritos",
+      "previous": "Anterior",
+      "next": "Próximo",
+      "page": "Página {current} de {total}"
     }
   }

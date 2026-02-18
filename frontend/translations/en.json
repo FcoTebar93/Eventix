@@ -123,5 +123,22 @@
       "portuguese": "Português",
       "french": "Français",
       "italian": "Italiano"
+    },
+    "favorites": {
+      "title": "My Favorites",
+      "subtitle": "Events you've saved for later",
+      "noFavorites": "You don't have any favorite events yet",
+      "noFavoritesHint": "Explore events and mark your favorites with the heart ❤️",
+      "error": "Error loading favorites",
+      "add": "Add to favorites",
+      "remove": "Remove from favorites",
+      "addToFavorites": "Add to favorites",
+      "removeFromFavorites": "Remove from favorites",
+      "addError": "Error adding to favorites",
+      "removeError": "Error removing from favorites",
+      "loginRequired": "You must be logged in to add events to favorites",
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page {current} of {total}"
     }
   }
