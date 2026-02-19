@@ -25,8 +25,6 @@ export const createEvent = async (
             validatedData,
         );
 
-        logger.info(`Evento creado: ${event.id} por usuario: ${req.user.userId}`);
-
         res.status(201).json({
             success: true,
             message: 'Evento creado exitosamente',
@@ -48,7 +46,6 @@ export const getEvents = async (
         const result = await eventsService.getEvents(query);
         const userId = (req as AuthenticatedRequest).user?.userId;
 
-        // Si hay un usuario autenticado, agregar información de favoritos
         if (userId) {
             const eventIds = result.events.map(e => e.id);
             const favorites = await Promise.all(
@@ -79,7 +76,6 @@ export const getEventById = async (
         const userId = (req as AuthenticatedRequest).user?.userId;
         const event = await eventsService.getEventById(id, userId);
 
-        // Si hay un usuario autenticado, agregar información de favorito
         let eventWithFavorite = event;
         if (userId) {
             const isFavorite = await favoritesService.isFavorite(userId, id);
@@ -112,20 +108,27 @@ export const updateEvent = async (
         }
 
         const { id } = eventIdParamsSchema.parse(req.params);
+        logger.info(`[UPDATE EVENT] Body recibido: ${JSON.stringify(req.body)}`);
         const validatedData = updateEventSchema.parse(req.body);
+        logger.info(`[UPDATE EVENT] Datos validados - Tags: ${JSON.stringify(validatedData.tags)}`);
         const event = await eventsService.updateEvent(
             id,
             req.user.userId,
             validatedData,
         );
 
-        logger.info(`Evento actualizado: ${id} por usuario: ${req.user.userId}`);
+        logger.info(`[UPDATE EVENT] Evento actualizado: ${id} por usuario: ${req.user.userId} - Tags en respuesta: ${JSON.stringify(event.tags?.map(t => t.tag.name))}`);
+
+        const responseEvent = {
+            ...event,
+            tags: event.tags || [],
+        };
 
         res.status(200).json({
             success: true,
             message: 'Evento actualizado exitosamente',
             data: {
-                event,
+                event: responseEvent,
             },
         });
     } catch (error) {
