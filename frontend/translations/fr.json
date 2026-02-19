@@ -160,6 +160,9 @@
         "imageUrlLabel": "URL de l'image (optionnel)",
         "categoryLabel": "Catégorie (optionnel)",
         "categoryPlaceholder": "Ex. Musique",
+        "tagsLabel": "Tags (optionnel)",
+        "tagsPlaceholder": "Tapez un tag et appuyez sur Entrée",
+        "tagsHint": "Appuyez sur Entrée ou virgule pour ajouter un tag. Cliquez sur le X pour supprimer les tags.",
         "submit": "Créer l'événement",
         "submitting": "Création..."
       },

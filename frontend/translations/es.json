@@ -20,6 +20,7 @@
       "events": "Eventos",
       "myOrders": "Mis órdenes",
       "favorites": "Mis favoritos",
+      "myEvents": "Mis eventos",
       "login": "Iniciar sesión",
       "register": "Registrarse",
       "logout": "Cerrar sesión",
@@ -210,6 +211,9 @@
         "imageUrlLabel": "URL de imagen (opcional)",
         "categoryLabel": "Categoría (opcional)",
         "categoryPlaceholder": "Ej. Música",
+        "tagsLabel": "Tags (opcional)",
+        "tagsPlaceholder": "Escribe un tag y presiona Enter",
+        "tagsHint": "Presiona Enter o coma para agregar un tag. Puedes eliminar tags haciendo clic en la X.",
         "submit": "Crear evento",
         "submitting": "Creando..."
       },
