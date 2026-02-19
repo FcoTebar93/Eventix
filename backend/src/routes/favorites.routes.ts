@@ -4,7 +4,6 @@ import { authenticate } from '../middleware/auth.middleware';
 
 const router = Router();
 
-// Todas las rutas requieren autenticación
 router.use(authenticate);
 
 router.get('/', favoritesController.getFavorites);

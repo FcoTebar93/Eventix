@@ -8,7 +8,11 @@ import { startReservationsWorker, stopReservationsWorker } from './workers/reser
 
 const startServer = async (): Promise<void> => {
     try {
-        await connectRabbitMQ();
+        try {
+            await connectRabbitMQ();
+        } catch (error) {
+            logger.warn('RabbitMQ no disponible. La API arrancará sin colas. ¿Está Docker/RabbitMQ en marcha?');
+        }
         getRedisClient();
         startReservationsWorker();
 
@@ -27,7 +31,7 @@ const startServer = async (): Promise<void> => {
 const shutdown = async (signal: string): Promise<void> => {
     logger.info(`${signal} signal received. Shutting down gracefully...`);
     try {
-        await closeRabbitMQConnection();
+        await closeRabbitMQConnection().catch(() => {});
         await closeRedisConnection();
         stopReservationsWorker();
         await prisma.$disconnect();

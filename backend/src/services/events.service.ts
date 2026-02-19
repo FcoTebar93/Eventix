@@ -3,6 +3,7 @@ import { prisma } from '../lib/prisma';
 import { AppError } from '../middleware/errorHandler';
 import { CreateEventInput, UpdateEventInput, GetEventsQuery } from '../schemas/events.schema';
 import { getEventsListCacheKey, getEventCacheKey, getFromCache, setCache, deleteCache } from '../utils/cache';
+import { associateTagsToEvent } from '../utils/tags';
 
 type GetEventsResult = {
     events: Array<{
@@ -81,6 +82,10 @@ export const createEvent = async (
             },
         },
     });
+
+    if (data.tags && data.tags.length > 0) {
+        await associateTagsToEvent(event.id, data.tags);
+    }
 
     await deleteCache('events:list:*');
 
@@ -357,6 +362,10 @@ export const updateEvent = async (
             },
         },
     });
+
+    if (data.tags !== undefined) {
+        await associateTagsToEvent(eventId, data.tags);
+    }
 
     await Promise.all([
         deleteCache(getEventCacheKey(eventId)),

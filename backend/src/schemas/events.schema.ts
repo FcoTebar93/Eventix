@@ -52,6 +52,9 @@ export const createEventSchema = z.object({
         .nativeEnum(EventStatus)
         .default(EventStatus.DRAFT)
         .optional(),
+    tags: z
+        .array(z.string().trim().min(1))
+        .optional(),
 });
 
 export const updateEventSchema = z.object({
@@ -108,6 +111,9 @@ export const updateEventSchema = z.object({
         .optional(),
     status: z
         .nativeEnum(EventStatus)
+        .optional(),
+    tags: z
+        .array(z.string().trim().min(1))
         .optional(),
 }).refine((data) => Object.keys(data).length > 0, {
     message: 'Al menos un campo debe ser proporcionado para actualizar',

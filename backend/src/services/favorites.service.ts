@@ -4,7 +4,6 @@ import { GetFavoritesQuery } from '../schemas/favorites.schema';
 import { EventStatus } from '@prisma/client';
 
 export const addFavorite = async (userId: string, eventId: string) => {
-    // Verificar que el evento existe
     const event = await prisma.event.findUnique({
         where: { id: eventId },
     });
@@ -13,12 +12,10 @@ export const addFavorite = async (userId: string, eventId: string) => {
         throw new AppError('Evento no encontrado', 404);
     }
 
-    // Verificar que el evento está publicado
     if (event.status !== EventStatus.PUBLISHED) {
         throw new AppError('Solo se pueden agregar eventos publicados a favoritos', 400);
     }
 
-    // Verificar si ya es favorito - hacer idempotente
     const existingFavorite = await prisma.favorite.findUnique({
         where: {
             userId_eventId: {
@@ -58,12 +55,10 @@ export const addFavorite = async (userId: string, eventId: string) => {
         },
     });
 
-    // Si ya existe, retornarlo en lugar de lanzar error (idempotente)
     if (existingFavorite) {
         return existingFavorite;
     }
 
-    // Crear el favorito
     const favorite = await prisma.favorite.create({
         data: {
             userId,
@@ -114,7 +109,6 @@ export const removeFavorite = async (userId: string, eventId: string) => {
         },
     });
 
-    // Si no existe, retornar éxito de todas formas (idempotente)
     if (!favorite) {
         return { message: 'Favorito eliminado correctamente' };
     }
@@ -188,7 +182,7 @@ export const getFavorites = async (userId: string, query: GetFavoritesQuery) => 
     return {
         favorites: favorites.map((f) => ({
             ...f.event,
-            isFavorite: true, // Asegurar que todos los eventos de favoritos tengan isFavorite: true
+            isFavorite: true,
         })),
         total,
         page: validPage,
