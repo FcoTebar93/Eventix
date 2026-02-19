@@ -146,7 +146,6 @@ export async function payOrder(orderId: string, method: import('./types').Paymen
   return data.data.order;
 }
 
-// Favorites API
 export interface GetFavoritesParams {
   page?: number;
   limit?: number;
@@ -186,7 +185,7 @@ export async function getMyEvents(includeDrafts?: boolean): Promise<{ events: Ev
   return data.data;
 }
 
-export async function createEvent(body: { title: string; description?: string; venue: string; address?: string; city: string; country: string; date: string; imageUrl?: string; category?: string; }): Promise<Event> {
+export async function createEvent(body: { title: string; description?: string; venue: string; address?: string; city: string; country: string; date: string; imageUrl?: string; category?: string; tags?: string[]; }): Promise<Event> {
   const { data } = await api.post<ApiResponse<{ event: Event }>>('/events', body);
   return data.data.event;
 }
@@ -196,7 +195,7 @@ export async function publishEvent(eventId: string): Promise<Event> {
   return data.data.event;
 }
 
-export async function updateEvent(eventId: string, body: { title?: string; description?: string; venue?: string; address?: string; city?: string; country?: string; date?: string; imageUrl?: string; category?: string; status?: EventStatus }): Promise<Event> {
+export async function updateEvent(eventId: string, body: { title?: string; description?: string; venue?: string; address?: string; city?: string; country?: string; date?: string; imageUrl?: string; category?: string; status?: EventStatus; tags?: string[]; }): Promise<Event> {
   const { data } = await api.patch<ApiResponse<{ event: Event }>>(`/events/${eventId}`, body);
   return data.data.event;
 }

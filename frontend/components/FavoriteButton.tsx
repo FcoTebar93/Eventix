@@ -50,13 +50,12 @@ export function FavoriteButton({
     const isAuthenticated = !!user;
     const queryClient = useQueryClient();
 
-    // Usar React Query para cachear y sincronizar el estado de favorito
     const { data: favoriteStatus, isLoading: isLoadingStatus } = useQuery({
         queryKey: ['favorite', eventId],
         queryFn: () => checkFavorite(eventId),
-        enabled: isAuthenticated, // Solo verificar si está autenticado
+        enabled: isAuthenticated,
         initialData: initialIsFavorite !== undefined ? { isFavorite: initialIsFavorite } : undefined,
-        staleTime: 5 * 60 * 1000, // Cache por 5 minutos
+        staleTime: 5 * 60 * 1000,
     });
 
     const isFavorite = favoriteStatus?.isFavorite ?? (initialIsFavorite ?? false);
@@ -64,9 +63,7 @@ export function FavoriteButton({
     const addFavoriteMutation = useMutation({
         mutationFn: () => addFavorite(eventId),
         onSuccess: () => {
-            // Actualizar el cache de React Query
             queryClient.setQueryData(['favorite', eventId], { isFavorite: true });
-            // Invalidar queries relacionadas
             queryClient.invalidateQueries({ queryKey: ['event', eventId] });
             queryClient.invalidateQueries({ queryKey: ['events'] });
             queryClient.invalidateQueries({ queryKey: ['favorites'] });
@@ -75,7 +72,6 @@ export function FavoriteButton({
             const status = error?.response?.status;
             const message = error?.response?.data?.error || t('addError');
             
-            // Si el error es 400 y dice "ya está en favoritos", actualizar el estado
             if (status === 400 && message.includes('ya está')) {
                 queryClient.setQueryData(['favorite', eventId], { isFavorite: true });
                 queryClient.invalidateQueries({ queryKey: ['favorites'] });
@@ -88,9 +84,7 @@ export function FavoriteButton({
     const removeFavoriteMutation = useMutation({
         mutationFn: () => removeFavorite(eventId),
         onSuccess: () => {
-            // Actualizar el cache de React Query
             queryClient.setQueryData(['favorite', eventId], { isFavorite: false });
-            // Invalidar queries relacionadas
             queryClient.invalidateQueries({ queryKey: ['event', eventId] });
             queryClient.invalidateQueries({ queryKey: ['events'] });
             queryClient.invalidateQueries({ queryKey: ['favorites'] });
@@ -99,7 +93,6 @@ export function FavoriteButton({
             const status = error?.response?.status;
             const message = error?.response?.data?.error || t('removeError');
             
-            // Si el error es 404 y dice "no está en favoritos", actualizar el estado
             if (status === 404 && message.includes('no está')) {
                 queryClient.setQueryData(['favorite', eventId], { isFavorite: false });
                 queryClient.invalidateQueries({ queryKey: ['favorites'] });
@@ -141,7 +134,6 @@ export function FavoriteButton({
         lg: 'text-lg',
     };
 
-    // Estilos dinámicos basados en el estado
     const isFavoriteAndAuth = isFavorite && isAuthenticated;
     
     const iconButtonClasses = isFavoriteAndAuth

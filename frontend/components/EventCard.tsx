@@ -8,9 +8,9 @@ import { FavoriteButton } from './FavoriteButton';
 
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=600&fit=crop';
 
-function CalendarIcon() {
+function CalendarIcon({ className = '' }: { className?: string }) {
     return (
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className={`w-4 h-4 ${className}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
         </svg>
     );
@@ -140,7 +140,7 @@ export function EventCard({ event }: { event: Event }) {
 
                     <div className="space-y-2">
                         <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
-                            <CalendarIcon />
+                            <CalendarIcon className="text-white" />
                             <span>{formattedDate}</span>
                         </div>
 
