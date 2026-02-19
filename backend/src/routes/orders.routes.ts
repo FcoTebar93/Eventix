@@ -7,7 +7,7 @@ const router = Router();
 router.use(authenticate);
 
 router.post('/', ordersController.createOrder);
-router.get('/me', ordersController.getMyOrders); // Debe ir ANTES de /:id
+router.get('/me', ordersController.getMyOrders);
 router.get('/', requireRole('ADMIN'), ordersController.getOrders);
 router.get('/:id', requireRole('ADMIN'), ordersController.getOrderById);
 router.patch('/:id', requireRole('ADMIN'), ordersController.updateOrder);

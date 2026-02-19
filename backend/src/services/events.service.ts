@@ -3,6 +3,8 @@ import { prisma } from '../lib/prisma';
 import { AppError } from '../middleware/errorHandler';
 import { CreateEventInput, UpdateEventInput, GetEventsQuery } from '../schemas/events.schema';
 import { getEventsListCacheKey, getEventCacheKey, getFromCache, setCache, deleteCache } from '../utils/cache';
+import { associateTagsToEvent } from '../utils/tags';
+import { logger } from '../utils/logger';
 import { parsePagination } from '../utils/pagination';
 
 type GetEventsResult = {
@@ -83,9 +85,46 @@ export const createEvent = async (
         },
     });
 
-    await deleteCache('events:list:*');
+    if (data.tags && data.tags.length > 0) {
+        await associateTagsToEvent(event.id, data.tags);
+    } else {
+        logger.info(`[CREATE EVENT] No hay tags para asociar al evento ${event.id}`);
+    }
 
-    return event;
+    await Promise.all([
+        deleteCache('events:list:*'),
+        deleteCache(getEventCacheKey(event.id)),
+    ]);
+
+    const eventWithTags = await prisma.event.findUnique({
+        where: { id: event.id },
+        include: {
+            organizer: {
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                },
+            },
+            tags: {
+                include: {
+                    tag: {
+                        select: {
+                            id: true,
+                            name: true,
+                            slug: true,
+                        },
+                    },
+                },
+            },
+        },
+    });
+
+    if (!eventWithTags) {
+        throw new AppError('Evento no encontrado después de crear', 500);
+    }
+
+    return eventWithTags;
 };
 
 export const getEvents = async (query: GetEventsQuery) => {
@@ -333,9 +372,29 @@ export const updateEvent = async (
     if (data.category !== undefined) updateData.category = data.category;
     if (data.status !== undefined) updateData.status = data.status;
 
-    const event = await prisma.event.update({
+    await prisma.event.update({
         where: { id: eventId },
         data: updateData,
+    });
+
+    if (data.tags !== undefined) {
+        console.log(`[UPDATE EVENT SERVICE] Actualizando tags del evento ${eventId}:`, data.tags);
+        logger.info(`[UPDATE EVENT] Actualizando tags del evento ${eventId}: ${data.tags.length} tags - ${data.tags.join(', ')}`);
+        await associateTagsToEvent(eventId, data.tags);
+        console.log(`[UPDATE EVENT SERVICE] Tags asociados completados para evento ${eventId}`);
+        logger.info(`[UPDATE EVENT] Tags asociados completados para evento ${eventId}`);
+    } else {
+        console.log(`[UPDATE EVENT SERVICE] No se actualizan tags del evento ${eventId} (tags undefined)`);
+        logger.info(`[UPDATE EVENT] No se actualizan tags del evento ${eventId} (tags undefined)`);
+    }
+
+    await Promise.all([
+        deleteCache(getEventCacheKey(eventId)),
+        deleteCache('events:list:*'),
+    ]);
+
+    const eventWithTags = await prisma.event.findUnique({
+        where: { id: eventId },
         include: {
             organizer: {
                 select: {
@@ -343,15 +402,29 @@ export const updateEvent = async (
                     name: true,
                 },
             },
+            tags: {
+                include: {
+                    tag: {
+                        select: {
+                            id: true,
+                            name: true,
+                            slug: true,
+                        },
+                    },
+                },
+            },
         },
     });
 
-    await Promise.all([
-        deleteCache(getEventCacheKey(eventId)),
-        deleteCache('events:list:*'),
-    ]);
+    if (!eventWithTags) {
+        throw new AppError('Evento no encontrado después de actualizar', 404);
+    }
 
-    return event;
+    console.log(`[UPDATE EVENT SERVICE] Evento ${eventId} devuelto con ${eventWithTags.tags?.length || 0} tags`);
+    console.log(`[UPDATE EVENT SERVICE] Tags:`, JSON.stringify(eventWithTags.tags));
+    logger.info(`[UPDATE EVENT] Evento ${eventId} devuelto con ${eventWithTags.tags?.length || 0} tags: ${eventWithTags.tags?.map(t => t.tag.name).join(', ') || 'ninguno'}`);
+
+    return eventWithTags;
 };
 
 export const deleteEvent = async (eventId: string, organizerId: string) => {
@@ -400,18 +473,10 @@ export const publishEvent = async (eventId: string, organizerId: string) => {
         );
     }
 
-    const publishedEvent = await prisma.event.update({
+    await prisma.event.update({
         where: { id: eventId },
         data: {
             status: EventStatus.PUBLISHED,
-        },
-        include: {
-            organizer: {
-                select: {
-                    id: true,
-                    name: true,
-                },
-            },
         },
     });
 
@@ -420,7 +485,30 @@ export const publishEvent = async (eventId: string, organizerId: string) => {
         deleteCache('events:list:*'),
     ]);
 
-    return publishedEvent;
+    const eventWithTags = await prisma.event.findUnique({
+        where: { id: eventId },
+        include: {
+            organizer: {
+                select: {
+                    id: true,
+                    name: true,
+                },
+            },
+            tags: {
+                include: {
+                    tag: {
+                        select: {
+                            id: true,
+                            name: true,
+                            slug: true,
+                        },
+                    },
+                },
+            },
+        },
+    });
+
+    return eventWithTags!;
 };
 
 export const getEventsByOrganizer = async (
@@ -440,6 +528,17 @@ export const getEventsByOrganizer = async (
                 select: {
                     tickets: true,
                     reviews: true,
+                },
+            },
+            tags: {
+                include: {
+                    tag: {
+                        select: {
+                            id: true,
+                            name: true,
+                            slug: true,
+                        },
+                    },
                 },
             },
         },

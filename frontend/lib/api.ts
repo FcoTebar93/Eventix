@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import type { ApiResponse, AuthTokens, Event } from './types';
+import type { ApiResponse, AuthTokens, Event, EventStatus } from './types';
 import { useAuthStore } from '@/store/authStore';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -102,6 +102,30 @@ export async function getTicketsByEvent(eventId: string, params?: GetTicketsPara
   return data.data;
 }
 
+export interface CreateTicketsBulkBody {
+  type: string;
+  price: number;
+  quantity: number;
+  section?: string;
+  row?: string;
+  seat?: string;
+}
+
+export async function createTicketsBulk(
+  eventId: string,
+  body: CreateTicketsBulkBody
+): Promise<{ tickets: import('./types').Ticket[]; count: number }> {
+  const { data } = await api.post<ApiResponse<{ tickets: import('./types').Ticket[]; count: number }>>(
+    `/events/${eventId}/tickets/bulk`,
+    body
+  );
+  return data.data;
+}
+
+export async function deleteTicket(eventId: string, ticketId: string): Promise<void> {
+  await api.delete<ApiResponse<unknown>>(`/events/${eventId}/tickets/${ticketId}`);
+}
+
 export async function createOrder(body: { ticketIds: string[]; deliveryEmail?: string; deliveryAddress?: string }) {
   const { data } = await api.post<ApiResponse<{ order: import('./types').Order }>>('/orders', body);
   return data.data.order;
@@ -122,7 +146,6 @@ export async function payOrder(orderId: string, method: import('./types').Paymen
   return data.data.order;
 }
 
-// Favorites API
 export interface GetFavoritesParams {
   page?: number;
   limit?: number;
@@ -153,6 +176,32 @@ export async function removeFavorite(eventId: string) {
 export async function checkFavorite(eventId: string): Promise<{ isFavorite: boolean }> {
   const { data } = await api.get<ApiResponse<{ isFavorite: boolean }>>(`/favorites/${eventId}/check`);
   return data.data;
+}
+
+export async function getMyEvents(includeDrafts?: boolean): Promise<{ events: Event[] }> {
+  const { data } = await api.get<ApiResponse<{ events: Event[] }>>('/events/organizer/me', {
+    params: includeDrafts ? { includeDrafts: 'true' } : undefined,
+  });
+  return data.data;
+}
+
+export async function createEvent(body: { title: string; description?: string; venue: string; address?: string; city: string; country: string; date: string; imageUrl?: string; category?: string; tags?: string[]; }): Promise<Event> {
+  const { data } = await api.post<ApiResponse<{ event: Event }>>('/events', body);
+  return data.data.event;
+}
+
+export async function publishEvent(eventId: string): Promise<Event> {
+  const { data } = await api.post<ApiResponse<{ event: Event }>>(`/events/${eventId}/publish`);
+  return data.data.event;
+}
+
+export async function updateEvent(eventId: string, body: { title?: string; description?: string; venue?: string; address?: string; city?: string; country?: string; date?: string; imageUrl?: string; category?: string; status?: EventStatus; tags?: string[]; }): Promise<Event> {
+  const { data } = await api.patch<ApiResponse<{ event: Event }>>(`/events/${eventId}`, body);
+  return data.data.event;
+}
+
+export async function deleteEvent(eventId: string): Promise<void> {
+  await api.delete<ApiResponse<unknown>>(`/events/${eventId}`);
 }
 
 export default api;

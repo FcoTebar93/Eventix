@@ -57,6 +57,16 @@ export function Navbar() {
                             >
                                 {t('myOrders')}
                             </Link>
+                            {(user.role === 'ORGANIZER' || user.role === 'ADMIN') && (
+                                <Link
+                                    href="/organizer/events"
+                                    className={`text-sm font-medium transition-colors ${
+                                        pathname === '/organizer/events' || pathname?.startsWith('/organizer/') ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)] hover:text-white'
+                                    }`}
+                                >
+                                    {t('myEvents')}
+                                </Link>
+                            )}
                             <span className="text-sm text-[var(--text-secondary)]">
                                 {user.name}
                             </span>

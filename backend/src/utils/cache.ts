@@ -80,22 +80,9 @@ export async function deleteCache(pattern: string): Promise<void> {
 export async function clearEventsCache(): Promise<void> {
     try {
         const redis = getRedisClient();
-        const allKeys: string[] = [];
-        let cursor = '0';
-        
-        do {
-            const result = await redis.scan(cursor, 'MATCH', 'events:*', 'COUNT', 100);
-            cursor = result[0];
-            allKeys.push(...result[1]);
-        } while (cursor !== '0');
-        
-        cursor = '0';
-        do {
-            const result = await redis.scan(cursor, 'MATCH', 'event:*', 'COUNT', 100);
-            cursor = result[0];
-            allKeys.push(...result[1]);
-        } while (cursor !== '0');
-        
+        const listKeys = await redis.keys('events:list:*');
+        const eventKeys = await redis.keys('event:*');
+        const allKeys = [...listKeys, ...eventKeys];
         if (allKeys.length > 0) {
             await redis.del(...allKeys);
             logger.info(`Cache de eventos limpiado: ${allKeys.length} claves eliminadas`);

@@ -50,14 +50,12 @@ export function FavoriteButton({
     const isAuthenticated = !!user;
     const queryClient = useQueryClient();
 
-    const shouldFetch = isAuthenticated && initialIsFavorite === undefined;
-    const { data: favoriteStatus } = useQuery({
+    const { data: favoriteStatus, isLoading: isLoadingStatus } = useQuery({
         queryKey: ['favorite', eventId],
         queryFn: () => checkFavorite(eventId),
-        enabled: shouldFetch,
+        enabled: isAuthenticated,
         initialData: initialIsFavorite !== undefined ? { isFavorite: initialIsFavorite } : undefined,
-        staleTime: 10 * 60 * 1000,
-        gcTime: 30 * 60 * 1000,
+        staleTime: 5 * 60 * 1000,
     });
 
     const isFavorite = favoriteStatus?.isFavorite ?? (initialIsFavorite ?? false);
@@ -66,7 +64,6 @@ export function FavoriteButton({
         mutationFn: () => addFavorite(eventId),
         onSuccess: () => {
             queryClient.setQueryData(['favorite', eventId], { isFavorite: true });
-
             queryClient.invalidateQueries({ queryKey: ['event', eventId] });
             queryClient.invalidateQueries({ queryKey: ['events'] });
             queryClient.invalidateQueries({ queryKey: ['favorites'] });
@@ -137,7 +134,7 @@ export function FavoriteButton({
         lg: 'text-lg',
     };
 
-    const isFavoriteAndAuth = useMemo(() => isFavorite && isAuthenticated, [isFavorite, isAuthenticated]);
+    const isFavoriteAndAuth = isFavorite && isAuthenticated;
     
     const iconButtonClasses = useMemo(() => 
         isFavoriteAndAuth

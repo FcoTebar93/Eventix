@@ -19,12 +19,10 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
   
-  // Validar que el locale es válido
   if (!routing.locales.includes(locale as any)) {
     notFound();
   }
 
-  // Cargar mensajes para el locale actual
   const messages = await getMessages();
 
   return (
