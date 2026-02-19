@@ -49,51 +49,16 @@ export async function getOrCreateTag(name: string): Promise<string> {
 }
 
 export async function associateTagsToEvent(eventId: string, tagNames: string[]): Promise<void> {
-    try {
-        if (tagNames.length === 0) {
-            const deleted = await prisma.eventTag.deleteMany({
-                where: { eventId },
-            });
-            console.log(`[TAGS] Eliminados ${deleted.count} tags del evento ${eventId}`);
-            return;
-        }
+    await prisma.eventTag.deleteMany({ where: { eventId } });
 
-        console.log(`[TAGS] Procesando ${tagNames.length} tags para evento ${eventId}: ${tagNames.join(', ')}`);
-        
-        const tagIds = await Promise.all(
-            tagNames.map(name => getOrCreateTag(name))
-        );
+    if (tagNames.length === 0) return;
 
-        console.log(`[TAGS] IDs de tags obtenidos: ${tagIds.join(', ')}`);
+    const tagIds = await Promise.all(
+        tagNames.map(name => getOrCreateTag(name))
+    );
 
-        const deleted = await prisma.eventTag.deleteMany({
-            where: { eventId },
-        });
-
-        if (tagIds.length > 0) {
-            await Promise.all(
-                tagIds.map(tagId =>
-                    prisma.eventTag.create({
-                        data: {
-                            eventId,
-                            tagId,
-                        },
-                    })
-                )
-            );
-        }
-
-        const verification = await prisma.eventTag.findMany({
-            where: { eventId },
-            include: {
-                tag: {
-                    select: {
-                        name: true,
-                    },
-                },
-            },
-        });
-    } catch (error) {
-        throw error;
-    }
+    await prisma.eventTag.createMany({
+        data: tagIds.map(tagId => ({ eventId, tagId })),
+        skipDuplicates: true,
+    });
 }

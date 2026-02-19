@@ -8,6 +8,7 @@ import { getEventCacheKey, deleteCache } from '../utils/cache';
 async function assertEventDraftAndOwned(eventId: string, userId: string, userRole: string) {
     const event = await prisma.event.findUnique({
         where: { id: eventId },
+        select: { id: true, status: true, organizerId: true },
     });
 
     if (!event) {
@@ -55,26 +56,23 @@ export const createTicket = async ( eventId: string, organizerId: string, userRo
 export const createTicketsBulk = async ( eventId: string, organizerId: string, userRole: string, data: CreateTicketsBulkInput) => {
     await assertEventDraftAndOwned(eventId, organizerId, userRole);
 
-    const created = await prisma.$transaction(Array.from({ length: data.quantity }, () => 
-        prisma.ticket.create({
-            data: {
-                eventId,
-                type: data.type,
-                price: data.price,
-                section: data.section ?? undefined,
-                row: data.row ?? undefined,
-                seat: data.seat ?? undefined,
-                },
-            })
-        ),
-    );
+    const ticketData = Array.from({ length: data.quantity }, () => ({
+        eventId,
+        type: data.type,
+        price: data.price,
+        section: data.section ?? undefined,
+        row: data.row ?? undefined,
+        seat: data.seat ?? undefined,
+    }));
+
+    const result = await prisma.ticket.createMany({ data: ticketData });
 
     await Promise.all([
         deleteCache(getEventCacheKey(eventId)),
         deleteCache('events:list:*'),
     ]);
 
-     return created;
+    return result;
 };
 
 export const getTicketsByEvent = async ( eventId: string, query: GetTicketsQuery, userId: string | undefined, userRole: string) => {
