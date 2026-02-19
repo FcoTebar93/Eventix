@@ -102,6 +102,30 @@ export async function getTicketsByEvent(eventId: string, params?: GetTicketsPara
   return data.data;
 }
 
+export interface CreateTicketsBulkBody {
+  type: string;
+  price: number;
+  quantity: number;
+  section?: string;
+  row?: string;
+  seat?: string;
+}
+
+export async function createTicketsBulk(
+  eventId: string,
+  body: CreateTicketsBulkBody
+): Promise<{ tickets: import('./types').Ticket[]; count: number }> {
+  const { data } = await api.post<ApiResponse<{ tickets: import('./types').Ticket[]; count: number }>>(
+    `/events/${eventId}/tickets/bulk`,
+    body
+  );
+  return data.data;
+}
+
+export async function deleteTicket(eventId: string, ticketId: string): Promise<void> {
+  await api.delete<ApiResponse<unknown>>(`/events/${eventId}/tickets/${ticketId}`);
+}
+
 export async function createOrder(body: { ticketIds: string[]; deliveryEmail?: string; deliveryAddress?: string }) {
   const { data } = await api.post<ApiResponse<{ order: import('./types').Order }>>('/orders', body);
   return data.data.order;

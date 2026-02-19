@@ -146,13 +146,23 @@ export default function NewEventPage() {
           </div>
           <div>
             <label className="mb-1 block text-sm text-[var(--text-secondary)]">{t('dateLabel')}</label>
-            <input
-              type="datetime-local"
-              required
-              value={form.date}
-              onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}
-              className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] px-3 py-2 text-white"
-            />
+            <div className="relative">
+              <input
+                type="datetime-local"
+                required
+                value={form.date}
+                onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}
+                className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] px-3 py-2 pr-10 text-white [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+              />
+              <svg
+                className="absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-white pointer-events-none z-10"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
           </div>
           <div>
             <label className="mb-1 block text-sm text-[var(--text-secondary)]">{t('imageUrlLabel')}</label>

@@ -1,17 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'next/navigation';
-import { Link, useRouter } from '@/i18n/routing';
+import { Link } from '@/i18n/routing';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getEventById, updateEvent } from '@/lib/api';
+import { getEventById, updateEvent, getTicketsByEvent, createTicketsBulk } from '@/lib/api';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuthStore } from '@/store/authStore';
 import { useTranslations } from 'next-intl';
+import type { Ticket } from '@/lib/types';
 
 export default function EditEventPage() {
   const params = useParams();
-  const router = useRouter();
   const queryClient = useQueryClient();
   const t = useTranslations('organizer');
   const tForm = useTranslations('organizer.newEvent');
@@ -61,7 +61,6 @@ export default function EditEventPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['event', id] });
       queryClient.invalidateQueries({ queryKey: ['myEvents'] });
-      router.push('/organizer/events');
     },
     onError: (err: unknown) => {
       const msg = err && typeof err === 'object' && 'response' in err
@@ -70,6 +69,62 @@ export default function EditEventPage() {
       setError(msg || 'Error al guardar');
     },
   });
+
+  const { data: ticketsData } = useQuery({
+    queryKey: ['tickets', id],
+    queryFn: () => getTicketsByEvent(id, { limit: 500 }),
+    enabled: !!id && isOrganizer,
+  });
+
+  const ticketsByType = useMemo(() => {
+    const list = ticketsData?.tickets ?? [];
+    const map = new Map<string, { type: string; price: number; count: number; tickets: Ticket[] }>();
+    for (const t of list) {
+      const price = typeof t.price === 'string' ? parseFloat(t.price) : t.price;
+      const key = `${t.type}|${price}`;
+      const existing = map.get(key);
+      if (existing) {
+        existing.count++;
+        existing.tickets.push(t);
+      } else {
+        map.set(key, { type: t.type, price, count: 1, tickets: [t] });
+      }
+    }
+    return Array.from(map.values());
+  }, [ticketsData?.tickets]);
+
+  const [ticketForm, setTicketForm] = useState({ type: '', price: '', quantity: '1' });
+  const [ticketError, setTicketError] = useState('');
+
+  const addTicketsMutation = useMutation({
+    mutationFn: (body: { type: string; price: number; quantity: number }) => createTicketsBulk(id, body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tickets', id] });
+      queryClient.invalidateQueries({ queryKey: ['event', id] });
+      queryClient.invalidateQueries({ queryKey: ['myEvents'] });
+      setTicketForm({ type: '', price: '', quantity: '1' });
+      setTicketError('');
+    },
+    onError: (err: unknown) => {
+      const msg = err && typeof err === 'object' && 'response' in err
+        ? (err as { response?: { data?: { error?: string } } }).response?.data?.error
+        : undefined;
+      setTicketError(msg || t('tickets.addError'));
+    },
+  });
+
+  const handleAddTickets = (e: React.FormEvent) => {
+    e.preventDefault();
+    setTicketError('');
+    const type = ticketForm.type.trim();
+    const price = parseFloat(ticketForm.price.replace(',', '.'));
+    const quantity = parseInt(ticketForm.quantity, 10);
+    if (!type || !Number.isFinite(price) || price <= 0 || !Number.isInteger(quantity) || quantity < 1 || quantity > 500) {
+      setTicketError(t('tickets.addError'));
+      return;
+    }
+    addTicketsMutation.mutate({ type, price, quantity });
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -187,13 +242,23 @@ export default function EditEventPage() {
           </div>
           <div>
             <label className="mb-1 block text-sm text-[var(--text-secondary)]">{tForm('dateLabel')}</label>
-            <input
-              type="datetime-local"
-              required
-              value={form.date}
-              onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}
-              className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] px-3 py-2 text-white"
-            />
+            <div className="relative">
+              <input
+                type="datetime-local"
+                required
+                value={form.date}
+                onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}
+                className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] px-3 py-2 pr-10 text-white [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+              />
+              <svg
+                className="absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-white pointer-events-none z-10"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
           </div>
           <div>
             <label className="mb-1 block text-sm text-[var(--text-secondary)]">{tForm('imageUrlLabel')}</label>
@@ -222,6 +287,88 @@ export default function EditEventPage() {
             {mutation.isPending ? t('editEvent.submitting') : t('editEvent.submit')}
           </button>
         </form>
+
+        <section className="mt-10 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6">
+          <h2 className="text-lg font-bold text-white">{t('tickets.title')}</h2>
+          {ticketsData?.tickets == null ? (
+            <p className="mt-2 text-sm text-[var(--text-secondary)]">{t('tickets.error')}</p>
+          ) : ticketsByType.length === 0 ? (
+            <p className="mt-2 text-sm text-[var(--text-secondary)]">{t('tickets.noTickets')}</p>
+          ) : (
+            <ul className="mt-4 space-y-2">
+              {ticketsByType.map((g) => (
+                <li
+                  key={`${g.type}-${g.price}`}
+                  className="flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] px-4 py-3"
+                >
+                  <span className="font-medium text-white">{g.type}</span>
+                  <span className="text-[var(--text-secondary)]">
+                    {g.price.toFixed(2)} € × {g.count}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {event?.status === 'DRAFT' && (
+            <form onSubmit={handleAddTickets} className="mt-6 flex flex-col gap-4 border-t border-[var(--border)] pt-6">
+              {ticketError && <p className="text-sm text-red-400">{ticketError}</p>}
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <div>
+                  <label className="mb-1 block text-sm text-[var(--text-secondary)]">{t('tickets.typeLabel')}</label>
+                  <input
+                    type="text"
+                    required
+                    value={ticketForm.type}
+                    onChange={(e) => setTicketForm((f) => ({ ...f, type: e.target.value }))}
+                    placeholder={t('tickets.typePlaceholder')}
+                    className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] px-3 py-2 text-white"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm text-[var(--text-secondary)]">{t('tickets.priceLabel')}</label>
+                  <input
+                    type="number"
+                    required
+                    min="0.01"
+                    step="0.01"
+                    value={ticketForm.price}
+                    onChange={(e) => setTicketForm((f) => ({ ...f, price: e.target.value }))}
+                    className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] px-3 py-2 text-white"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm text-[var(--text-secondary)]">{t('tickets.quantityLabel')}</label>
+                  <input
+                    type="number"
+                    required
+                    min="1"
+                    max="500"
+                    value={ticketForm.quantity}
+                    onChange={(e) => setTicketForm((f) => ({ ...f, quantity: e.target.value }))}
+                    className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] px-3 py-2 text-white"
+                  />
+                </div>
+              </div>
+              <button
+                type="submit"
+                disabled={addTicketsMutation.isPending}
+                className="self-start rounded bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--accent-hover)] disabled:opacity-50"
+              >
+                {addTicketsMutation.isPending ? t('tickets.submitting') : t('tickets.addType')}
+              </button>
+            </form>
+          )}
+        </section>
+
+        <div className="mt-6">
+          <Link
+            href="/organizer/events"
+            className="text-sm text-[var(--text-secondary)] hover:text-white"
+          >
+            ← Volver a mis eventos
+          </Link>
+        </div>
       </div>
     </ProtectedRoute>
   );
