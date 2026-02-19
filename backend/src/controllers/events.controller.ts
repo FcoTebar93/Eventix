@@ -8,7 +8,6 @@ import {
 } from '../schemas/events.schema';
 import * as eventsService from '../services/events.service';
 import * as favoritesService from '../services/favorites.service';
-import { logger } from '../utils/logger';
 
 export const createEvent = async (
     req: AuthenticatedRequest,
@@ -93,8 +92,6 @@ export const getEventById = async (
     }
 };
 
-
-
 export const updateEvent = async (
     req: AuthenticatedRequest,
     res: Response,
@@ -105,27 +102,18 @@ export const updateEvent = async (
         }
 
         const { id } = eventIdParamsSchema.parse(req.params);
-        logger.info(`[UPDATE EVENT] Body recibido: ${JSON.stringify(req.body)}`);
         const validatedData = updateEventSchema.parse(req.body);
-        logger.info(`[UPDATE EVENT] Datos validados - Tags: ${JSON.stringify(validatedData.tags)}`);
         const event = await eventsService.updateEvent(
             id,
             req.user.userId,
             validatedData,
         );
 
-        logger.info(`[UPDATE EVENT] Evento actualizado: ${id} por usuario: ${req.user.userId} - Tags en respuesta: ${JSON.stringify(event.tags?.map(t => t.tag.name))}`);
-
-        const responseEvent = {
-            ...event,
-            tags: event.tags || [],
-        };
-
         res.status(200).json({
             success: true,
             message: 'Evento actualizado exitosamente',
             data: {
-                event: responseEvent,
+                event,
             },
         });
     } catch (error) {
@@ -144,8 +132,6 @@ export const deleteEvent = async (
 
         const { id } = eventIdParamsSchema.parse(req.params);
         await eventsService.deleteEvent(id, req.user.userId);
-
-        logger.info(`Evento eliminado: ${id} por usuario: ${req.user.userId}`);
 
         res.status(200).json({
             success: true,
@@ -167,8 +153,6 @@ export const publishEvent = async (
 
         const { id } = eventIdParamsSchema.parse(req.params);
         const event = await eventsService.publishEvent(id, req.user.userId);
-
-        logger.info(`Evento publicado: ${id} por usuario: ${req.user.userId}`);
 
         res.status(200).json({
             success: true,

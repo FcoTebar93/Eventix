@@ -203,3 +203,18 @@ export const isFavorite = async (userId: string, eventId: string): Promise<boole
 
     return !!favorite;
 };
+
+export const getFavoritesBatch = async (
+    userId: string,
+    eventIds: string[],
+): Promise<Record<string, boolean>> => {
+    if (eventIds.length === 0) return {};
+
+    const favorites = await prisma.favorite.findMany({
+        where: { userId, eventId: { in: eventIds } },
+        select: { eventId: true },
+    });
+
+    const favoriteSet = new Set(favorites.map(f => f.eventId));
+    return Object.fromEntries(eventIds.map(id => [id, favoriteSet.has(id)]));
+};
