@@ -15,6 +15,9 @@ app.use(cors({
     credentials: true,
 }));
 
+// Stripe webhook necesita el body raw para verificar la firma
+app.use('/api/v1/stripe/webhook', express.raw({ type: 'application/json' }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(generalLimiter);
