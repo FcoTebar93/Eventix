@@ -12,12 +12,17 @@ export const generalLimiter = rateLimit({
     legacyHeaders: false, 
 });
 
-export const authLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, 
-    max: 5, 
-    message: {
-        success: false,
-        error: 'Too many authentication attempts, please try again later.',
-    },
-    skipSuccessfulRequests: true, 
-});
+// En desarrollo, deshabilitar el rate limiter para facilitar las pruebas
+export const authLimiter = env.NODE_ENV === 'development' 
+    ? ((req: any, res: any, next: any) => next()) // Middleware que no hace nada en desarrollo
+    : rateLimit({
+        windowMs: 15 * 60 * 1000, // 15 minutos
+        max: 5, // 5 intentos en producción
+        message: {
+            success: false,
+            error: 'Too many authentication attempts, please try again later.',
+        },
+        skipSuccessfulRequests: true, // Solo cuenta intentos fallidos
+        standardHeaders: true,
+        legacyHeaders: false,
+    });

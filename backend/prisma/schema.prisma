@@ -61,11 +61,6 @@ enum PaymentMethod {
   BANK_TRANSFER
 }
 
-enum UserPlan {
-  FREE     // Plan gratuito - solo puede comprar tickets
-  PREMIUM  // Plan de pago mensual - puede crear eventos y vender tickets
-}
-
 enum SubscriptionStatus {
   ACTIVE      // Suscripción activa y pagada
   CANCELLED   // Suscripción cancelada
@@ -83,7 +78,6 @@ model User {
   password  String   // Hash bcrypt
   name      String
   role      UserRole @default(BUYER)
-  plan      UserPlan @default(FREE)
   
   // Relaciones
   organizedEvents Event[]       @relation("EventOrganizer")
@@ -100,7 +94,6 @@ model User {
   
   @@index([email])
   @@index([role])
-  @@index([plan])
   @@map("users")
 }
 
@@ -326,35 +319,6 @@ model EventTag {
   @@index([eventId])
   @@index([tagId])
   @@map("event_tags")
-}
-
-model Subscription {
-  id                  String             @id @default(uuid())
-  userId              String
-  user                User                @relation("UserSubscriptions", fields: [userId], references: [id], onDelete: Cascade)
-  
-  stripeCustomerId    String             @unique
-  stripeSubscriptionId String            @unique
-  
-  status              SubscriptionStatus @default(ACTIVE)
-  currentPeriodEnd    DateTime           // Fecha de fin del período actual
-  cancelAtPeriodEnd   Boolean            @default(false) // Si se cancela al final del período
-  
-  createdAt           DateTime           @default(now())
-  updatedAt           DateTime           @updatedAt
-  
-  @@index([userId])
-  @@index([stripeCustomerId])
-  @@index([stripeSubscriptionId])
-  @@index([status])
-  @@map("subscriptions")
-}
-
-enum SubscriptionStatus {
-  ACTIVE      // Suscripción activa y pagada
-  CANCELLED   // Suscripción cancelada
-  PAST_DUE    // Pago pendiente
-  UNPAID      // No pagado
 }
 
 model Subscription {
