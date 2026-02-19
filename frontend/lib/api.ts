@@ -155,8 +155,10 @@ export async function checkFavorite(eventId: string): Promise<{ isFavorite: bool
   return data.data;
 }
 
-export async function getMyEvents(): Promise<{ events: Event[] }> {
-  const { data } = await api.get<ApiResponse<{ events: Event[] }>>('/events/organizer/me');
+export async function getMyEvents(includeDrafts?: boolean): Promise<{ events: Event[] }> {
+  const { data } = await api.get<ApiResponse<{ events: Event[] }>>('/events/organizer/me', {
+    params: includeDrafts ? { includeDrafts: 'true' } : undefined,
+  });
   return data.data;
 }
 

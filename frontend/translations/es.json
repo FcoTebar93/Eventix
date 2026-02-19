@@ -177,5 +177,53 @@
       "previous": "Anterior",
       "next": "Siguiente",
       "page": "Página {current} de {total}"
+    },
+    "organizer": {
+      "title": "Mis eventos",
+      "noEvents": "No tienes eventos.",
+      "includeDrafts": "Incluir borradores",
+      "create": "Crear evento",
+      "edit": "Editar",
+      "publish": "Publicar",
+      "delete": "Eliminar",
+      "deleteConfirm": "¿Eliminar este evento? Esta acción no se puede deshacer.",
+      "status": {
+        "draft": "Borrador",
+        "published": "Publicado",
+        "cancelled": "Cancelado",
+        "completed": "Completado"
+      },
+      "ticketsCount": "{count} entradas",
+      "newEvent": {
+        "title": "Nuevo evento",
+        "titleLabel": "Título",
+        "titlePlaceholder": "Nombre del evento",
+        "descriptionLabel": "Descripción",
+        "venueLabel": "Lugar",
+        "venuePlaceholder": "Ej. WiZink Center",
+        "addressLabel": "Dirección (opcional)",
+        "cityLabel": "Ciudad",
+        "cityPlaceholder": "Ej. Madrid",
+        "countryLabel": "País",
+        "countryPlaceholder": "España",
+        "dateLabel": "Fecha y hora",
+        "imageUrlLabel": "URL de imagen (opcional)",
+        "categoryLabel": "Categoría (opcional)",
+        "categoryPlaceholder": "Ej. Música",
+        "submit": "Crear evento",
+        "submitting": "Creando..."
+      },
+      "editEvent": {
+        "title": "Editar evento",
+        "submit": "Guardar cambios",
+        "submitting": "Guardando..."
+      },
+      "forbidden": "No tienes permiso para acceder al panel de organizador.",
+      "error": "Error al cargar los eventos",
+      "publishSuccess": "Evento publicado.",
+      "deleteSuccess": "Evento eliminado.",
+      "createSuccess": "Evento creado.",
+      "publishError": "Error al publicar el evento",
+      "deleteError": "Error al eliminar el evento"
     }
   }
