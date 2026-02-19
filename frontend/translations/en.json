@@ -64,19 +64,19 @@
         "noEvents": "No published events yet.",
         "error": "Error loading events",
         "tickets": "tickets"
+      },
+      "search": {
+        "name": "Name",
+        "namePlaceholder": "Search by name or description",
+        "category": "Category",
+        "allCategories": "All",
+        "city": "City",
+        "cityPlaceholder": "e.g. Madrid",
+        "tags": "Tags",
+        "tagsPlaceholder": "e.g. rock, music, concert (separated by commas)",
+        "search": "Search",
+        "clear": "Clear"
       }
-    },
-    "search": {
-      "name": "Name",
-      "namePlaceholder": "Search by name or description",
-      "category": "Category",
-      "allCategories": "All",
-      "city": "City",
-      "cityPlaceholder": "e.g. Madrid",
-      "tags": "Tags",
-      "tagsPlaceholder": "e.g. rock, music, concert (separated by commas)",
-      "search": "Search",
-      "clear": "Clear"
     },
     "orders": {
     "title": "My Orders",

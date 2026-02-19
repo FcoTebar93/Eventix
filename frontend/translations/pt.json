@@ -64,6 +64,18 @@
         "noEvents": "Ainda não há eventos publicados.",
         "error": "Erro ao carregar eventos",
         "tickets": "ingressos"
+      },
+      "search": {
+        "name": "Nome",
+        "namePlaceholder": "Pesquisar por nome ou descrição",
+        "category": "Categoria",
+        "allCategories": "Todas",
+        "city": "Cidade",
+        "cityPlaceholder": "Ex. Madrid",
+        "tags": "Tags",
+        "tagsPlaceholder": "Ex. rock, música, concerto (separados por vírgulas)",
+        "search": "Pesquisar",
+        "clear": "Limpar"
       }
     },
     "orders": {

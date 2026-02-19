@@ -64,6 +64,18 @@
         "noEvents": "Nessun evento pubblicato ancora.",
         "error": "Errore nel caricamento degli eventi",
         "tickets": "biglietti"
+      },
+      "search": {
+        "name": "Nome",
+        "namePlaceholder": "Cerca per nome o descrizione",
+        "category": "Categoria",
+        "allCategories": "Tutte",
+        "city": "Città",
+        "cityPlaceholder": "Es. Madrid",
+        "tags": "Tag",
+        "tagsPlaceholder": "Es. rock, musica, concerto (separati da virgole)",
+        "search": "Cerca",
+        "clear": "Pulisci"
       }
     },
     "orders": {
