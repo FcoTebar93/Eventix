@@ -8,6 +8,7 @@ import { createEvent } from '@/lib/api';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuthStore } from '@/store/authStore';
 import { useTranslations } from 'next-intl';
+import { TagInput } from '@/components/TagInput';
 
 export default function NewEventPage() {
   const t = useTranslations('organizer.newEvent');
@@ -25,6 +26,7 @@ export default function NewEventPage() {
     date: '',
     imageUrl: '',
     category: '',
+    tags: [] as string[],
   });
   const [error, setError] = useState('');
 
@@ -59,6 +61,7 @@ export default function NewEventPage() {
       date,
       imageUrl: form.imageUrl.trim() || undefined,
       category: form.category.trim() || undefined,
+      tags: form.tags.length > 0 ? form.tags : undefined,
     });
   };
 
@@ -182,6 +185,15 @@ export default function NewEventPage() {
               placeholder={t('categoryPlaceholder')}
               className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] px-3 py-2 text-white"
             />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm text-[var(--text-secondary)]">{t('tagsLabel')}</label>
+            <TagInput
+              tags={form.tags}
+              onChange={(tags) => setForm((f) => ({ ...f, tags }))}
+              placeholder={t('tagsPlaceholder')}
+            />
+            <p className="mt-1 text-xs text-[var(--text-secondary)]">{t('tagsHint')}</p>
           </div>
           <button
             type="submit"

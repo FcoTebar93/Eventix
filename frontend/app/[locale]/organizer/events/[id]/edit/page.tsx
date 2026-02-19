@@ -9,6 +9,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuthStore } from '@/store/authStore';
 import { useTranslations } from 'next-intl';
 import type { Ticket } from '@/lib/types';
+import { TagInput } from '@/components/TagInput';
 
 export default function EditEventPage() {
   const params = useParams();
@@ -36,6 +37,7 @@ export default function EditEventPage() {
     date: '',
     imageUrl: '',
     category: '',
+    tags: [] as string[],
   });
   const [error, setError] = useState('');
 
@@ -43,6 +45,7 @@ export default function EditEventPage() {
     if (!event) return;
     const d = event.date ? new Date(event.date) : new Date();
     const localDate = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+    const tagsArray = event.tags?.map(et => et.tag.name) ?? [];
     setForm({
       title: event.title ?? '',
       description: event.description ?? '',
@@ -53,6 +56,7 @@ export default function EditEventPage() {
       date: localDate,
       imageUrl: event.imageUrl ?? '',
       category: event.category ?? '',
+      tags: tagsArray,
     });
   }, [event]);
 
@@ -134,7 +138,11 @@ export default function EditEventPage() {
       setError('La fecha debe ser futura.');
       return;
     }
-    mutation.mutate({
+    
+    const originalTags = event?.tags?.map(et => et.tag.name) ?? [];
+    const tagsChanged = JSON.stringify(originalTags.sort()) !== JSON.stringify(form.tags.sort());
+    
+    const submitData: Parameters<typeof updateEvent>[1] = {
       title: form.title.trim(),
       description: form.description.trim() || undefined,
       venue: form.venue.trim(),
@@ -144,7 +152,13 @@ export default function EditEventPage() {
       date,
       imageUrl: form.imageUrl.trim() || undefined,
       category: form.category.trim() || undefined,
-    });
+    };
+    
+    if (tagsChanged) {
+      submitData.tags = form.tags;
+    }
+    
+    mutation.mutate(submitData);
   };
 
   if (user && !isOrganizer) {
@@ -278,6 +292,15 @@ export default function EditEventPage() {
               placeholder={tForm('categoryPlaceholder')}
               className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] px-3 py-2 text-white"
             />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm text-[var(--text-secondary)]">{tForm('tagsLabel')}</label>
+            <TagInput
+              tags={form.tags}
+              onChange={(tags: string[]) => setForm((f) => ({ ...f, tags }))}
+              placeholder={tForm('tagsPlaceholder')}
+            />
+            <p className="mt-1 text-xs text-[var(--text-secondary)]">{tForm('tagsHint')}</p>
           </div>
           <button
             type="submit"
