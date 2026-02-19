@@ -224,6 +224,21 @@
       "deleteSuccess": "Evento eliminado.",
       "createSuccess": "Evento creado.",
       "publishError": "Error al publicar el evento",
-      "deleteError": "Error al eliminar el evento"
+      "deleteError": "Error al eliminar el evento",
+      "tickets": {
+        "title": "Entradas",
+        "noTickets": "Aún no hay entradas. Añade al menos un tipo para poder publicar.",
+        "addType": "Añadir tipo de entrada",
+        "typeLabel": "Nombre del tipo",
+        "typePlaceholder": "Ej. General, VIP",
+        "priceLabel": "Precio (€)",
+        "quantityLabel": "Cantidad",
+        "submit": "Añadir entradas",
+        "submitting": "Añadiendo...",
+        "error": "Error al cargar entradas",
+        "addError": "Error al crear entradas",
+        "deleteConfirm": "¿Eliminar esta entrada?",
+        "summary": "{count} entradas"
+      }
     }
   }

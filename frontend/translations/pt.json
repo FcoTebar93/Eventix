@@ -18,6 +18,7 @@
     },
     "nav": {
       "events": "Eventos",
+      "myEvents": "Meus Eventos",
       "myOrders": "Meus Pedidos",
       "favorites": "Meus Favoritos",
       "login": "Entrar",
@@ -114,5 +115,68 @@
       "previous": "Anterior",
       "next": "Próximo",
       "page": "Página {current} de {total}"
+    },
+    "organizer": {
+      "title": "Meus Eventos",
+      "noEvents": "Você não tem eventos.",
+      "includeDrafts": "Incluir rascunhos",
+      "create": "Criar evento",
+      "edit": "Editar",
+      "publish": "Publicar",
+      "delete": "Excluir",
+      "deleteConfirm": "Excluir este evento? Esta ação não pode ser desfeita.",
+      "status": {
+        "draft": "Rascunho",
+        "published": "Publicado",
+        "cancelled": "Cancelado",
+        "completed": "Concluído"
+      },
+      "ticketsCount": "{count} ingressos",
+      "newEvent": {
+        "title": "Novo evento",
+        "titleLabel": "Título",
+        "titlePlaceholder": "Nome do evento",
+        "descriptionLabel": "Descrição",
+        "venueLabel": "Local",
+        "venuePlaceholder": "Ex. WiZink Center",
+        "addressLabel": "Endereço (opcional)",
+        "cityLabel": "Cidade",
+        "cityPlaceholder": "Ex. Madrid",
+        "countryLabel": "País",
+        "countryPlaceholder": "Espanha",
+        "dateLabel": "Data e hora",
+        "imageUrlLabel": "URL da imagem (opcional)",
+        "categoryLabel": "Categoria (opcional)",
+        "categoryPlaceholder": "Ex. Música",
+        "submit": "Criar evento",
+        "submitting": "Criando..."
+      },
+      "editEvent": {
+        "title": "Editar evento",
+        "submit": "Salvar alterações",
+        "submitting": "Salvando..."
+      },
+      "forbidden": "Você não tem permissão para acessar o painel do organizador.",
+      "error": "Erro ao carregar eventos",
+      "publishSuccess": "Evento publicado.",
+      "deleteSuccess": "Evento excluído.",
+      "createSuccess": "Evento criado.",
+      "publishError": "Erro ao publicar evento",
+      "deleteError": "Erro ao excluir evento",
+      "tickets": {
+        "title": "Ingressos",
+        "noTickets": "Ainda não há ingressos. Adicione pelo menos um tipo para poder publicar.",
+        "addType": "Adicionar tipo de ingresso",
+        "typeLabel": "Nome do tipo",
+        "typePlaceholder": "Ex. Geral, VIP",
+        "priceLabel": "Preço (€)",
+        "quantityLabel": "Quantidade",
+        "submit": "Adicionar ingressos",
+        "submitting": "Adicionando...",
+        "error": "Erro ao carregar ingressos",
+        "addError": "Erro ao criar ingressos",
+        "deleteConfirm": "Excluir este ingresso?",
+        "summary": "{count} ingressos"
+      }
     }
   }

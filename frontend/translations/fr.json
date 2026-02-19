@@ -18,6 +18,7 @@
     },
     "nav": {
       "events": "Événements",
+      "myEvents": "Mes Événements",
       "myOrders": "Mes Commandes",
       "favorites": "Mes Favoris",
       "login": "Se connecter",
@@ -114,5 +115,68 @@
       "previous": "Précédent",
       "next": "Suivant",
       "page": "Page {current} sur {total}"
+    },
+    "organizer": {
+      "title": "Mes Événements",
+      "noEvents": "Vous n'avez pas d'événements.",
+      "includeDrafts": "Inclure les brouillons",
+      "create": "Créer un événement",
+      "edit": "Modifier",
+      "publish": "Publier",
+      "delete": "Supprimer",
+      "deleteConfirm": "Supprimer cet événement ? Cette action ne peut pas être annulée.",
+      "status": {
+        "draft": "Brouillon",
+        "published": "Publié",
+        "cancelled": "Annulé",
+        "completed": "Terminé"
+      },
+      "ticketsCount": "{count} billets",
+      "newEvent": {
+        "title": "Nouvel événement",
+        "titleLabel": "Titre",
+        "titlePlaceholder": "Nom de l'événement",
+        "descriptionLabel": "Description",
+        "venueLabel": "Lieu",
+        "venuePlaceholder": "Ex. WiZink Center",
+        "addressLabel": "Adresse (optionnel)",
+        "cityLabel": "Ville",
+        "cityPlaceholder": "Ex. Madrid",
+        "countryLabel": "Pays",
+        "countryPlaceholder": "Espagne",
+        "dateLabel": "Date et heure",
+        "imageUrlLabel": "URL de l'image (optionnel)",
+        "categoryLabel": "Catégorie (optionnel)",
+        "categoryPlaceholder": "Ex. Musique",
+        "submit": "Créer l'événement",
+        "submitting": "Création..."
+      },
+      "editEvent": {
+        "title": "Modifier l'événement",
+        "submit": "Enregistrer les modifications",
+        "submitting": "Enregistrement..."
+      },
+      "forbidden": "Vous n'avez pas la permission d'accéder au panneau organisateur.",
+      "error": "Erreur lors du chargement des événements",
+      "publishSuccess": "Événement publié.",
+      "deleteSuccess": "Événement supprimé.",
+      "createSuccess": "Événement créé.",
+      "publishError": "Erreur lors de la publication de l'événement",
+      "deleteError": "Erreur lors de la suppression de l'événement",
+      "tickets": {
+        "title": "Billets",
+        "noTickets": "Aucun billet pour le moment. Ajoutez au moins un type pour pouvoir publier.",
+        "addType": "Ajouter un type de billet",
+        "typeLabel": "Nom du type",
+        "typePlaceholder": "Ex. Général, VIP",
+        "priceLabel": "Prix (€)",
+        "quantityLabel": "Quantité",
+        "submit": "Ajouter des billets",
+        "submitting": "Ajout...",
+        "error": "Erreur lors du chargement des billets",
+        "addError": "Erreur lors de la création des billets",
+        "deleteConfirm": "Supprimer ce billet ?",
+        "summary": "{count} billets"
+      }
     }
   }

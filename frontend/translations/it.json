@@ -18,6 +18,7 @@
     },
     "nav": {
       "events": "Eventi",
+      "myEvents": "I Miei Eventi",
       "myOrders": "I Miei Ordini",
       "favorites": "I Miei Preferiti",
       "login": "Accedi",
@@ -114,5 +115,68 @@
       "previous": "Precedente",
       "next": "Successivo",
       "page": "Pagina {current} di {total}"
+    },
+    "organizer": {
+      "title": "I Miei Eventi",
+      "noEvents": "Non hai eventi.",
+      "includeDrafts": "Includi bozze",
+      "create": "Crea evento",
+      "edit": "Modifica",
+      "publish": "Pubblica",
+      "delete": "Elimina",
+      "deleteConfirm": "Eliminare questo evento? Questa azione non può essere annullata.",
+      "status": {
+        "draft": "Bozza",
+        "published": "Pubblicato",
+        "cancelled": "Annullato",
+        "completed": "Completato"
+      },
+      "ticketsCount": "{count} biglietti",
+      "newEvent": {
+        "title": "Nuovo evento",
+        "titleLabel": "Titolo",
+        "titlePlaceholder": "Nome dell'evento",
+        "descriptionLabel": "Descrizione",
+        "venueLabel": "Luogo",
+        "venuePlaceholder": "Es. WiZink Center",
+        "addressLabel": "Indirizzo (opzionale)",
+        "cityLabel": "Città",
+        "cityPlaceholder": "Es. Madrid",
+        "countryLabel": "Paese",
+        "countryPlaceholder": "Spagna",
+        "dateLabel": "Data e ora",
+        "imageUrlLabel": "URL immagine (opzionale)",
+        "categoryLabel": "Categoria (opzionale)",
+        "categoryPlaceholder": "Es. Musica",
+        "submit": "Crea evento",
+        "submitting": "Creazione..."
+      },
+      "editEvent": {
+        "title": "Modifica evento",
+        "submit": "Salva modifiche",
+        "submitting": "Salvataggio..."
+      },
+      "forbidden": "Non hai il permesso di accedere al pannello organizzatore.",
+      "error": "Errore nel caricamento degli eventi",
+      "publishSuccess": "Evento pubblicato.",
+      "deleteSuccess": "Evento eliminato.",
+      "createSuccess": "Evento creato.",
+      "publishError": "Errore nella pubblicazione dell'evento",
+      "deleteError": "Errore nell'eliminazione dell'evento",
+      "tickets": {
+        "title": "Biglietti",
+        "noTickets": "Nessun biglietto ancora. Aggiungi almeno un tipo per poter pubblicare.",
+        "addType": "Aggiungi tipo di biglietto",
+        "typeLabel": "Nome del tipo",
+        "typePlaceholder": "Es. Generale, VIP",
+        "priceLabel": "Prezzo (€)",
+        "quantityLabel": "Quantità",
+        "submit": "Aggiungi biglietti",
+        "submitting": "Aggiunta...",
+        "error": "Errore nel caricamento dei biglietti",
+        "addError": "Errore nella creazione dei biglietti",
+        "deleteConfirm": "Eliminare questo biglietto?",
+        "summary": "{count} biglietti"
+      }
     }
   }

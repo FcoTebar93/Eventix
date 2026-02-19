@@ -18,6 +18,7 @@
     },
     "nav": {
       "events": "Events",
+      "myEvents": "My Events",
       "myOrders": "My Orders",
       "favorites": "My Favorites",
       "login": "Sign In",
@@ -140,5 +141,68 @@
       "previous": "Previous",
       "next": "Next",
       "page": "Page {current} of {total}"
+    },
+    "organizer": {
+      "title": "My Events",
+      "noEvents": "You don't have any events.",
+      "includeDrafts": "Include drafts",
+      "create": "Create event",
+      "edit": "Edit",
+      "publish": "Publish",
+      "delete": "Delete",
+      "deleteConfirm": "Delete this event? This action cannot be undone.",
+      "status": {
+        "draft": "Draft",
+        "published": "Published",
+        "cancelled": "Cancelled",
+        "completed": "Completed"
+      },
+      "ticketsCount": "{count} tickets",
+      "newEvent": {
+        "title": "New event",
+        "titleLabel": "Title",
+        "titlePlaceholder": "Event name",
+        "descriptionLabel": "Description",
+        "venueLabel": "Venue",
+        "venuePlaceholder": "e.g. WiZink Center",
+        "addressLabel": "Address (optional)",
+        "cityLabel": "City",
+        "cityPlaceholder": "e.g. Madrid",
+        "countryLabel": "Country",
+        "countryPlaceholder": "Spain",
+        "dateLabel": "Date and time",
+        "imageUrlLabel": "Image URL (optional)",
+        "categoryLabel": "Category (optional)",
+        "categoryPlaceholder": "e.g. Music",
+        "submit": "Create event",
+        "submitting": "Creating..."
+      },
+      "editEvent": {
+        "title": "Edit event",
+        "submit": "Save changes",
+        "submitting": "Saving..."
+      },
+      "forbidden": "You don't have permission to access the organizer panel.",
+      "error": "Error loading events",
+      "publishSuccess": "Event published.",
+      "deleteSuccess": "Event deleted.",
+      "createSuccess": "Event created.",
+      "publishError": "Error publishing event",
+      "deleteError": "Error deleting event",
+      "tickets": {
+        "title": "Tickets",
+        "noTickets": "No tickets yet. Add at least one type to be able to publish.",
+        "addType": "Add ticket type",
+        "typeLabel": "Type name",
+        "typePlaceholder": "e.g. General, VIP",
+        "priceLabel": "Price (€)",
+        "quantityLabel": "Quantity",
+        "submit": "Add tickets",
+        "submitting": "Adding...",
+        "error": "Error loading tickets",
+        "addError": "Error creating tickets",
+        "deleteConfirm": "Delete this ticket?",
+        "summary": "{count} tickets"
+      }
     }
   }
