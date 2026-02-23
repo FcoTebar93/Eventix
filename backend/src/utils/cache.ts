@@ -31,6 +31,24 @@ export function getEventCacheKey(eventId: string): string {
     return `event:${eventId}`;
 }
 
+const FAV_TTL = 60;
+
+export function getFavoriteCacheKey(userId: string, eventId: string): string {
+    return `fav:${userId}:${eventId}`;
+}
+
+export async function getFavoriteFromCache(userId: string, eventId: string): Promise<boolean | null> {
+    const key = getFavoriteCacheKey(userId, eventId);
+    const raw = await getFromCache<string>(key);
+    if (raw === null) return null;
+    return raw === '1';
+}
+
+export async function setFavoriteCache(userId: string, eventId: string, isFavorite: boolean): Promise<void> {
+    const key = getFavoriteCacheKey(userId, eventId);
+    await setCache(key, isFavorite ? '1' : '0', FAV_TTL);
+}
+
 export async function getFromCache<T>(key: string): Promise<T | null> {
     try {
         const redis = getRedisClient();
@@ -70,9 +88,8 @@ export async function deleteCache(pattern: string): Promise<void> {
     }
 }
 
+const EVENTS_CACHE_PATTERN = 'event*';
+
 export async function clearEventsCache(): Promise<void> {
-    await Promise.all([
-        deleteCache('events:list:*'),
-        deleteCache('event:*'),
-    ]);
+    await deleteCache(EVENTS_CACHE_PATTERN);
 }
