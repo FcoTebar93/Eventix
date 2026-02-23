@@ -12,7 +12,7 @@ if (!env.STRIPE_SECRET_KEY) {
 }
 
 const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
-    apiVersion: '2024-11-20.acacia',
+    apiVersion: '2024-11-20.acacia' as any,
 });
 
 /**
@@ -30,7 +30,7 @@ export const createPaymentIntent = async (
 ): Promise<Stripe.PaymentIntent> => {
     try {
         const paymentIntent = await stripe.paymentIntents.create({
-            amount, // Monto en centavos
+            amount,
             currency: 'eur',
             metadata: {
                 orderId,

@@ -1,25 +1,16 @@
-/**
- * Controladores para pagos de tickets con Stripe
- */
-
 import { Response } from 'express';
 import { AuthenticatedRequest } from '../types';
 import * as stripeService from '../services/stripe.service';
 import * as ordersService from '../services/orders.service';
-import { logger } from '../utils/logger';
 import { asyncHandler } from '../utils/asyncHandler';
 
-/**
- * Crea un Payment Intent para una orden
- * POST /payments/create-intent
- */
 export const createPaymentIntent = asyncHandler(
     async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         if (!req.user) {
             throw new Error('User not authenticated');
         }
 
-        const { orderId } = req.body;
+        const { orderId } = req.body as { orderId?: string };
 
         if (!orderId) {
             res.status(400).json({
@@ -39,8 +30,6 @@ export const createPaymentIntent = asyncHandler(
             { type: 'ticket_purchase' },
         );
 
-        logger.info(`Payment Intent creado para orden: ${orderId}`);
-
         res.status(200).json({
             success: true,
             data: {
@@ -51,17 +40,13 @@ export const createPaymentIntent = asyncHandler(
     },
 );
 
-/**
- * Confirma un pago después de que Stripe lo procesa
- * Este endpoint normalmente se llama desde el webhook, pero puede usarse para verificar
- */
 export const confirmPayment = asyncHandler(
     async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         if (!req.user) {
             throw new Error('User not authenticated');
         }
 
-        const { paymentIntentId, orderId } = req.body;
+        const { paymentIntentId, orderId } = req.body as { paymentIntentId?: string; orderId?: string };
 
         if (!paymentIntentId || !orderId) {
             res.status(400).json({
@@ -81,12 +66,9 @@ export const confirmPayment = asyncHandler(
             return;
         }
 
-        // Nota: En producción esto se maneja automáticamente vía webhook
         await ordersService.payOrder(orderId, req.user.userId, {
             method: 'CREDIT_CARD',
         });
-
-        logger.info(`Pago confirmado para orden: ${orderId}`);
 
         res.status(200).json({
             success: true,

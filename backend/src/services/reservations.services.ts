@@ -12,43 +12,25 @@ export async function releaseExpiredReservations(): Promise<{
     const expiredTickets = await prisma.ticket.findMany({
       where: {
         status: TicketStatus.RESERVED,
-        reservedUntil: {
-          lt: now,
-        },
+        reservedUntil: { lt: now },
       },
-      include: {
-        orderItems: {
-          include: {
-            order: {
-              select: {
-                id: true,
-                status: true,
-              },
-            },
-          },
-        },
-      },
+      select: { id: true, orderId: true },
     });
 
     if (expiredTickets.length === 0) {
       return { released: 0, ordersCancelled: 0 };
     }
 
-    const orderIdsToCancel = new Set<string>();
-
-    expiredTickets.forEach((ticket) => {
-      if (ticket.orderItems[0]?.order && ticket.orderItems[0].order.status === OrderStatus.PENDING) {
-        orderIdsToCancel.add(ticket.orderItems[0].order.id);
-      }
-    });
+    const ticketIds = expiredTickets.map((t) => t.id);
+    const orderIdsToCancel = new Set(
+      expiredTickets
+        .filter((t) => t.orderId != null)
+        .map((t) => t.orderId as string)
+    );
 
     const result = await prisma.$transaction(async (tx) => {
       await tx.ticket.updateMany({
-        where: {
-          id: {
-            in: expiredTickets.map((t) => t.id),
-          },
-        },
+        where: { id: { in: ticketIds } },
         data: {
           status: TicketStatus.AVAILABLE,
           reservedUntil: null,
@@ -58,22 +40,18 @@ export async function releaseExpiredReservations(): Promise<{
 
       let ordersCancelled = 0;
       if (orderIdsToCancel.size > 0) {
-        await tx.order.updateMany({
+        const { count } = await tx.order.updateMany({
           where: {
-            id: {
-              in: Array.from(orderIdsToCancel),
-            },
+            id: { in: Array.from(orderIdsToCancel) },
             status: OrderStatus.PENDING,
           },
-          data: {
-            status: OrderStatus.CANCELLED,
-          },
+          data: { status: OrderStatus.CANCELLED },
         });
-        ordersCancelled = orderIdsToCancel.size;
+        ordersCancelled = count;
       }
 
       return {
-        released: expiredTickets.length,
+        released: ticketIds.length,
         ordersCancelled,
       };
     });

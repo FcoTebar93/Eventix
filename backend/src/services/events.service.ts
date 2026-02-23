@@ -2,7 +2,7 @@ import { EventStatus, Prisma } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 import { AppError } from '../middleware/errorHandler';
 import { CreateEventInput, UpdateEventInput, GetEventsQuery } from '../schemas/events.schema';
-import { getEventsListCacheKey, getEventCacheKey, getFromCache, setCache, deleteCache } from '../utils/cache';
+import { getEventsListCacheKey, getEventCacheKey, getFromCache, setCache, deleteCache, clearEventsCache } from '../utils/cache';
 import { associateTagsToEvent } from '../utils/tags';
 import { parsePagination } from '../utils/pagination';
 
@@ -90,10 +90,7 @@ export const createEvent = async (
     if (data.tags && data.tags.length > 0) {
         await associateTagsToEvent(event.id, data.tags);
 
-        await Promise.all([
-            deleteCache('events:list:*'),
-            deleteCache(getEventCacheKey(event.id)),
-        ]);
+        await clearEventsCache();
 
         const eventWithTags = await prisma.event.findUnique({
             where: { id: event.id },
@@ -107,10 +104,7 @@ export const createEvent = async (
         return eventWithTags;
     }
 
-    await Promise.all([
-        deleteCache('events:list:*'),
-        deleteCache(getEventCacheKey(event.id)),
-    ]);
+    await clearEventsCache();
 
     return event;
 };
@@ -148,26 +142,13 @@ export const getEvents = async (query: GetEventsQuery) => {
     if (tags) {
         const tagArray = tags.split(',').map(t => t.trim().toLowerCase()).filter(Boolean);
         if (tagArray.length > 0) {
-            const matchingTags = await prisma.tag.findMany({
-                where: {
-                    slug: {
-                        in: tagArray,
+            where.tags = {
+                some: {
+                    tag: {
+                        slug: { in: tagArray },
                     },
                 },
-                select: {
-                    id: true,
-                },
-            });
-
-            if (matchingTags.length > 0) {
-                where.tags = {
-                    some: {
-                        tagId: {
-                            in: matchingTags.map(t => t.id),
-                        },
-                    },
-                };
-            }
+            };
         }
     }
 
@@ -381,10 +362,7 @@ export const updateEvent = async (
         include: eventInclude,
     });
 
-    await Promise.all([
-        deleteCache(getEventCacheKey(eventId)),
-        deleteCache('events:list:*'),
-    ]);
+    await clearEventsCache();
 
     return updatedEvent;
 };
@@ -409,10 +387,7 @@ export const deleteEvent = async (eventId: string, organizerId: string) => {
         },
     });
 
-    await Promise.all([
-        deleteCache(getEventCacheKey(eventId)),
-        deleteCache('events:list:*'),
-    ]);
+    await clearEventsCache();
 };
 
 export const publishEvent = async (eventId: string, organizerId: string) => {
@@ -450,10 +425,7 @@ export const publishEvent = async (eventId: string, organizerId: string) => {
         },
     });
 
-    await Promise.all([
-        deleteCache(getEventCacheKey(eventId)),
-        deleteCache('events:list:*'),
-    ]);
+    await clearEventsCache();
 
     return publishedEvent;
 };

@@ -3,7 +3,7 @@ import { prisma } from "../lib/prisma";
 import { Prisma } from "@prisma/client";
 import { AppError } from "../middleware/errorHandler";
 import { CreateTicketInput, CreateTicketsBulkInput, UpdateTicketInput, GetTicketsQuery } from '../schemas/tickets.schema';
-import { getEventCacheKey, deleteCache } from '../utils/cache';
+import { clearEventsCache } from '../utils/cache';
 
 async function assertEventDraftAndOwned(eventId: string, userId: string, userRole: string) {
     const event = await prisma.event.findUnique({
@@ -45,10 +45,7 @@ export const createTicket = async ( eventId: string, organizerId: string, userRo
         },
     });
 
-    await Promise.all([
-        deleteCache(getEventCacheKey(eventId)),
-        deleteCache('events:list:*'),
-    ]);
+    await clearEventsCache();
 
     return ticket;
 }
@@ -67,10 +64,7 @@ export const createTicketsBulk = async ( eventId: string, organizerId: string, u
 
     const result = await prisma.ticket.createMany({ data: ticketData });
 
-    await Promise.all([
-        deleteCache(getEventCacheKey(eventId)),
-        deleteCache('events:list:*'),
-    ]);
+    await clearEventsCache();
 
     return result;
 };
@@ -81,9 +75,25 @@ export const getTicketsByEvent = async ( eventId: string, query: GetTicketsQuery
     const skip = (page - 1) * limit;
     const validLimit = Math.min(Math.max(limit, 1), 100);
 
-    const event = await prisma.event.findUnique({
-        where: { id: eventId },
-    });
+    const where: Prisma.TicketWhereInput = { eventId };
+    if (status) {
+        where.status = status;
+    }
+
+    const [event, tickets, total] = await Promise.all([
+        prisma.event.findUnique({
+            where: { id: eventId },
+            select: { id: true, status: true, organizerId: true },
+        }),
+        prisma.ticket.findMany({
+            where,
+            skip,
+            take: validLimit,
+            orderBy: { createdAt: 'asc' },
+        }),
+        prisma.ticket.count({ where }),
+    ]);
+
     if (!event) {
         throw new AppError('Evento no encontrado', 404);
     }
@@ -93,21 +103,6 @@ export const getTicketsByEvent = async ( eventId: string, query: GetTicketsQuery
     if (event.status === EventStatus.DRAFT && !isOrganizerOrAdmin) {
         throw new AppError('Evento no encontrado', 404);
     }
-
-    const where: Prisma.TicketWhereInput = { eventId };
-    if (status) {
-        where.status = status;
-    }
-
-    const [tickets, total] = await Promise.all([
-        prisma.ticket.findMany({
-            where,
-            skip,
-            take: validLimit,
-            orderBy: { createdAt: 'asc' },
-        }),
-        prisma.ticket.count({ where }),
-    ]);
 
     return {
         tickets,
@@ -183,10 +178,7 @@ export const updateTicket = async ( eventId: string, ticketId: string, userId: s
         data: updateData,
     });
 
-    await Promise.all([
-        deleteCache(getEventCacheKey(eventId)),
-        deleteCache('events:list:*'),
-    ]);
+    await clearEventsCache();
 
     return updated;
 };
@@ -212,8 +204,5 @@ export const deleteTicket = async ( eventId: string, ticketId: string, userId: s
         where: { id: ticketId },
     });
 
-    await Promise.all([
-        deleteCache(getEventCacheKey(eventId)),
-        deleteCache('events:list:*'),
-    ]);
+    await clearEventsCache();
 };

@@ -2,6 +2,7 @@ import { prisma } from '../lib/prisma';
 import { AppError } from '../middleware/errorHandler';
 import { GetFavoritesQuery } from '../schemas/favorites.schema';
 import { EventStatus } from '@prisma/client';
+import { getFavoriteFromCache, setFavoriteCache } from '../utils/cache';
 
 export const addFavorite = async (userId: string, eventId: string) => {
     const event = await prisma.event.findUnique({
@@ -57,6 +58,7 @@ export const addFavorite = async (userId: string, eventId: string) => {
     });
 
     if (existingFavorite) {
+        await setFavoriteCache(userId, eventId, true);
         return existingFavorite;
     }
 
@@ -97,6 +99,7 @@ export const addFavorite = async (userId: string, eventId: string) => {
         },
     });
 
+    await setFavoriteCache(userId, eventId, true);
     return favorite;
 };
 
@@ -116,13 +119,11 @@ export const removeFavorite = async (userId: string, eventId: string) => {
 
     await prisma.favorite.delete({
         where: {
-            userId_eventId: {
-                userId,
-                eventId,
-            },
+            userId_eventId: { userId, eventId },
         },
     });
 
+    await setFavoriteCache(userId, eventId, false);
     return { message: 'Favorito eliminado correctamente' };
 };
 
@@ -192,16 +193,18 @@ export const getFavorites = async (userId: string, query: GetFavoritesQuery) => 
 };
 
 export const isFavorite = async (userId: string, eventId: string): Promise<boolean> => {
+    const cached = await getFavoriteFromCache(userId, eventId);
+    if (cached !== null) return cached;
+
     const favorite = await prisma.favorite.findUnique({
         where: {
-            userId_eventId: {
-                userId,
-                eventId,
-            },
+            userId_eventId: { userId, eventId },
         },
     });
 
-    return !!favorite;
+    const result = !!favorite;
+    await setFavoriteCache(userId, eventId, result);
+    return result;
 };
 
 export const getFavoritesBatch = async (

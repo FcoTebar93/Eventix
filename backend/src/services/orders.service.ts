@@ -68,7 +68,10 @@ export const createOrder = async (
         0,
     );
 
-    const order = await prisma.$transaction(async (tx) => {
+    const reservedUntil = new Date();
+    reservedUntil.setMinutes(reservedUntil.getMinutes() + 15);
+
+    const orderWithDetails = await prisma.$transaction(async (tx) => {
         const newOrder = await tx.order.create({
             data: {
                 userId,
@@ -80,72 +83,47 @@ export const createOrder = async (
             },
         });
 
-        const orderItems = await Promise.all(
-            tickets.map(async (ticket) => {
-                const orderItem = await tx.orderItem.create({
-                    data: {
-                        orderId: newOrder.id,
-                        ticketId: ticket.id,
-                        quantity: 1,
-                        price: ticket.price,
-                        subtotal: ticket.price,
-                    },
-                });
+        await tx.orderItem.createMany({
+            data: tickets.map((ticket) => ({
+                orderId: newOrder.id,
+                ticketId: ticket.id,
+                quantity: 1,
+                price: ticket.price,
+                subtotal: ticket.price,
+            })),
+        });
 
-                const reservedUntil = new Date();
-                reservedUntil.setMinutes(reservedUntil.getMinutes() + 15);
-
-                await tx.ticket.update({
-                    where: { id: ticket.id },
-                    data: {
-                        status: TicketStatus.RESERVED,
-                        reservedUntil,
-                        orderId: newOrder.id,
-                    },
-                });
-
-                return orderItem;
-            }),
-        );
-
-        return {
-            ...newOrder,
-            items: orderItems,
-        };
-    });
-
-    const orderWithDetails = await prisma.order.findUnique({
-        where: { id: order.id },
-        include: {
-            user: {
-                select: {
-                    id: true,
-                    name: true,
-                    email: true,
-                },
+        await tx.ticket.updateMany({
+            where: { id: { in: data.ticketIds } },
+            data: {
+                status: TicketStatus.RESERVED,
+                reservedUntil,
+                orderId: newOrder.id,
             },
-            event: {
-                select: {
-                    id: true,
-                    title: true,
-                    date: true,
+        });
+
+        return tx.order.findUnique({
+            where: { id: newOrder.id },
+            include: {
+                user: {
+                    select: { id: true, name: true, email: true },
                 },
-            },
-            items: {
-                include: {
-                    ticket: {
-                        include: {
-                            event: {
-                                select: {
-                                    id: true,
-                                    title: true,
+                event: {
+                    select: { id: true, title: true, date: true },
+                },
+                items: {
+                    include: {
+                        ticket: {
+                            include: {
+                                event: {
+                                    select: { id: true, title: true },
                                 },
                             },
                         },
                     },
                 },
             },
-        },
+        });
     });
 
     return orderWithDetails!;
@@ -259,9 +237,8 @@ export const getOrderById = async (orderId: string, userId: string, userRole: st
                 },
             },
             payments: {
-                orderBy: {
-                    createdAt: 'desc',
-                },
+                orderBy: { createdAt: 'desc' },
+                take: 20,
             },
         },
     });

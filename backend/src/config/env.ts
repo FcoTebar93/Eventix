@@ -7,7 +7,7 @@ export const env = {
     PORT: parseInt(process.env.PORT || '3001', 10),
     API_PREFIX: process.env.API_PREFIX || '/api/v1',
     
-    DATABASE_URL: process.env.SHADOW_DATABASE_URL || '',
+    DATABASE_URL: process.env.DATABASE_URL || '',
     
     REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6379',
     
