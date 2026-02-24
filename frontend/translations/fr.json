@@ -50,7 +50,31 @@
         "submitting": "Création du compte...",
         "hasAccount": "Vous avez déjà un compte ?",
         "loginLink": "Connectez-vous",
-        "error": "Erreur lors de l'inscription"
+        "error": "Erreur lors de l'inscription",
+        "selectPlan": "Sélectionnez votre plan",
+        "plans": {
+          "popular": "Populaire",
+          "monthly": "/mois",
+          "free": {
+            "title": "Gratuit",
+            "features": [
+              "Acheter des billets pour les événements",
+              "Enregistrer les événements favoris",
+              "Gérer vos commandes",
+              "Accès à tous les événements"
+            ]
+          },
+          "premium": {
+            "title": "Premium",
+            "features": [
+              "Tout du plan Gratuit",
+              "Créer et gérer des événements",
+              "Vendre des billets primaires",
+              "Tableau de bord organisateur complet",
+              "Support prioritaire"
+            ]
+          }
+        }
       }
     },
     "home": {

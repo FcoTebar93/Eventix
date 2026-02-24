@@ -146,6 +146,38 @@ export async function payOrder(orderId: string, method: import('./types').Paymen
   return data.data.order;
 }
 
+export async function createPaymentIntent(orderId: string): Promise<{
+  clientSecret: string;
+  paymentIntentId: string;
+}> {
+  const { data } = await api.post<ApiResponse<{ clientSecret: string; paymentIntentId: string }>>('/stripe/create-intent', { orderId });
+  return data.data;
+}
+
+export async function confirmPayment(orderId: string, paymentIntentId: string): Promise<void> {
+  await api.post<ApiResponse<{ message: string }>>('/stripe/confirm', { orderId, paymentIntentId });
+}
+
+export async function createSubscription(): Promise<{
+  subscriptionId: string;
+  clientSecret: string | null;
+  customerId: string;
+}> {
+  const { data } = await api.post<ApiResponse<{ subscriptionId: string; clientSecret: string | null; customerId: string }>>('/stripe/subscriptions');
+  return data.data;
+}
+
+export async function cancelSubscription(cancelImmediately: boolean = false): Promise<void> {
+  await api.delete('/stripe/subscriptions', {
+    data: { cancelImmediately },
+  });
+}
+
+export async function getMySubscription() {
+  const { data } = await api.get<ApiResponse<{ subscription: any }>>('/stripe/subscriptions/me');
+  return data.data.subscription;
+}
+
 export interface GetFavoritesParams {
   page?: number;
   limit?: number;

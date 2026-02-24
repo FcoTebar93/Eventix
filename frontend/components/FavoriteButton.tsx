@@ -53,7 +53,7 @@ export function FavoriteButton({
     const { data: favoriteStatus, isLoading: isLoadingStatus } = useQuery({
         queryKey: ['favorite', eventId],
         queryFn: () => checkFavorite(eventId),
-        enabled: isAuthenticated,
+        enabled: isAuthenticated && initialIsFavorite === undefined,
         initialData: initialIsFavorite !== undefined ? { isFavorite: initialIsFavorite } : undefined,
         staleTime: 5 * 60 * 1000,
     });
@@ -64,8 +64,6 @@ export function FavoriteButton({
         mutationFn: () => addFavorite(eventId),
         onSuccess: () => {
             queryClient.setQueryData(['favorite', eventId], { isFavorite: true });
-            queryClient.invalidateQueries({ queryKey: ['event', eventId] });
-            queryClient.invalidateQueries({ queryKey: ['events'] });
             queryClient.invalidateQueries({ queryKey: ['favorites'] });
         },
         onError: (error: any) => {
@@ -85,8 +83,6 @@ export function FavoriteButton({
         mutationFn: () => removeFavorite(eventId),
         onSuccess: () => {
             queryClient.setQueryData(['favorite', eventId], { isFavorite: false });
-            queryClient.invalidateQueries({ queryKey: ['event', eventId] });
-            queryClient.invalidateQueries({ queryKey: ['events'] });
             queryClient.invalidateQueries({ queryKey: ['favorites'] });
         },
         onError: (error: any) => {

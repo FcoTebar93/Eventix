@@ -50,7 +50,31 @@
         "submitting": "Creando cuenta...",
         "hasAccount": "¿Ya tienes cuenta?",
         "loginLink": "Inicia sesión",
-        "error": "Error al registrar"
+        "error": "Error al registrar",
+        "selectPlan": "Selecciona tu plan",
+        "plans": {
+          "popular": "Popular",
+          "monthly": "/mes",
+          "free": {
+            "title": "Gratis",
+            "features": [
+              "Comprar entradas para eventos",
+              "Guardar eventos favoritos",
+              "Gestionar tus pedidos",
+              "Acceso a todos los eventos"
+            ]
+          },
+          "premium": {
+            "title": "Premium",
+            "features": [
+              "Todo lo del plan Gratis",
+              "Crear y gestionar eventos",
+              "Vender entradas primarias",
+              "Panel de organizador completo",
+              "Soporte prioritario"
+            ]
+          }
+        }
       }
     },
     "home": {
@@ -134,6 +158,9 @@
       "emailPlaceholder": "tu@email.com",
       "processing": "Procesando...",
       "confirm": "Confirmar compra",
+      "continueToPayment": "Continuar al pago",
+      "back": "Volver",
+      "payNow": "Pagar ahora",
       "error": "Error al crear el pedido"
     },
     "events": {

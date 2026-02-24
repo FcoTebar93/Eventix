@@ -50,7 +50,31 @@
         "submitting": "Creating account...",
         "hasAccount": "Already have an account?",
         "loginLink": "Sign In",
-        "error": "Error creating account"
+        "error": "Error creating account",
+        "selectPlan": "Select your plan",
+        "plans": {
+          "popular": "Popular",
+          "monthly": "/month",
+          "free": {
+            "title": "Free",
+            "features": [
+              "Buy tickets for events",
+              "Save favorite events",
+              "Manage your orders",
+              "Access to all events"
+            ]
+          },
+          "premium": {
+            "title": "Premium",
+            "features": [
+              "Everything in Free plan",
+              "Create and manage events",
+              "Sell primary tickets",
+              "Full organizer dashboard",
+              "Priority support"
+            ]
+          }
+        }
       }
     },
     "home": {
@@ -141,6 +165,20 @@
       "previous": "Previous",
       "next": "Next",
       "page": "Page {current} of {total}"
+    },
+    "checkout": {
+      "title": "Checkout",
+      "ticket": "ticket",
+      "tickets": "tickets",
+      "total": "Total",
+      "emailLabel": "Email where we will send the tickets",
+      "emailPlaceholder": "you@email.com",
+      "processing": "Processing...",
+      "confirm": "Confirm purchase",
+      "continueToPayment": "Continue to payment",
+      "back": "Back",
+      "payNow": "Pay now",
+      "error": "Error creating order"
     },
     "organizer": {
       "title": "My Events",

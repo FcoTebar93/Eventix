@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from "react";
-import { Link, useParams, useRouter } from "@/i18n/routing";
+import { useParams } from "next/navigation";
+import { Link, useRouter } from "@/i18n/routing";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getOrderById, payOrder } from "@/lib/api";
 import ProtectedRoute from '@/components/ProtectedRoute';

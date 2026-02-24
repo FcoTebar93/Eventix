@@ -36,6 +36,7 @@ export default function HomePage() {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['events', params],
     queryFn: () => getEvents(params),
+    staleTime: 2 * 60 * 1000,
   });
 
   const onSearch = useCallback((applied: EventSearchFilters) => {

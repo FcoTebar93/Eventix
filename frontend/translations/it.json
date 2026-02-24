@@ -50,7 +50,31 @@
         "submitting": "Creazione account...",
         "hasAccount": "Hai già un account?",
         "loginLink": "Accedi",
-        "error": "Errore durante la registrazione"
+        "error": "Errore durante la registrazione",
+        "selectPlan": "Seleziona il tuo piano",
+        "plans": {
+          "popular": "Popolare",
+          "monthly": "/mese",
+          "free": {
+            "title": "Gratuito",
+            "features": [
+              "Acquista biglietti per eventi",
+              "Salva eventi preferiti",
+              "Gestisci i tuoi ordini",
+              "Accesso a tutti gli eventi"
+            ]
+          },
+          "premium": {
+            "title": "Premium",
+            "features": [
+              "Tutto del piano Gratuito",
+              "Crea e gestisci eventi",
+              "Vendi biglietti primari",
+              "Dashboard organizzatore completo",
+              "Supporto prioritario"
+            ]
+          }
+        }
       }
     },
     "home": {

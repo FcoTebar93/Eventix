@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { Link } from '@/i18n/routing';
 import { useTranslations, useLocale } from 'next-intl';
 import { Event } from '../lib/types';
@@ -82,10 +83,12 @@ export const EventCard = memo(function EventCard({ event }: { event: Event }) {
                     {!imageLoaded && (
                         <div className="absolute inset-0 animate-pulse bg-[var(--bg-secondary)]" />
                     )}
-                    <img
+                    <Image
                         src={imageUrl}
                         alt={event.title}
-                        className={`h-full w-full object-cover transition-all duration-700 ${
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className={`object-cover transition-all duration-700 ${
                             imageLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-110'
                         } group-hover:scale-110`}
                         onLoad={() => setImageLoaded(true)}

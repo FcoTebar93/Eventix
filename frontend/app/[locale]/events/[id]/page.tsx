@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { Link, useRouter } from '@/i18n/routing';
 import { useQuery } from '@tanstack/react-query';
@@ -27,44 +28,57 @@ export default function EventDetailPage() {
         queryKey: ['event', id],
         queryFn: () => getEventById(id),
         enabled: !!id,
+        staleTime: 60 * 1000,
     });
 
     const { data: ticketsData, isLoading: loadingTickets } = useQuery({
         queryKey: ['tickets', id],
         queryFn: () => getTicketsByEvent(id, { status: 'AVAILABLE' }),
         enabled: !!id,
+        staleTime: 30 * 1000,
     });
 
     const tickets = ticketsData?.tickets ?? [];
 
+    // Agrupar por tipo+precio para que "cantidad 2" = 2 IDs distintos (2 filas en DB)
+    const ticketGroups = useMemo(() => {
+        const groups = new Map<string, Ticket[]>();
+        tickets.forEach((t) => {
+            const key = `${t.type}-${t.price}`;
+            if (!groups.has(key)) groups.set(key, []);
+            groups.get(key)!.push(t);
+        });
+        return Array.from(groups.entries()).map(([key, list]) => ({ key, tickets: list }));
+    }, [tickets]);
+
+    // quantities keyed by group key (tipo-precio)
     const ticketIds = useMemo(() => {
         const ids: string[] = [];
-        Object.entries(quantities).forEach(([ticketId, quantity]) => {
-            if (quantity > 0) {
-                ids.push(ticketId);
+        ticketGroups.forEach(({ key, tickets: groupTickets }) => {
+            const qty = quantities[key] ?? 0;
+            for (let i = 0; i < qty && i < groupTickets.length; i++) {
+                ids.push(groupTickets[i].id);
             }
         });
         return ids;
-    }, [quantities]);
+    }, [ticketGroups, quantities]);
 
     const totalSelected = ticketIds.length;
     const totalPrice = useMemo(() => {
-        return tickets.reduce((sum, ticket) => {
-            const quantity = quantities[ticket.id] ?? 0;
-            return sum + Number(ticket.price) * quantity;
+        return ticketGroups.reduce((sum, { key, tickets: groupTickets }) => {
+            const qty = quantities[key] ?? 0;
+            const price = Number(groupTickets[0]?.price ?? 0);
+            return sum + price * qty;
         }, 0);
-    }, [tickets, quantities]);
+    }, [ticketGroups, quantities]);
 
-    const setQuantity = (ticketId: string, value: number) => {
+    const setQuantity = (groupKey: string, value: number) => {
         const n = Math.max(0, Math.min(10, value));
         setQuantities((prev) => {
-            const newQuantities = { ...prev };
-            if (n === 0) {
-                delete newQuantities[ticketId];
-            } else {
-                newQuantities[ticketId] = n;
-            }
-            return newQuantities;
+            const next = { ...prev };
+            if (n === 0) delete next[groupKey];
+            else next[groupKey] = n;
+            return next;
         });
     };
 
@@ -119,8 +133,8 @@ export default function EventDetailPage() {
       <Link href="/" className="text-sm text-[var(--text-secondary)] hover:text-white">← {t('backToEvents')}</Link>
 
       <div className="mt-6 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)]">
-        <div className="aspect-video w-full overflow-hidden bg-[var(--bg-secondary)]">
-          <img src={imageUrl} alt={event.title} className="h-full w-full object-cover" />
+        <div className="relative aspect-video w-full overflow-hidden bg-[var(--bg-secondary)]">
+          <Image src={imageUrl} alt={event.title} fill sizes="(max-width: 768px) 100vw, 896px" className="object-cover" priority />
         </div>
         <div className="p-6">
           <div className="flex items-start justify-between gap-4">
@@ -173,16 +187,18 @@ export default function EventDetailPage() {
               <div key={i} className="h-20 animate-pulse rounded-lg bg-[var(--bg-card)]" />
             ))}
           </div>
-        ) : tickets.length === 0 ? (
+        ) : ticketGroups.length === 0 ? (
           <p className="mt-4 text-[var(--text-secondary)]">{t('noTicketsAvailable')}</p>
         ) : (
           <ul className="mt-4 space-y-3">
-            {tickets.map((ticket: Ticket) => {
-              const qty = quantities[ticket.id] ?? 0;
+            {ticketGroups.map(({ key, tickets: groupTickets }) => {
+              const qty = quantities[key] ?? 0;
+              const ticket = groupTickets[0];
               const price = typeof ticket.price === 'string' ? parseFloat(ticket.price) : ticket.price;
+              const available = groupTickets.length;
               return (
                 <li
-                  key={ticket.id}
+                  key={key}
                   className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-4"
                 >
                   <div>
@@ -190,12 +206,13 @@ export default function EventDetailPage() {
                     <p className="text-sm text-[var(--text-secondary)]">
                       {price.toFixed(2)} €
                       {ticket.section && ` · ${ticket.section}`}
+                      {' · '}{available} {t('ticket', { count: available })}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
-                      onClick={() => setQuantity(ticket.id, qty - 1)}
+                      onClick={() => setQuantity(key, qty - 1)}
                       className="h-9 w-9 rounded border border-[var(--border)] bg-[var(--bg-secondary)] text-white hover:bg-[var(--border)]"
                     >
                       −
@@ -203,7 +220,7 @@ export default function EventDetailPage() {
                     <span className="min-w-[2rem] text-center text-white">{qty}</span>
                     <button
                       type="button"
-                      onClick={() => setQuantity(ticket.id, qty + 1)}
+                      onClick={() => setQuantity(key, qty + 1)}
                       className="h-9 w-9 rounded border border-[var(--border)] bg-[var(--bg-secondary)] text-white hover:bg-[var(--border)]"
                     >
                       +

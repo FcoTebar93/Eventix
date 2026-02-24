@@ -13,6 +13,8 @@ export function Navbar() {
     const user = useAuthStore((state) => state.user);
     const logout = useAuthStore((state) => state.logout);
 
+    const shouldShowPremium = user && user.role !== 'ORGANIZER' && user.role !== 'ADMIN';
+
     const handleLogout = () => {
         logout();
         router.push('/login');
@@ -41,6 +43,14 @@ export function Navbar() {
 
                     {user ? (
                         <>
+                            {shouldShowPremium && (
+                                <Link
+                                    href="/subscription"
+                                    className="text-sm font-medium text-[var(--accent)] hover:text-[var(--accent-hover)]"
+                                >
+                                    ⭐ Premium
+                                </Link>
+                            )}
                             <Link
                                 href="/favorites"
                                 className={`text-sm font-medium transition-colors ${

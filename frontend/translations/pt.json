@@ -50,7 +50,31 @@
         "submitting": "Criando conta...",
         "hasAccount": "Já tem uma conta?",
         "loginLink": "Entre",
-        "error": "Erro ao criar conta"
+        "error": "Erro ao criar conta",
+        "selectPlan": "Selecione seu plano",
+        "plans": {
+          "popular": "Popular",
+          "monthly": "/mês",
+          "free": {
+            "title": "Grátis",
+            "features": [
+              "Comprar ingressos para eventos",
+              "Salvar eventos favoritos",
+              "Gerenciar seus pedidos",
+              "Acesso a todos os eventos"
+            ]
+          },
+          "premium": {
+            "title": "Premium",
+            "features": [
+              "Tudo do plano Grátis",
+              "Criar e gerenciar eventos",
+              "Vender ingressos primários",
+              "Painel completo de organizador",
+              "Suporte prioritário"
+            ]
+          }
+        }
       }
     },
     "home": {

@@ -60,6 +60,9 @@ export default function OrganizerEventsPage() {
     return (
       <div className="mx-auto max-w-4xl px-4 py-8">
         <p className="text-red-400">{t('forbidden')}</p>
+        <p className="mt-2 text-sm text-[var(--text-secondary)]">
+          Tu rol actual es: <strong>{user.role}</strong>. Necesitas ser ORGANIZER para acceder a esta página.
+        </p>
         <Link href="/" className="mt-4 inline-block text-[var(--accent)] hover:underline">
           Volver al inicio
         </Link>

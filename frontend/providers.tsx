@@ -9,16 +9,15 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     const [queryClient] = useState(() => new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 2 * 60 * 1000,
+            staleTime: 5 * 60 * 1000,
             gcTime: 10 * 60 * 1000,
           },
         },
     }));
-    const loadFromStorage = useAuthStore((state) => state.loadFromStorage);
 
     useEffect(() => {
-        loadFromStorage();
-    }, [loadFromStorage]);
+        useAuthStore.getState().loadFromStorage();
+    }, []);
 
     const router = useRouter();
 
