@@ -167,6 +167,10 @@ export async function createSubscription(): Promise<{
   return data.data;
 }
 
+export async function confirmSubscription(subscriptionId: string): Promise<void> {
+  await api.post<ApiResponse<unknown>>('/stripe/subscriptions/confirm', { subscriptionId });
+}
+
 export async function cancelSubscription(cancelImmediately: boolean = false): Promise<void> {
   await api.delete('/stripe/subscriptions', {
     data: { cancelImmediately },

@@ -1,8 +1,3 @@
-/**
- * Servicio para integración con Stripe
- * Maneja pagos de tickets y suscripciones
- */
-
 import Stripe from 'stripe';
 import { AppError } from '../middleware/errorHandler';
 import { env } from '../config/env';
@@ -15,13 +10,6 @@ const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
     apiVersion: '2024-11-20.acacia' as any,
 });
 
-/**
- * Crea un Payment Intent para una orden de tickets
- * @param amount Monto en centavos (ej: 2999 = €29.99)
- * @param orderId ID de la orden
- * @param userId ID del usuario
- * @param metadata Metadata adicional
- */
 export const createPaymentIntent = async (
     amount: number,
     orderId: string,
@@ -37,7 +25,6 @@ export const createPaymentIntent = async (
                 userId,
                 ...metadata,
             },
-            // Opcional: configurar métodos de pago permitidos
             payment_method_types: ['card'],
         });
 
@@ -50,10 +37,6 @@ export const createPaymentIntent = async (
     }
 };
 
-/**
- * Confirma un Payment Intent después de que el usuario completa el pago
- * @param paymentIntentId ID del Payment Intent
- */
 export const confirmPaymentIntent = async (
     paymentIntentId: string,
 ): Promise<Stripe.PaymentIntent> => {
@@ -73,12 +56,6 @@ export const confirmPaymentIntent = async (
     }
 };
 
-/**
- * Crea un cliente en Stripe para suscripciones
- * @param email Email del usuario
- * @param name Nombre del usuario
- * @param userId ID del usuario en nuestra BD
- */
 export const createCustomer = async (
     email: string,
     name: string,
@@ -102,11 +79,6 @@ export const createCustomer = async (
     }
 };
 
-/**
- * Crea una suscripción para el plan Premium
- * @param customerId ID del cliente en Stripe
- * @param priceId ID del precio del plan Premium en Stripe
- */
 export const createSubscription = async (
     customerId: string,
     priceId: string,
@@ -137,11 +109,6 @@ export const createSubscription = async (
     }
 };
 
-/**
- * Cancela una suscripción
- * @param subscriptionId ID de la suscripción en Stripe
- * @param cancelImmediately Si es true, cancela inmediatamente. Si es false, cancela al final del período
- */
 export const cancelSubscription = async (
     subscriptionId: string,
     cancelImmediately: boolean = false,
@@ -162,14 +129,14 @@ export const cancelSubscription = async (
     }
 };
 
-/**
- * Obtiene una suscripción por ID
- */
 export const getSubscription = async (
     subscriptionId: string,
+    expand?: string[],
 ): Promise<Stripe.Subscription> => {
     try {
-        return await stripe.subscriptions.retrieve(subscriptionId);
+        return await stripe.subscriptions.retrieve(subscriptionId, {
+            ...(expand?.length ? { expand } : {}),
+        });
     } catch (error) {
         if (error instanceof Stripe.errors.StripeError) {
             throw new AppError(`Error al obtener suscripción: ${error.message}`, 400);
@@ -178,9 +145,6 @@ export const getSubscription = async (
     }
 };
 
-/**
- * Obtiene un cliente por ID
- */
 export const getCustomer = async (customerId: string): Promise<Stripe.Customer> => {
     try {
         return await stripe.customers.retrieve(customerId) as Stripe.Customer;
@@ -192,9 +156,6 @@ export const getCustomer = async (customerId: string): Promise<Stripe.Customer> 
     }
 };
 
-/**
- * Construye el webhook event desde el request de Stripe
- */
 export const constructWebhookEvent = (
     payload: string | Buffer,
     signature: string,

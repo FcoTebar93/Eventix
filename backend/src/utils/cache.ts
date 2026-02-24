@@ -63,8 +63,8 @@ export async function setCache(key: string, value: unknown, ttlSeconds: number =
     try {
         const redis = getRedisClient();
         await redis.set(key, JSON.stringify(value), 'EX', ttlSeconds);
-    } catch {
-        // silent
+    } catch (error) {
+        console.error('Error al setear el cache:', error instanceof Error ? error.message : error);
     }
 }
 
@@ -83,8 +83,8 @@ export async function deleteCache(pattern: string): Promise<void> {
         if (keys.length > 0) {
             await redis.del(...keys);
         }
-    } catch {
-        // silent
+    } catch (error) {
+        console.error('Error al eliminar el cache:', error instanceof Error ? error.message : error);
     }
 }
 

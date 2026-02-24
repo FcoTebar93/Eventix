@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useRouter, Link } from '@/i18n/routing';
 import {
     PaymentElement,
@@ -9,7 +9,7 @@ import {
     Elements,
 } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import { createSubscription } from '@/lib/api';
+import api, { createSubscription, confirmSubscription } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
@@ -24,6 +24,8 @@ export default function SubscriptionForm() {
     const [clientSecret, setClientSecret] = useState<string | null>(null);
     const [subscriptionId, setSubscriptionId] = useState<string | null>(null);
     const [creating, setCreating] = useState(true);
+    const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
+    const hasInitializedRef = useRef(false);
 
     useEffect(() => {
         if (!user && typeof window !== 'undefined') {
@@ -32,23 +34,29 @@ export default function SubscriptionForm() {
                 try {
                     JSON.parse(pendingAuthStr);
                 } catch (err) {
-                    // Error silenciado
+                    console.error('Error al parsear pendingAuth:', err instanceof Error ? err.message : err);
                 }
             }
         }
     }, [user]);
 
     useEffect(() => {
-        const createSubscriptionIntent = async () => {
+        if (hasInitializedRef.current) return;
+        hasInitializedRef.current = true;
+
+        const initSubscriptionFlow = async () => {
             let currentUser = user;
             if (!currentUser && typeof window !== 'undefined') {
                 const pendingAuthStr = localStorage.getItem('pendingAuth');
                 if (pendingAuthStr) {
                     try {
                         const pendingAuth = JSON.parse(pendingAuthStr);
+                        localStorage.setItem('accessToken', pendingAuth.tokens.accessToken);
+                        localStorage.setItem('refreshToken', pendingAuth.tokens.refreshToken);
+                        setAuth(pendingAuth.user, pendingAuth.tokens);
                         currentUser = pendingAuth.user;
                     } catch (err) {
-                        // Error silenciado
+                        console.error('Error al parsear pendingAuth:', err instanceof Error ? err.message : err);
                     }
                 }
             }
@@ -60,24 +68,17 @@ export default function SubscriptionForm() {
             }
 
             try {
-                let tokensToUse = null;
-                if (!user && typeof window !== 'undefined') {
-                    const pendingAuthStr = localStorage.getItem('pendingAuth');
-                    if (pendingAuthStr) {
-                        const pendingAuth = JSON.parse(pendingAuthStr);
-                        tokensToUse = pendingAuth.tokens;
-                        localStorage.setItem('accessToken', pendingAuth.tokens.accessToken);
-                        localStorage.setItem('refreshToken', pendingAuth.tokens.refreshToken);
-                    }
+                const result = await createSubscription();
+
+                if (!result.clientSecret) {
+                    setHasActiveSubscription(true);
+                    setCreating(false);
+                    return;
                 }
 
-                const result = await createSubscription();
                 setClientSecret(result.clientSecret);
                 setSubscriptionId(result.subscriptionId);
-                
-                if (!result.clientSecret) {
-                    setError('No se pudo obtener el client secret. Verifica que STRIPE_PREMIUM_PRICE_ID esté configurado correctamente.');
-                }
+                setCreating(false);
             } catch (err: any) {
                 const errorMsg = 
                     err?.response?.data?.error || 
@@ -89,8 +90,13 @@ export default function SubscriptionForm() {
             }
         };
 
-        createSubscriptionIntent();
+        initSubscriptionFlow();
     }, [user, setAuth]);
+
+    const elementsOptions = useMemo(
+        () => (clientSecret ? { clientSecret } : null),
+        [clientSecret],
+    );
 
     const hasUserOrPending = user || (typeof window !== 'undefined' && localStorage.getItem('pendingAuth'));
 
@@ -116,7 +122,32 @@ export default function SubscriptionForm() {
         );
     }
 
-    if (!clientSecret) {
+    if (hasActiveSubscription && !clientSecret) {
+        return (
+            <div className="mx-auto max-w-md rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-6">
+                <p className="text-center text-white mb-2">
+                    Ya tienes una suscripción Premium activa.
+                </p>
+                <p className="text-center text-[var(--text-secondary)] mb-4">
+                    Puedes ir directamente al panel de organizador.
+                </p>
+                <Link
+                    href="/organizer"
+                    className="mb-2 block w-full rounded bg-[var(--accent)] py-2 text-center font-medium text-white hover:bg-[var(--accent-hover)]"
+                >
+                    Ir al panel de organizador
+                </Link>
+                <Link
+                    href="/"
+                    className="mt-2 block text-center text-[var(--accent)] hover:underline"
+                >
+                    Volver al inicio
+                </Link>
+            </div>
+        );
+    }
+
+    if (!clientSecret || !elementsOptions) {
         return (
             <div className="mx-auto max-w-md rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-6">
                 {error ? (
@@ -137,7 +168,7 @@ export default function SubscriptionForm() {
     }
 
     return (
-        <Elements stripe={stripePromise} options={{ clientSecret }}>
+        <Elements stripe={stripePromise} options={elementsOptions}>
             <SubscriptionFormContent
                 subscriptionId={subscriptionId}
                 onSuccess={() => router.push('/subscription/success')}
@@ -185,58 +216,38 @@ function SubscriptionFormContent({
             }
 
             if (paymentIntent?.status === 'succeeded') {
-                let tokensToUse = null;
                 if (typeof window !== 'undefined') {
                     const pendingAuthStr = localStorage.getItem('pendingAuth');
                     if (pendingAuthStr) {
                         try {
                             const pendingAuth = JSON.parse(pendingAuthStr);
-                            tokensToUse = pendingAuth.tokens;
                             setAuth(pendingAuth.user, pendingAuth.tokens);
                             localStorage.removeItem('pendingAuth');
                         } catch (err) {
-                            // Error silenciado
+                            console.error('Error al parsear pendingAuth:', err instanceof Error ? err.message : err);
                         }
                     }
                 }
 
-                let attempts = 0;
-                const maxAttempts = 15;
-                const refreshUser = async () => {
+                if (subscriptionId) {
                     try {
-                        const api = (await import('@/lib/api')).default;
-                        const response = await api.get('/users/profile');
-                        const updatedUser = response.data.data.user;
-                        const currentTokens = useAuthStore.getState();
-                        
-                        if (updatedUser && currentTokens.accessToken) {
-                            setAuth(updatedUser, {
-                                accessToken: currentTokens.accessToken,
-                                refreshToken: currentTokens.refreshToken || '',
-                            });
-                            
-                            if (updatedUser.role === 'ORGANIZER') {
-                                onSuccess();
-                                return;
-                            } else if (attempts < maxAttempts - 1) {
-                                attempts++;
-                                setTimeout(refreshUser, 1000);
-                                return;
-                            } else {
-                                onSuccess();
+                        await confirmSubscription(subscriptionId);
+                        const tokens = useAuthStore.getState();
+                        if (tokens.accessToken) {
+                            const { data } = await api.get<{ data: { user: import('@/lib/types').User } }>('/users/profile');
+                            const updatedUser = data.data?.user;
+                            if (updatedUser) {
+                                setAuth(updatedUser, {
+                                    accessToken: tokens.accessToken,
+                                    refreshToken: tokens.refreshToken || '',
+                                });
                             }
                         }
                     } catch (err) {
-                        if (attempts < maxAttempts - 1) {
-                            attempts++;
-                            setTimeout(refreshUser, 1000);
-                        } else {
-                            onSuccess();
-                        }
+                        console.error('Error al confirmar la suscripción:', err instanceof Error ? err.message : err);
                     }
-                };
-
-                setTimeout(refreshUser, 3000);
+                }
+                onSuccess();
             }
         } catch (err: any) {
             setError(err.message || 'Error al procesar el pago');

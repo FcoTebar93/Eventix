@@ -2,6 +2,7 @@ import { prisma } from '../lib/prisma';
 import { AppError } from '../middleware/errorHandler';
 import { env } from '../config/env';
 import * as stripeService from './stripe.service';
+import { SubscriptionStatus } from '@prisma/client';
 
 export const createPremiumSubscription = async (
     userId: string,
@@ -17,8 +18,12 @@ export const createPremiumSubscription = async (
             where: { userId },
         });
 
-        if (existingRecord?.status === 'ACTIVE') {
-            throw new AppError('Ya tienes una suscripción activa', 400);
+        if (existingRecord && existingRecord.status !== 'CANCELLED') {
+            return {
+                subscriptionId: existingRecord.stripeSubscriptionId,
+                clientSecret: null,
+                customerId: existingRecord.stripeCustomerId,
+            };
         }
 
         const priceId = env.STRIPE_PREMIUM_PRICE_ID;
@@ -44,7 +49,7 @@ export const createPremiumSubscription = async (
             customerId = newCustomer.id;
         }
 
-        let subscription;
+        let subscription: any;
 
         if (existingRecord?.stripeSubscriptionId) {
             try {
@@ -63,7 +68,7 @@ export const createPremiumSubscription = async (
         const subscriptionData = {
             stripeCustomerId: customerId,
             stripeSubscriptionId: subscription.id,
-            status: subscription.status === 'active' ? 'ACTIVE' : 'PAST_DUE',
+            status: subscription.status === 'active' ? SubscriptionStatus.ACTIVE : SubscriptionStatus.PAST_DUE,
             currentPeriodEnd: new Date(subscription.current_period_end * 1000),
             cancelAtPeriodEnd: subscription.cancel_at_period_end || false,
         };
@@ -104,10 +109,29 @@ export const createPremiumSubscription = async (
     }
 };
 
-export const confirmSubscription = async (subscriptionId: string): Promise<void> => {
-    const subscription = await stripeService.getSubscription(subscriptionId);
+function isSubscriptionEffectivelyActive(subscription: {
+    status: string;
+    latest_invoice?: string | { status?: string } | null;
+}): boolean {
+    if (subscription.status === 'active') return true;
+    const invoice = subscription.latest_invoice;
+    if (invoice && typeof invoice === 'object' && invoice.status === 'paid') return true;
+    return false;
+}
 
-    const subscriptionStatus = subscription.status === 'active' ? 'ACTIVE' : 'PAST_DUE';
+export const confirmSubscription = async (subscriptionId: string): Promise<void> => {
+    const expand = ['latest_invoice'];
+    let subscription: any = await stripeService.getSubscription(subscriptionId, expand);
+
+    // Si Stripe aún no ha actualizado la suscripción a "active" tras el pago, reintentar una vez
+    if (!isSubscriptionEffectivelyActive(subscription)) {
+        await new Promise((r) => setTimeout(r, 1500));
+        subscription = await stripeService.getSubscription(subscriptionId, expand);
+    }
+
+    const effectivelyActive = isSubscriptionEffectivelyActive(subscription);
+    const subscriptionStatus =
+        subscription.status === 'active' || effectivelyActive ? 'ACTIVE' : 'PAST_DUE';
 
     await prisma.subscription.updateMany({
         where: { stripeSubscriptionId: subscriptionId },
@@ -118,7 +142,7 @@ export const confirmSubscription = async (subscriptionId: string): Promise<void>
         },
     });
 
-    if (subscriptionStatus === 'ACTIVE') {
+    if (effectivelyActive) {
         const sub = await prisma.subscription.findFirst({
             where: { stripeSubscriptionId: subscriptionId },
             select: { userId: true },
@@ -220,5 +244,12 @@ export const getUserSubscription = async (userId: string) => {
     return await prisma.subscription.findFirst({
         where: { userId },
         orderBy: { createdAt: 'desc' },
+    });
+};
+
+export const getSubscriptionByStripeId = async (stripeSubscriptionId: string) => {
+    return await prisma.subscription.findUnique({
+        where: { stripeSubscriptionId },
+        select: { id: true, userId: true },
     });
 };

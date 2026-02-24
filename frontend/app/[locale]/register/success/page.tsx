@@ -12,7 +12,6 @@ export default function RegisterSuccessPage() {
     const [countdown, setCountdown] = useState(3);
 
     useEffect(() => {
-        // Contador regresivo
         const interval = setInterval(() => {
             setCountdown((prev) => {
                 if (prev <= 1) {
@@ -23,7 +22,6 @@ export default function RegisterSuccessPage() {
             });
         }, 1000);
 
-        // Redirigir a la página principal después de 3 segundos
         const timer = setTimeout(() => {
             router.push('/');
         }, 3000);

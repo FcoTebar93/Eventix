@@ -2,7 +2,6 @@ import amqp from 'amqplib';
 import type { Channel } from 'amqplib';
 import { env } from '../config/env';
 
-// Usar el tipo de retorno real de amqp.connect() en lugar de Connection
 type AmqpConnection = Awaited<ReturnType<typeof amqp.connect>>;
 
 let connection: AmqpConnection | null = null;
