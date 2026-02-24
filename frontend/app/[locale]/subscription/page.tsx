@@ -1,7 +1,21 @@
 'use client';
 
-import SubscriptionForm from '@/components/SubscriptionForm';
+import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
+
+const SubscriptionForm = dynamic(
+    () => import('@/components/SubscriptionForm'),
+    {
+        loading: () => (
+            <div className="mx-auto max-w-md rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-6">
+                <p className="text-center text-white">
+                    Cargando formulario de suscripción...
+                </p>
+            </div>
+        ),
+        ssr: false,
+    },
+);
 
 export default function SubscriptionPage() {
     const t = useTranslations('auth.register');

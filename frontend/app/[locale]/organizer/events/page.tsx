@@ -1,13 +1,23 @@
 'use client';
 
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { Link } from '@/i18n/routing';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getMyEvents, publishEvent, deleteEvent } from '@/lib/api';
 import type { Event } from '@/lib/types';
-import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuthStore } from '@/store/authStore';
 import { useTranslations, useLocale } from 'next-intl';
+
+const ProtectedRoute = dynamic(() => import('@/components/ProtectedRoute'), {
+  loading: () => (
+    <div className="mx-auto max-w-4xl px-4 py-8">
+      <div className="h-8 w-48 animate-pulse rounded bg-[var(--bg-card)]" />
+      <div className="mt-6 h-64 animate-pulse rounded-xl bg-[var(--bg-card)]" />
+    </div>
+  ),
+  ssr: false,
+});
 
 const statusColors: Record<string, string> = {
   DRAFT: 'text-yellow-400',

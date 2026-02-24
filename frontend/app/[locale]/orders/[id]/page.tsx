@@ -5,8 +5,18 @@ import { useParams } from "next/navigation";
 import { Link, useRouter } from "@/i18n/routing";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getOrderById, payOrder } from "@/lib/api";
-import ProtectedRoute from '@/components/ProtectedRoute';
+import dynamic from 'next/dynamic';
 import { useTranslations, useLocale } from 'next-intl';
+
+const ProtectedRoute = dynamic(() => import('@/components/ProtectedRoute'), {
+    loading: () => (
+        <div className="mx-auto max-w-4xl px-4 py-8">
+            <div className="h-8 w-48 animate-pulse rounded bg-[var(--bg-card)]" />
+            <div className="mt-6 h-64 animate-pulse rounded-xl bg-[var(--bg-card)]" />
+        </div>
+    ),
+    ssr: false,
+});
 
 const statusColors: Record<string, string> = {
     PENDING: 'text-yellow-400',

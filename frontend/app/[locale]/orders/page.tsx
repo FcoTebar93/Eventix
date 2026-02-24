@@ -4,8 +4,18 @@ import { useQuery } from '@tanstack/react-query';
 import { getMyOrders } from '@/lib/api';
 import type { OrderStatus } from '@/lib/types';
 import { Link } from '@/i18n/routing';
-import ProtectedRoute from '@/components/ProtectedRoute';
+import dynamic from 'next/dynamic';
 import { useTranslations, useLocale } from 'next-intl';
+
+const ProtectedRoute = dynamic(() => import('@/components/ProtectedRoute'), {
+    loading: () => (
+        <div className="mx-auto max-w-4xl px-4 py-8">
+            <div className="h-8 w-48 animate-pulse rounded bg-[var(--bg-card)]" />
+            <div className="mt-6 h-64 animate-pulse rounded-xl bg-[var(--bg-card)]" />
+        </div>
+    ),
+    ssr: false,
+});
 
 const statusColors: Record<OrderStatus, string> = {
     PENDING: 'text-yellow-400',

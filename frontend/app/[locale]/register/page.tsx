@@ -1,11 +1,17 @@
 'use client';
 
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { Link, useRouter } from '@/i18n/routing';
 import { authRegister } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { useTranslations } from 'next-intl';
-import PlanCard from '@/components/PlanCard';
+
+const PlanCard = dynamic(() => import('@/components/PlanCard'), {
+    loading: () => (
+        <div className="h-40 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] animate-pulse" />
+    ),
+});
 
 type PlanSelection = 'FREE' | 'PREMIUM';
 
