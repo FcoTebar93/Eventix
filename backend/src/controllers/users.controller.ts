@@ -97,6 +97,22 @@ export const getUserById = async (
     }
 };
 
+export const getPublicProfile = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { id } = userIdParamsSchema.parse(req.params);
+        const profile = await usersService.getPublicProfile(id);
+
+        res.status(200).json({
+            success: true,
+            data: {
+                profile,
+            },
+        });
+    } catch (error) {
+        throw error;
+    }
+};
+
 export const getAllUsers = async (
     req: Request,
     res: Response,
