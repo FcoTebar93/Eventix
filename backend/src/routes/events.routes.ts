@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import * as eventsController from '../controllers/events.controller';
+import * as reviewsController from '../controllers/reviews.controller';
 import ticketsRoutes from './tickets.routes';
 import { authenticate, requireRole } from '../middleware/auth.middleware';
 
@@ -15,6 +16,12 @@ router.use('/:eventId/tickets', (req, _res, next) => {
 }, ticketsRoutes);
 
 router.get('/:id', eventsController.getEventById);
+router.get('/:id/reviews', reviewsController.getEventReviews);
+router.post(
+    '/:id/reviews',
+    authenticate,
+    reviewsController.createEventReview,
+);
 router.patch('/:id', authenticate, requireRole('ORGANIZER', 'ADMIN'), eventsController.updateEvent);
 router.delete('/:id', authenticate, requireRole('ORGANIZER', 'ADMIN'), eventsController.deleteEvent);
 router.post('/:id/publish', authenticate, requireRole('ORGANIZER', 'ADMIN'), eventsController.publishEvent);
