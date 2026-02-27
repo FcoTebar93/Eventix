@@ -18,6 +18,7 @@ router.use('/:eventId/tickets', (req, _res, next) => {
 router.get('/:id', eventsController.getEventById);
 router.get('/:id/reviews', reviewsController.getEventReviews);
 router.post('/:id/reviews', authenticate, reviewsController.createEventReview);
+router.delete('/:id/reviews', authenticate, reviewsController.deleteEventReview);
 router.patch('/:id', authenticate, requireRole('ORGANIZER', 'ADMIN'), eventsController.updateEvent);
 router.delete('/:id', authenticate, requireRole('ORGANIZER', 'ADMIN'), eventsController.deleteEvent);
 router.post('/:id/publish', authenticate, requireRole('ORGANIZER', 'ADMIN'), eventsController.publishEvent);

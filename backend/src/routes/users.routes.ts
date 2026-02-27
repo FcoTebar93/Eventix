@@ -12,6 +12,7 @@ router.post('/profile/change-password', authenticate, usersController.changePass
 router.get('/:id/public', usersController.getPublicProfile);
 router.get('/:id/reviews', reviewsController.getUserProfileReviews);
 router.post('/:id/reviews', authenticate, reviewsController.createUserProfileReview);
+router.delete('/:id/reviews', authenticate, reviewsController.deleteUserProfileReview);
 
 router.get('/', authenticate, requireRole('ADMIN'), usersController.getAllUsers);
 router.get('/:id', authenticate, requireRole('ADMIN'), usersController.getUserById);
