@@ -98,10 +98,7 @@ export const deleteEventReview = async (req: AuthenticatedRequest, res: Response
     }
 };
 
-export const deleteUserProfileReview = async (
-    req: AuthenticatedRequest,
-    res: Response,
-): Promise<void> => {
+export const deleteUserProfileReview = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
         if (!req.user) {
             throw new Error('User not authenticated');
@@ -115,4 +112,3 @@ export const deleteUserProfileReview = async (
         throw error;
     }
 };
-
