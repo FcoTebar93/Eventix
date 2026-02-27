@@ -239,6 +239,81 @@ export const getEvents = async (query: GetEventsQuery) => {
     };
 };
 
+export const getEventsForAdmin = async (query: GetEventsQuery): Promise<GetEventsResult> => {
+    const { status, category, city, search, dateFrom, dateTo, tags, ...paginationParams } = query;
+    const { skip, take: validLimit, page: validPage } = parsePagination(paginationParams);
+
+    const where: Prisma.EventWhereInput = {};
+
+    if (status) {
+        where.status = status;
+    }
+
+    if (category) {
+        where.category = category;
+    }
+
+    if (city) {
+        where.city = { contains: city };
+    }
+
+    if (search) {
+        where.OR = [
+            { title: { contains: search } },
+            { description: { contains: search } },
+            { venue: { contains: search } },
+        ];
+    }
+
+    if (tags) {
+        const tagArray = tags.split(',').map(t => t.trim().toLowerCase()).filter(Boolean);
+        if (tagArray.length > 0) {
+            where.tags = {
+                some: {
+                    tag: { slug: { in: tagArray } },
+                },
+            };
+        }
+    }
+
+    if (dateFrom || dateTo) {
+        const dateFilter: Prisma.DateTimeFilter = {};
+        if (dateFrom) dateFilter.gte = new Date(dateFrom);
+        if (dateTo) dateFilter.lte = new Date(dateTo);
+        where.date = dateFilter;
+    }
+
+    const [events, total] = await Promise.all([
+        prisma.event.findMany({
+            where,
+            skip,
+            take: validLimit,
+            include: {
+                organizer: {
+                    select: { id: true, name: true },
+                },
+                tags: {
+                    include: {
+                        tag: { select: { id: true, name: true, slug: true } },
+                    },
+                },
+                _count: {
+                    select: { tickets: true, reviews: true },
+                },
+            },
+            orderBy: { date: 'asc' },
+        }),
+        prisma.event.count({ where }),
+    ]);
+
+    return {
+        events,
+        total,
+        page: validPage,
+        totalPages: Math.ceil(total / validLimit),
+    };
+};
+
 export const getEventById = async (eventId: string, userId?: string) => {
     const cacheKey = getEventCacheKey(eventId);
     
