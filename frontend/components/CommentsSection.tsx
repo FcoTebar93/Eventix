@@ -33,7 +33,7 @@ export function CommentsSection(props: CommentsSectionProps) {
   const queryClient = useQueryClient();
   const { user } = useAuthStore();
 
-  const [rating, setRating] = useState(5);
+  const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
 
   const queryKey =

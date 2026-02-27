@@ -218,6 +218,11 @@ export async function getPublicProfile(userId: string): Promise<{ profile: UserP
   return data.data;
 }
 
+export async function getUserOrganizedEvents(userId: string): Promise<{ events: Event[] }> {
+  const { data } = await api.get<ApiResponse<{ events: Event[] }>>(`/users/${userId}/events`);
+  return data.data;
+}
+
 export interface GetUserProfileReviewsResult {
   reviews: UserProfileReview[];
   total: number;

@@ -8,7 +8,7 @@ import {
   getPublicProfile,
   getUserProfileReviews,
   getFavorites,
-  getEvents,
+  getUserOrganizedEvents,
 } from '@/lib/api';
 import type { Event } from '@/lib/types';
 import { UserAvatar } from '@/components/UserAvatar';
@@ -51,13 +51,7 @@ export default function UserProfilePage() {
     isLoading: loadingEvents,
   } = useQuery({
     queryKey: ['organizedEvents', id],
-    queryFn: () =>
-      getEvents({
-        page: 1,
-        limit: 12,
-        // backend no filtra por organizador, así que en esta iteración
-        // mostraremos simplemente eventos recientes (se puede mejorar después)
-      }),
+    queryFn: () => getUserOrganizedEvents(id),
     staleTime: 60 * 1000,
   });
 
