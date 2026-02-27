@@ -187,7 +187,10 @@
       "noTicketsSelected": "No has seleccionado ninguna entrada",
       "selectTickets": "Selecciona al menos una entrada",
       "row": "Fila",
-      "seat": "Asiento"
+      "seat": "Asiento",
+      "viewOrganizerProfile": "Ver perfil de {name}",
+      "reviewsTitle": "Reseñas del evento",
+      "noReviews": "Este evento todavía no tiene reseñas."
     },
     "favorites": {
       "title": "Mis favoritos",
@@ -271,5 +274,30 @@
         "deleteConfirm": "¿Eliminar esta entrada?",
         "summary": "{count} entradas"
       }
+    },
+    "profile": {
+      "notFound": "Perfil no encontrado.",
+      "backToHome": "Volver al inicio",
+      "organizedEventsTitle": "Eventos organizados",
+      "organizedEventsCount": "{count} eventos organizados",
+      "eventReviewsCount": "{count} reseñas de eventos",
+      "profileReviewsCount": "{count} reseñas de perfil",
+      "noOrganizedEvents": "Este usuario todavía no tiene eventos organizados.",
+      "favoriteEventsTitle": "Eventos favoritos",
+      "noFavorites": "Aún no tienes eventos favoritos.",
+      "reviewsTitle": "Reseñas del perfil",
+      "noReviews": "Todavía no hay reseñas para este perfil."
+    },
+    "comments": {
+      "loadError": "Error al cargar los comentarios.",
+      "loginToComment": "Inicia sesión para dejar tu comentario y valoración.",
+      "yourRating": "Tu valoración",
+      "placeholder": "Comparte tu experiencia con este evento o perfil...",
+      "sending": "Enviando...",
+      "submit": "Publicar reseña",
+      "attended": "Asistente verificado",
+      "noRating": "Sin puntuación",
+      "deleteReview": "Eliminar reseña",
+      "deleting": "Eliminando..."
     }
   }

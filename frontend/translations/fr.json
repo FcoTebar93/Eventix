@@ -152,6 +152,35 @@
       "next": "Suivant",
       "page": "Page {current} sur {total}"
     },
+    "events": {
+      "notFound": "L'événement n'a pas été trouvé",
+      "backToList": "Retour à la liste des événements",
+      "backToEvents": "Retour aux événements",
+      "availableTickets": "Billets disponibles",
+      "tickets": "Billets",
+      "ticket": "billet",
+      "noTicketsAvailable": "Aucun billet disponible.",
+      "maxTickets": "Vous ne pouvez pas sélectionner plus de 5 billets",
+      "zeroPrice": "Le prix total est 0",
+      "goToCheckout": "Aller au checkout",
+      "total": "Total",
+      "available": "Disponible",
+      "soldOut": "Complet",
+      "today": "Aujourd'hui",
+      "tomorrow": "Demain",
+      "daysAway": "{count} jours",
+      "past": "Passé",
+      "viewDetails": "Voir les détails",
+      "description": "Description",
+      "orderSummary": "Récapitulatif de la commande",
+      "noTicketsSelected": "Vous n'avez sélectionné aucun billet",
+      "selectTickets": "Sélectionnez au moins un billet",
+      "row": "Rangée",
+      "seat": "Siège",
+      "viewOrganizerProfile": "Voir le profil de {name}",
+      "reviewsTitle": "Avis sur l'événement",
+      "noReviews": "Cet événement n'a pas encore d'avis."
+    },
     "organizer": {
       "title": "Mes Événements",
       "noEvents": "Vous n'avez pas d'événements.",
@@ -217,5 +246,30 @@
         "deleteConfirm": "Supprimer ce billet ?",
         "summary": "{count} billets"
       }
+    },
+    "profile": {
+      "notFound": "Profil introuvable.",
+      "backToHome": "Retour à l'accueil",
+      "organizedEventsTitle": "Événements organisés",
+      "organizedEventsCount": "{count} événements organisés",
+      "eventReviewsCount": "{count} avis d'événements",
+      "profileReviewsCount": "{count} avis de profil",
+      "noOrganizedEvents": "Cet utilisateur n'a pas encore d'événements organisés.",
+      "favoriteEventsTitle": "Événements favoris",
+      "noFavorites": "Vous n'avez pas encore d'événements favoris.",
+      "reviewsTitle": "Avis sur le profil",
+      "noReviews": "Il n'y a pas encore d'avis pour ce profil."
+    },
+    "comments": {
+      "loadError": "Erreur lors du chargement des commentaires.",
+      "loginToComment": "Connectez-vous pour laisser votre commentaire et votre note.",
+      "yourRating": "Votre note",
+      "placeholder": "Partagez votre expérience avec cet événement ou ce profil...",
+      "sending": "Envoi...",
+      "submit": "Publier l'avis",
+      "attended": "Participant vérifié",
+      "noRating": "Sans note",
+      "deleteReview": "Supprimer l'avis",
+      "deleting": "Suppression..."
     }
   }

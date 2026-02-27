@@ -152,6 +152,35 @@
       "next": "Próximo",
       "page": "Página {current} de {total}"
     },
+    "events": {
+      "notFound": "O evento não foi encontrado",
+      "backToList": "Voltar à lista de eventos",
+      "backToEvents": "Voltar aos eventos",
+      "availableTickets": "Ingressos disponíveis",
+      "tickets": "Ingressos",
+      "ticket": "ingresso",
+      "noTicketsAvailable": "Não há ingressos disponíveis.",
+      "maxTickets": "Você não pode selecionar mais de 5 ingressos",
+      "zeroPrice": "O preço total é 0",
+      "goToCheckout": "Ir para o checkout",
+      "total": "Total",
+      "available": "Disponível",
+      "soldOut": "Esgotado",
+      "today": "Hoje",
+      "tomorrow": "Amanhã",
+      "daysAway": "{count} dias",
+      "past": "Passado",
+      "viewDetails": "Ver detalhes",
+      "description": "Descrição",
+      "orderSummary": "Resumo do pedido",
+      "noTicketsSelected": "Você não selecionou nenhum ingresso",
+      "selectTickets": "Selecione pelo menos um ingresso",
+      "row": "Fila",
+      "seat": "Assento",
+      "viewOrganizerProfile": "Ver perfil de {name}",
+      "reviewsTitle": "Avaliações do evento",
+      "noReviews": "Este evento ainda não tem avaliações."
+    },
     "organizer": {
       "title": "Meus Eventos",
       "noEvents": "Você não tem eventos.",
@@ -217,5 +246,30 @@
         "deleteConfirm": "Excluir este ingresso?",
         "summary": "{count} ingressos"
       }
+    },
+    "profile": {
+      "notFound": "Perfil não encontrado.",
+      "backToHome": "Voltar ao início",
+      "organizedEventsTitle": "Eventos organizados",
+      "organizedEventsCount": "{count} eventos organizados",
+      "eventReviewsCount": "{count} avaliações de eventos",
+      "profileReviewsCount": "{count} avaliações de perfil",
+      "noOrganizedEvents": "Este usuário ainda não tem eventos organizados.",
+      "favoriteEventsTitle": "Eventos favoritos",
+      "noFavorites": "Você ainda não tem eventos favoritos.",
+      "reviewsTitle": "Avaliações do perfil",
+      "noReviews": "Ainda não há avaliações para este perfil."
+    },
+    "comments": {
+      "loadError": "Erro ao carregar comentários.",
+      "loginToComment": "Entre para deixar seu comentário e avaliação.",
+      "yourRating": "Sua avaliação",
+      "placeholder": "Compartilhe sua experiência com este evento ou perfil...",
+      "sending": "Enviando...",
+      "submit": "Publicar avaliação",
+      "attended": "Participante verificado",
+      "noRating": "Sem pontuação",
+      "deleteReview": "Excluir avaliação",
+      "deleting": "Excluindo..."
     }
   }

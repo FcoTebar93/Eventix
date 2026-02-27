@@ -180,6 +180,35 @@
       "payNow": "Pay now",
       "error": "Error creating order"
     },
+    "events": {
+      "notFound": "The event was not found",
+      "backToList": "Back to event list",
+      "backToEvents": "Back to events",
+      "availableTickets": "Available tickets",
+      "tickets": "Tickets",
+      "ticket": "ticket",
+      "noTicketsAvailable": "No tickets available.",
+      "maxTickets": "You cannot select more than 5 tickets",
+      "zeroPrice": "Total price is 0",
+      "goToCheckout": "Go to checkout",
+      "total": "Total",
+      "available": "Available",
+      "soldOut": "Sold out",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "daysAway": "{count} days",
+      "past": "Past",
+      "viewDetails": "View details",
+      "description": "Description",
+      "orderSummary": "Order summary",
+      "noTicketsSelected": "You have not selected any ticket",
+      "selectTickets": "Select at least one ticket",
+      "row": "Row",
+      "seat": "Seat",
+      "viewOrganizerProfile": "View {name}'s profile",
+      "reviewsTitle": "Event reviews",
+      "noReviews": "This event does not have any reviews yet."
+    },
     "organizer": {
       "title": "My Events",
       "noEvents": "You don't have any events.",
@@ -245,5 +274,30 @@
         "deleteConfirm": "Delete this ticket?",
         "summary": "{count} tickets"
       }
+    },
+    "profile": {
+      "notFound": "Profile not found.",
+      "backToHome": "Back to home",
+      "organizedEventsTitle": "Organized events",
+      "organizedEventsCount": "{count} organized events",
+      "eventReviewsCount": "{count} event reviews",
+      "profileReviewsCount": "{count} profile reviews",
+      "noOrganizedEvents": "This user has no organized events yet.",
+      "favoriteEventsTitle": "Favorite events",
+      "noFavorites": "You don't have favorite events yet.",
+      "reviewsTitle": "Profile reviews",
+      "noReviews": "There are no reviews for this profile yet."
+    },
+    "comments": {
+      "loadError": "Error loading comments.",
+      "loginToComment": "Sign in to leave your comment and rating.",
+      "yourRating": "Your rating",
+      "placeholder": "Share your experience with this event or profile...",
+      "sending": "Sending...",
+      "submit": "Publish review",
+      "attended": "Verified attendee",
+      "noRating": "No rating",
+      "deleteReview": "Delete review",
+      "deleting": "Deleting..."
     }
   }
