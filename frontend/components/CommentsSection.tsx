@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { useAuthStore } from '@/store/authStore';
-import { getEventReviews, createEventReview, getUserProfileReviews, createUserProfileReview, type GetEventReviewsResult, type GetUserProfileReviewsResult } from '@/lib/api';
+import { getEventReviews, createEventReview, getUserProfileReviews, createUserProfileReview, deleteEventReview, deleteUserProfileReview, type GetEventReviewsResult, type GetUserProfileReviewsResult } from '@/lib/api';
 import type { EventReview, UserProfileReview } from '@/lib/types';
 import { RatingStars } from './RatingStars';
 import { UserAvatar } from './UserAvatar';
@@ -85,6 +85,38 @@ export function CommentsSection(props: CommentsSectionProps) {
   const reviews = (data?.reviews ?? []) as Comment[];
   const averageRating = data?.averageRating ?? null;
 
+  const myReview = useMemo(() => {
+    if (!user) return null;
+    return reviews.find((review) => {
+      const isEventReview = (review as EventReview).user !== undefined;
+      const author = isEventReview
+        ? (review as EventReview).user
+        : (review as UserProfileReview).authorUser;
+      return author.id === user.id;
+    }) as Comment | null;
+  }, [reviews, user]);
+
+  useEffect(() => {
+    if (!myReview) return;
+    setRating(myReview.rating);
+    setComment(myReview.comment ?? '');
+  }, [myReview]);
+
+  const deleteMutation = useMutation<unknown, Error, void>({
+    mutationFn: async () => {
+      if (kind === 'event') {
+        await deleteEventReview(targetId);
+      } else {
+        await deleteUserProfileReview(targetId);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey });
+      setComment('');
+      setRating(5);
+    },
+  });
+
   return (
     <section className="mt-10 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6">
       <div className="flex items-center justify-between gap-4">
@@ -151,10 +183,36 @@ export function CommentsSection(props: CommentsSectionProps) {
                     size="sm"
                   />
                   <div className="flex flex-col items-end gap-1">
-                    <RatingStars value={review.rating} size="sm" />
+                    <div className="flex items-center gap-2">
+                      {review.rating > 0 ? (
+                        <RatingStars value={review.rating} size="sm" />
+                      ) : (
+                        <span className="rounded-full bg-[var(--bg-secondary)] px-2 py-0.5 text-xs text-[var(--text-secondary)] border border-[var(--border)]">
+                          {t('noRating')}
+                        </span>
+                      )}
+                      {kind === 'event' &&
+                        (review as EventReview).hasAttended && (
+                          <span className="rounded-full bg-green-500/20 px-2 py-0.5 text-xs font-medium text-green-400 border border-green-500/40">
+                            {t('attended')}
+                          </span>
+                        )}
+                    </div>
                     <span className="text-xs text-[var(--text-secondary)]">
                       {new Date(review.createdAt).toLocaleDateString()}
                     </span>
+                    {user && myReview && myReview.id === review.id && (
+                      <button
+                        type="button"
+                        onClick={() => deleteMutation.mutate()}
+                        className="mt-1 text-[10px] text-red-400 hover:text-red-300"
+                        disabled={deleteMutation.isPending}
+                      >
+                        {deleteMutation.isPending
+                          ? t('deleting')
+                          : t('deleteReview')}
+                      </button>
+                    )}
                   </div>
                 </div>
                 {review.comment && (
