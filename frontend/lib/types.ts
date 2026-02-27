@@ -48,6 +48,7 @@ export interface EventReview {
   comment: string | null;
   createdAt: string;
   updatedAt: string;
+  hasAttended?: boolean;
   user: {
     id: string;
     name: string;

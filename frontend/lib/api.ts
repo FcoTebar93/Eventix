@@ -111,6 +111,10 @@ export async function createEventReview(eventId: string, body: { rating: number;
   return data.data;
 }
 
+export async function deleteEventReview(eventId: string): Promise<void> {
+  await api.delete<ApiResponse<unknown>>(`/events/${eventId}/reviews`);
+}
+
 export interface GetTicketsParams {
   page?: number;
   limit?: number;
@@ -233,6 +237,10 @@ export async function createUserProfileReview(userId: string, body: { rating: nu
     totalReviews: number;
   }>>(`/users/${userId}/reviews`, body);
   return data.data;
+}
+
+export async function deleteUserProfileReview(userId: string): Promise<void> {
+  await api.delete<ApiResponse<unknown>>(`/users/${userId}/reviews`);
 }
 
 export interface GetFavoritesParams {
