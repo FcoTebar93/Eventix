@@ -1,4 +1,4 @@
-import { EventStatus } from '@prisma/client';
+import { EventStatus, OrderStatus } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 import { AppError } from '../middleware/errorHandler';
 import { CreateEventReviewInput, GetEventReviewsQuery, CreateUserReviewInput, GetUserReviewsQuery } from '../schemas/reviews.schema';
@@ -31,8 +31,32 @@ export const getEventReviews = async (
         }),
     ]);
 
+    // Calcular qué usuarios han asistido (tienen una orden confirmada/completada para este evento)
+    const reviewerIds = reviews.map((r) => r.userId);
+    let attendedUserIds = new Set<string>();
+
+    if (reviewerIds.length > 0) {
+        const attendeeOrders = await prisma.order.findMany({
+            where: {
+                userId: { in: reviewerIds },
+                eventId,
+                status: {
+                    in: [OrderStatus.CONFIRMED, OrderStatus.COMPLETED],
+                },
+            },
+            select: { userId: true },
+        });
+
+        attendedUserIds = new Set(attendeeOrders.map((o) => o.userId));
+    }
+
+    const reviewsWithAttendance = reviews.map((r) => ({
+        ...r,
+        hasAttended: attendedUserIds.has(r.userId),
+    }));
+
     return {
-        reviews,
+        reviews: reviewsWithAttendance,
         total,
         page: validPage,
         totalPages: Math.ceil(total / validLimit),
@@ -89,8 +113,22 @@ export const upsertEventReview = async (
         _count: { rating: true },
     });
 
+    const hasAttended = await prisma.order.findFirst({
+        where: {
+            userId,
+            eventId,
+            status: {
+                in: [OrderStatus.CONFIRMED, OrderStatus.COMPLETED],
+            },
+        },
+        select: { id: true },
+    });
+
     return {
-        review,
+        review: {
+            ...review,
+            hasAttended: !!hasAttended,
+        },
         averageRating: aggregate._avg.rating ?? null,
         totalReviews: aggregate._count.rating,
     };
@@ -197,4 +235,28 @@ export const upsertUserProfileReview = async (
         totalReviews: aggregate._count.rating,
     };
 }
+
+export const deleteEventReview = async (
+    eventId: string,
+    userId: string,
+) => {
+    await prisma.review.deleteMany({
+        where: {
+            eventId,
+            userId,
+        },
+    });
+};
+
+export const deleteUserProfileReview = async (
+    targetUserId: string,
+    authorUserId: string,
+) => {
+    await userReviewDelegate.deleteMany({
+        where: {
+            targetUserId,
+            authorUserId,
+        },
+    });
+};
 
