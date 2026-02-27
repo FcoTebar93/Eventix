@@ -1,7 +1,7 @@
 import { releaseExpiredReservations } from '../services/reservations.services';
 import { logger } from '../utils/logger';
 
-const INTERVAL_MS = 1000 * 60 * 5; //  Se ejecuta cada 5 minutos
+const INTERVAL_MS = 1000 * 60 * 5;
 
 let intervalID: NodeJS.Timeout | null = null;
 

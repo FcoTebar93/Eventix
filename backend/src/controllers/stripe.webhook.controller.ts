@@ -89,8 +89,8 @@ async function handlePaymentIntentSucceeded(event: any): Promise<void> {
                 method: 'CREDIT_CARD',
             });
         }
-    } catch (error: any) {
-        // Error silenciado
+    } catch (err) {
+        console.error('Error al confirmar la suscripción:', err instanceof Error ? err.message : err);
     }
 }
 

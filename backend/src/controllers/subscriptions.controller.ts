@@ -1,8 +1,9 @@
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { AuthenticatedRequest } from '../types';
 import * as subscriptionsService from '../services/subscriptions.service';
 import { logger } from '../utils/logger';
 import { asyncHandler } from '../utils/asyncHandler';
+import { AppError } from '../middleware/errorHandler';
 
 export const createSubscription = asyncHandler(
     async (req: AuthenticatedRequest, res: Response): Promise<void> => {

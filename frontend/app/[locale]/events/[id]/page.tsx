@@ -42,7 +42,6 @@ export default function EventDetailPage() {
 
     const tickets = ticketsData?.tickets ?? [];
 
-    // Agrupar por tipo+precio para que "cantidad 2" = 2 IDs distintos (2 filas en DB)
     const ticketGroups = useMemo(() => {
         const groups = new Map<string, Ticket[]>();
         tickets.forEach((t) => {
@@ -53,7 +52,6 @@ export default function EventDetailPage() {
         return Array.from(groups.entries()).map(([key, list]) => ({ key, tickets: list }));
     }, [tickets]);
 
-    // quantities keyed by group key (tipo-precio)
     const ticketIds = useMemo(() => {
         const ids: string[] = [];
         ticketGroups.forEach(({ key, tickets: groupTickets }) => {

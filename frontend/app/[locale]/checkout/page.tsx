@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from '@/i18n/routing';
 import { useQuery } from '@tanstack/react-query';
@@ -82,11 +82,16 @@ export default function CheckoutPage() {
         }
     };
 
+    const elementsOptions = useMemo(
+        () => (clientSecret ? { clientSecret } : null),
+        [clientSecret],
+    );
+
     if (!eventId || ticketIds.length === 0) {
         return null;
     }
 
-    if (clientSecret && orderId && paymentIntentId) {
+    if (clientSecret && orderId && paymentIntentId && elementsOptions) {
         return (
             <ProtectedRoute>
                 <div className="mx-auto max-w-lg px-4 py-8">
@@ -99,7 +104,7 @@ export default function CheckoutPage() {
                         {t('total')}: <span className="font-semibold text-white">{total.toFixed(2)} €</span>
                     </p>
                     <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4">
-                        <Elements stripe={stripePromise} options={{ clientSecret }}>
+                        <Elements stripe={stripePromise} options={elementsOptions}>
                             <CheckoutPaymentForm
                                 orderId={orderId}
                                 paymentIntentId={paymentIntentId}

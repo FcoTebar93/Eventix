@@ -25,8 +25,6 @@ export const register = async (data: RegisterInput): Promise<{
 
     const hashedPassword = await hashPassword(data.password);
 
-    // Todos los usuarios se crean como BUYER inicialmente
-    // El rol se actualizará a ORGANIZER cuando se active la suscripción
     const finalRole = data.role || UserRole.BUYER;
 
     const user = await prisma.user.create({
