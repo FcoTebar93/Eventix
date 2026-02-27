@@ -13,6 +13,27 @@ export const updateProfileSchema = z.object({
         .toLowerCase()
         .trim()
         .optional(),
+    displayName: z
+        .string()
+        .min(2, 'El nombre público debe tener al menos 2 caracteres')
+        .max(100, 'El nombre público no puede exceder 100 caracteres')
+        .trim()
+        .optional(),
+    bio: z
+        .string()
+        .max(500, 'La bio no puede exceder 500 caracteres')
+        .trim()
+        .optional(),
+    avatarUrl: z
+        .string()
+        .url('La URL del avatar no es válida')
+        .max(500, 'La URL del avatar no puede exceder 500 caracteres')
+        .optional(),
+    location: z
+        .string()
+        .max(100, 'La ubicación no puede exceder 100 caracteres')
+        .trim()
+        .optional(),
 }).refine((data) => Object.keys(data).length > 0, {
     message: 'Al menos un campo debe ser proporcionado para actualizar',
 });
