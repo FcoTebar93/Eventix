@@ -77,6 +77,16 @@ export function Navbar() {
                                     {t('myEvents')}
                                 </Link>
                             )}
+                            {user.role === 'ADMIN' && (
+                                <Link
+                                    href="/admin"
+                                    className={`text-sm font-medium transition-colors ${
+                                        pathname === '/admin' || pathname?.startsWith('/admin') ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)] hover:text-white'
+                                    }`}
+                                >
+                                    {t('admin')}
+                                </Link>
+                            )}
                             <Link
                                 href="/profile"
                                 className={`text-sm font-medium transition-colors ${

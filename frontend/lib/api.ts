@@ -79,6 +79,11 @@ export async function getEvents(params?: GetEventsParams): Promise<GetEventsResu
   return data.data;
 }
 
+export async function getAdminEvents(params?: GetEventsParams): Promise<GetEventsResult> {
+  const { data } = await api.get<ApiResponse<GetEventsResult>>('/admin/events', { params });
+  return data.data;
+}
+
 export async function getEventById(id: string) {
   const { data } = await api.get<ApiResponse<{ event: Event }>>(`/events/${id}`);
   return data.data.event;
@@ -323,6 +328,68 @@ export async function updateEvent(eventId: string, body: { title?: string; descr
 
 export async function deleteEvent(eventId: string): Promise<void> {
   await api.delete<ApiResponse<unknown>>(`/events/${eventId}`);
+}
+
+export interface AdminDashboardStats {
+  totalUsers: number;
+  totalEvents: number;
+  totalOrders: number;
+  totalRevenue: number;
+  ordersCompleted: number;
+}
+
+export async function getAdminDashboard(): Promise<AdminDashboardStats> {
+  const { data } = await api.get<ApiResponse<AdminDashboardStats>>('/admin/dashboard');
+  return data.data;
+}
+
+export interface AdminUser {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  createdAt: string;
+}
+
+export interface GetAllUsersResult {
+  users: AdminUser[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+export async function getAllUsers(params?: { page?: number; limit?: number }): Promise<GetAllUsersResult> {
+  const { data } = await api.get<ApiResponse<GetAllUsersResult>>('/users', { params });
+  return data.data;
+}
+
+export interface GetOrdersAdminParams {
+  page?: number;
+  limit?: number;
+  status?: string;
+  eventId?: string;
+}
+
+export interface GetOrdersAdminResult {
+  orders: import('./types').Order[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+export async function getOrdersAdmin(params?: GetOrdersAdminParams): Promise<GetOrdersAdminResult> {
+  const { data } = await api.get<ApiResponse<GetOrdersAdminResult>>('/orders', { params });
+  return data.data;
+}
+
+export interface ReleaseReservationsResult {
+  released: number;
+  ordersCancelled: number;
+}
+
+export async function releaseExpiredReservations(): Promise<ReleaseReservationsResult> {
+  const { data } = await api.post<ApiResponse<{ released: number; ordersCancelled: number }>>('/admin/release-expired-reservations');
+  return data.data;
 }
 
 export default api;
