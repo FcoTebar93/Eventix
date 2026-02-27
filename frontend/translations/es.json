@@ -24,7 +24,8 @@
       "login": "Iniciar sesión",
       "register": "Registrarse",
       "logout": "Cerrar sesión",
-      "profile": "Mi perfil"
+      "profile": "Mi perfil",
+      "admin": "Admin"
     },
     "auth": {
       "login": {
@@ -316,5 +317,32 @@
       "noRating": "Sin puntuación",
       "deleteReview": "Eliminar reseña",
       "deleting": "Eliminando..."
+    },
+    "admin": {
+      "title": "Panel de administración",
+      "dashboard": "Dashboard",
+      "statsUsers": "Usuarios",
+      "statsEvents": "Eventos",
+      "statsOrders": "Pedidos",
+      "statsRevenue": "Ingresos",
+      "reservationsTitle": "Reservas expiradas",
+      "reservationsDescription": "Libera las entradas que quedaron reservadas y ya pasó el tiempo de espera.",
+      "releaseReservations": "Liberar reservas expiradas",
+      "releasing": "Liberando...",
+      "reservationsReleased": "Se liberaron {count} entradas y se cancelaron {orders} pedidos.",
+      "noReservationsToRelease": "No hay reservas expiradas que liberar.",
+      "releaseError": "Error al liberar reservas.",
+      "usersTitle": "Usuarios",
+      "eventsTitle": "Eventos",
+      "ordersTitle": "Pedidos",
+      "viewProfile": "Ver perfil",
+      "viewEvent": "Ver evento",
+      "viewOrder": "Ver pedido",
+      "allStatuses": "Todos los estados",
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "pageOf": "Página {current} de {total}",
+      "noEvents": "No hay eventos con este filtro.",
+      "noOrders": "No hay pedidos con este filtro."
     }
   }

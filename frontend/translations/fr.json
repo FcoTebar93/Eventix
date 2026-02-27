@@ -24,7 +24,8 @@
       "login": "Se connecter",
       "register": "S'inscrire",
       "logout": "Se déconnecter",
-      "profile": "Mon Profil"
+      "profile": "Mon Profil",
+      "admin": "Admin"
     },
     "auth": {
       "login": {
@@ -288,5 +289,32 @@
       "noRating": "Sans note",
       "deleteReview": "Supprimer l'avis",
       "deleting": "Suppression..."
+    },
+    "admin": {
+      "title": "Panel d'administration",
+      "dashboard": "Dashboard",
+      "statsUsers": "Utilisateurs",
+      "statsEvents": "Événements",
+      "statsOrders": "Commandes",
+      "statsRevenue": "Revenus",
+      "reservationsTitle": "Réservations expirées",
+      "reservationsDescription": "Libérez les billets réservés dont le délai est dépassé.",
+      "releaseReservations": "Libérer les réservations expirées",
+      "releasing": "Libération...",
+      "reservationsReleased": "{count} billets libérés et {orders} commandes annulées.",
+      "noReservationsToRelease": "Aucune réservation expirée à libérer.",
+      "releaseError": "Erreur lors de la libération.",
+      "usersTitle": "Utilisateurs",
+      "eventsTitle": "Événements",
+      "ordersTitle": "Commandes",
+      "viewProfile": "Voir le profil",
+      "viewEvent": "Voir l'événement",
+      "viewOrder": "Voir la commande",
+      "allStatuses": "Tous les statuts",
+      "previous": "Précédent",
+      "next": "Suivant",
+      "pageOf": "Page {current} sur {total}",
+      "noEvents": "Aucun événement avec ce filtre.",
+      "noOrders": "Aucune commande avec ce filtre."
     }
   }

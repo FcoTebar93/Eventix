@@ -24,7 +24,8 @@
       "login": "Accedi",
       "register": "Registrati",
       "logout": "Esci",
-      "profile": "Il Mio Profilo"
+      "profile": "Il Mio Profilo",
+      "admin": "Admin"
     },
     "auth": {
       "login": {
@@ -288,5 +289,32 @@
       "noRating": "Senza valutazione",
       "deleteReview": "Elimina recensione",
       "deleting": "Eliminazione..."
+    },
+    "admin": {
+      "title": "Pannello di amministrazione",
+      "dashboard": "Dashboard",
+      "statsUsers": "Utenti",
+      "statsEvents": "Eventi",
+      "statsOrders": "Ordini",
+      "statsRevenue": "Ricavi",
+      "reservationsTitle": "Prenotazioni scadute",
+      "reservationsDescription": "Rilascia i biglietti prenotati oltre il tempo di attesa.",
+      "releaseReservations": "Rilascia prenotazioni scadute",
+      "releasing": "Rilascio...",
+      "reservationsReleased": "{count} biglietti rilasciati e {orders} ordini annullati.",
+      "noReservationsToRelease": "Nessuna prenotazione scaduta da rilasciare.",
+      "releaseError": "Errore nel rilascio.",
+      "usersTitle": "Utenti",
+      "eventsTitle": "Eventi",
+      "ordersTitle": "Ordini",
+      "viewProfile": "Vedi profilo",
+      "viewEvent": "Vedi evento",
+      "viewOrder": "Vedi ordine",
+      "allStatuses": "Tutti gli stati",
+      "previous": "Precedente",
+      "next": "Successivo",
+      "pageOf": "Pagina {current} di {total}",
+      "noEvents": "Nessun evento con questo filtro.",
+      "noOrders": "Nessun ordine con questo filtro."
     }
   }

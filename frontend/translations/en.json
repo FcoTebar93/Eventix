@@ -24,7 +24,8 @@
       "login": "Sign In",
       "register": "Sign Up",
       "logout": "Sign Out",
-      "profile": "My Profile"
+      "profile": "My Profile",
+      "admin": "Admin"
     },
     "auth": {
       "login": {
@@ -316,5 +317,32 @@
       "noRating": "No rating",
       "deleteReview": "Delete review",
       "deleting": "Deleting..."
+    },
+    "admin": {
+      "title": "Admin panel",
+      "dashboard": "Dashboard",
+      "statsUsers": "Users",
+      "statsEvents": "Events",
+      "statsOrders": "Orders",
+      "statsRevenue": "Revenue",
+      "reservationsTitle": "Expired reservations",
+      "reservationsDescription": "Release tickets that were reserved and past their hold time.",
+      "releaseReservations": "Release expired reservations",
+      "releasing": "Releasing...",
+      "reservationsReleased": "Released {count} tickets and cancelled {orders} orders.",
+      "noReservationsToRelease": "No expired reservations to release.",
+      "releaseError": "Error releasing reservations.",
+      "usersTitle": "Users",
+      "eventsTitle": "Events",
+      "ordersTitle": "Orders",
+      "viewProfile": "View profile",
+      "viewEvent": "View event",
+      "viewOrder": "View order",
+      "allStatuses": "All statuses",
+      "previous": "Previous",
+      "next": "Next",
+      "pageOf": "Page {current} of {total}",
+      "noEvents": "No events with this filter.",
+      "noOrders": "No orders with this filter."
     }
   }
