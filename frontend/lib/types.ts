@@ -9,6 +9,10 @@ export interface User {
   email: string;
   name: string;
   role: UserRole;
+  displayName?: string | null;
+  bio?: string | null;
+  avatarUrl?: string | null;
+  location?: string | null;
 }
 
 export interface AuthTokens {
@@ -29,12 +33,59 @@ export interface Event {
   category: string | null;
   status: EventStatus;
   organizerId?: string;
-  organizer?: { id: string; name: string; email: string };
+  organizer?: { id: string; name: string; email: string; displayName?: string | null; avatarUrl?: string | null };
   tags?: EventTagItem[];
   isFavorite?: boolean;
   _count?: { tickets: number; reviews: number; favorites: number };
+  averageRating?: number | null;
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface EventReview {
+  id: string;
+  rating: number;
+  comment: string | null;
+  createdAt: string;
+  updatedAt: string;
+  user: {
+    id: string;
+    name: string;
+    displayName?: string | null;
+    avatarUrl?: string | null;
+  };
+}
+
+export interface UserProfile {
+  id: string;
+  name: string;
+  displayName?: string | null;
+  bio?: string | null;
+  avatarUrl?: string | null;
+  location?: string | null;
+  role: UserRole;
+  createdAt: string;
+  stats: {
+    organizedEventsCount: number;
+    averageEventRating: number | null;
+    averageProfileRating: number | null;
+    totalEventReviews: number;
+    totalProfileReviews: number;
+  };
+}
+
+export interface UserProfileReview {
+  id: string;
+  rating: number;
+  comment: string | null;
+  createdAt: string;
+  updatedAt: string;
+  authorUser: {
+    id: string;
+    name: string;
+    displayName?: string | null;
+    avatarUrl?: string | null;
+  };
 }
 
 export interface EventTagItem {

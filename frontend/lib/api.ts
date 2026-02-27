@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import type { ApiResponse, AuthTokens, Event, EventStatus } from './types';
+import type { ApiResponse, AuthTokens, Event, EventStatus, EventReview, UserProfile, UserProfileReview } from './types';
 import { useAuthStore } from '@/store/authStore';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -82,6 +82,33 @@ export async function getEvents(params?: GetEventsParams): Promise<GetEventsResu
 export async function getEventById(id: string) {
   const { data } = await api.get<ApiResponse<{ event: Event }>>(`/events/${id}`);
   return data.data.event;
+}
+export interface GetEventReviewsResult {
+  reviews: EventReview[];
+  total: number;
+  page: number;
+  totalPages: number;
+  averageRating: number | null;
+}
+
+export async function getEventReviews(
+  eventId: string,
+  params?: { page?: number; limit?: number },
+): Promise<GetEventReviewsResult> {
+  const { data } = await api.get<ApiResponse<GetEventReviewsResult>>(
+    `/events/${eventId}/reviews`,
+    { params },
+  );
+  return data.data;
+}
+
+export async function createEventReview(eventId: string, body: { rating: number; comment?: string }) {
+  const { data } = await api.post<ApiResponse<{
+    review: EventReview;
+    averageRating: number | null;
+    totalReviews: number;
+  }>>(`/events/${eventId}/reviews`, body);
+  return data.data;
 }
 
 export interface GetTicketsParams {
@@ -176,6 +203,36 @@ export async function cancelSubscription(cancelImmediately: boolean = false): Pr
 export async function getMySubscription() {
   const { data } = await api.get<ApiResponse<{ subscription: any }>>('/stripe/subscriptions/me');
   return data.data.subscription;
+}
+
+export async function getPublicProfile(userId: string): Promise<{ profile: UserProfile }> {
+  const { data } = await api.get<ApiResponse<{ profile: UserProfile }>>(`/users/${userId}/public`);
+  return data.data;
+}
+
+export interface GetUserProfileReviewsResult {
+  reviews: UserProfileReview[];
+  total: number;
+  page: number;
+  totalPages: number;
+  averageRating: number | null;
+}
+
+export async function getUserProfileReviews(userId: string, params?: { page?: number; limit?: number }): Promise<GetUserProfileReviewsResult> {
+  const { data } = await api.get<ApiResponse<GetUserProfileReviewsResult>>(
+    `/users/${userId}/reviews`,
+    { params },
+  );
+  return data.data;
+}
+
+export async function createUserProfileReview(userId: string, body: { rating: number; comment?: string }) {
+  const { data } = await api.post<ApiResponse<{
+    review: UserProfileReview;
+    averageRating: number | null;
+    totalReviews: number;
+  }>>(`/users/${userId}/reviews`, body);
+  return data.data;
 }
 
 export interface GetFavoritesParams {
