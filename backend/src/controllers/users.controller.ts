@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { AuthenticatedRequest } from '../types';
+import * as eventsService from '../services/events.service';
 import { updateProfileSchema, changePasswordSchema, userIdParamsSchema } from '../schemas/users.schema';
 import * as usersService from '../services/users.service';
 import { logger } from '../utils/logger';
@@ -129,6 +130,25 @@ export const getAllUsers = async (
         res.status(200).json({
             success: true,
             data: result,
+        });
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getUserOrganizedEvents = async (
+    req: Request,
+    res: Response,
+): Promise<void> => {
+    try {
+        const { id } = userIdParamsSchema.parse(req.params);
+        const events = await eventsService.getEventsByOrganizer(id, false);
+
+        res.status(200).json({
+            success: true,
+            data: {
+                events,
+            },
         });
     } catch (error) {
         throw error;

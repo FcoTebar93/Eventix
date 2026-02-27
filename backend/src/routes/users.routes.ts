@@ -10,6 +10,7 @@ router.patch('/profile', authenticate, usersController.updateProfile);
 router.post('/profile/change-password', authenticate, usersController.changePassword);
 
 router.get('/:id/public', usersController.getPublicProfile);
+router.get('/:id/events', usersController.getUserOrganizedEvents);
 router.get('/:id/reviews', reviewsController.getUserProfileReviews);
 router.post('/:id/reviews', authenticate, reviewsController.createUserProfileReview);
 router.delete('/:id/reviews', authenticate, reviewsController.deleteUserProfileReview);
