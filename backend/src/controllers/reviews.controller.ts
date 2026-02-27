@@ -5,10 +5,7 @@ import { eventIdParamsSchema } from '../schemas/events.schema';
 import { userIdParamsSchema } from '../schemas/users.schema';
 import * as reviewsService from '../services/reviews.service';
 
-export const getEventReviews = async (
-    req: Request,
-    res: Response,
-): Promise<void> => {
+export const getEventReviews = async (req: Request, res: Response): Promise<void> => {
     try {
         const { id } = eventIdParamsSchema.parse(req.params);
         const query = getEventReviewsQuerySchema.parse(req.query);
@@ -23,10 +20,7 @@ export const getEventReviews = async (
     }
 };
 
-export const createEventReview = async (
-    req: AuthenticatedRequest,
-    res: Response,
-): Promise<void> => {
+export const createEventReview = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
         if (!req.user) {
             throw new Error('User not authenticated');
@@ -50,10 +44,7 @@ export const createEventReview = async (
     }
 };
 
-export const getUserProfileReviews = async (
-    req: Request,
-    res: Response,
-): Promise<void> => {
+export const getUserProfileReviews = async (req: Request, res: Response): Promise<void> => {
     try {
         const { id } = userIdParamsSchema.parse(req.params);
         const query = getUserReviewsQuerySchema.parse(req.query);
@@ -68,10 +59,7 @@ export const getUserProfileReviews = async (
     }
 };
 
-export const createUserProfileReview = async (
-    req: AuthenticatedRequest,
-    res: Response,
-): Promise<void> => {
+export const createUserProfileReview = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
         if (!req.user) {
             throw new Error('User not authenticated');
@@ -90,6 +78,39 @@ export const createUserProfileReview = async (
             message: 'Reseña de perfil guardada correctamente',
             data: result,
         });
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const deleteEventReview = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+        if (!req.user) {
+            throw new Error('User not authenticated');
+        }
+
+        const { id } = eventIdParamsSchema.parse(req.params);
+        await reviewsService.deleteEventReview(id, req.user.userId);
+
+        res.status(204).send();
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const deleteUserProfileReview = async (
+    req: AuthenticatedRequest,
+    res: Response,
+): Promise<void> => {
+    try {
+        if (!req.user) {
+            throw new Error('User not authenticated');
+        }
+
+        const { id } = userIdParamsSchema.parse(req.params);
+        await reviewsService.deleteUserProfileReview(id, req.user.userId);
+
+        res.status(204).send();
     } catch (error) {
         throw error;
     }

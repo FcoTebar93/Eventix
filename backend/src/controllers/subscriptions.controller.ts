@@ -1,16 +1,9 @@
-/**
- * Controladores para gestión de suscripciones Premium
- */
-
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { AuthenticatedRequest } from '../types';
 import * as subscriptionsService from '../services/subscriptions.service';
 import { logger } from '../utils/logger';
 import { asyncHandler } from '../utils/asyncHandler';
 
-/**
- * Crea una suscripción Premium para el usuario autenticado
- */
 export const createSubscription = asyncHandler(
     async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         if (!req.user) {
@@ -40,16 +33,13 @@ export const createSubscription = asyncHandler(
     },
 );
 
-/**
- * Cancela la suscripción Premium del usuario autenticado
- */
 export const cancelSubscription = asyncHandler(
     async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         if (!req.user) {
             throw new Error('User not authenticated');
         }
 
-        const { cancelImmediately } = req.body;
+        const { cancelImmediately } = req.body as { cancelImmediately?: boolean };
 
         await subscriptionsService.cancelPremiumSubscription(
             req.user.userId,
@@ -67,9 +57,6 @@ export const cancelSubscription = asyncHandler(
     },
 );
 
-/**
- * Obtiene la suscripción del usuario autenticado
- */
 export const getMySubscription = asyncHandler(
     async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         if (!req.user) {
