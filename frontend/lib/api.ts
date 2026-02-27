@@ -218,6 +218,21 @@ export async function getPublicProfile(userId: string): Promise<{ profile: UserP
   return data.data;
 }
 
+export async function updateMyProfile(body: {
+  name?: string;
+  email?: string;
+  displayName?: string;
+  bio?: string;
+  avatarUrl?: string;
+  location?: string;
+}) {
+  const { data } = await api.patch<ApiResponse<{ user: import('./types').User }>>(
+    '/users/profile',
+    body,
+  );
+  return data.data.user;
+}
+
 export async function getUserOrganizedEvents(userId: string): Promise<{ events: Event[] }> {
   const { data } = await api.get<ApiResponse<{ events: Event[] }>>(`/users/${userId}/events`);
   return data.data;

@@ -77,9 +77,16 @@ export function Navbar() {
                                     {t('myEvents')}
                                 </Link>
                             )}
-                            <span className="text-sm text-[var(--text-secondary)]">
-                                {user.name}
-                            </span>
+                            <Link
+                                href="/profile"
+                                className={`text-sm font-medium transition-colors ${
+                                    pathname === '/profile'
+                                        ? 'text-[var(--accent)]'
+                                        : 'text-[var(--text-secondary)] hover:text-white'
+                                }`}
+                            >
+                                {t('profile')}
+                            </Link>
                             <button
                                 type="button"
                                 onClick={handleLogout}
