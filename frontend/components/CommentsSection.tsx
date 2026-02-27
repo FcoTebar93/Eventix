@@ -113,7 +113,7 @@ export function CommentsSection(props: CommentsSectionProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
       setComment('');
-      setRating(5);
+      setRating(0);
     },
   });
 

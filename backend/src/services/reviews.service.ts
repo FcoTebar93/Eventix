@@ -26,7 +26,12 @@ export const getEventReviews = async (
         }),
         prisma.review.count({ where: { eventId } }),
         prisma.review.aggregate({
-            where: { eventId },
+            where: {
+                eventId,
+                rating: {
+                    gt: 0,
+                },
+            },
             _avg: { rating: true },
         }),
     ]);
@@ -108,7 +113,12 @@ export const upsertEventReview = async (
     });
 
     const aggregate = await prisma.review.aggregate({
-        where: { eventId },
+        where: {
+            eventId,
+            rating: {
+                gt: 0,
+            },
+        },
         _avg: { rating: true },
         _count: { rating: true },
     });
@@ -162,7 +172,12 @@ export const getUserProfileReviews = async (
         }),
         userReviewDelegate.count({ where: { targetUserId } }),
         userReviewDelegate.aggregate({
-            where: { targetUserId },
+            where: {
+                targetUserId,
+                rating: {
+                    gt: 0,
+                },
+            },
             _avg: { rating: true },
         }),
     ]);
@@ -224,7 +239,12 @@ export const upsertUserProfileReview = async (
     });
 
     const aggregate = await userReviewDelegate.aggregate({
-        where: { targetUserId },
+        where: {
+            targetUserId,
+            rating: {
+                gt: 0,
+            },
+        },
         _avg: { rating: true },
         _count: { rating: true },
     });

@@ -4,7 +4,7 @@ export const createEventReviewSchema = z.object({
     rating: z
         .number()
         .int('La puntuación debe ser un número entero')
-        .min(1, 'La puntuación mínima es 1')
+        .min(0, 'La puntuación mínima es 0')
         .max(5, 'La puntuación máxima es 5'),
     comment: z
         .string()
@@ -22,7 +22,7 @@ export const createUserReviewSchema = z.object({
     rating: z
         .number()
         .int('La puntuación debe ser un número entero')
-        .min(1, 'La puntuación mínima es 1')
+        .min(0, 'La puntuación mínima es 0')
         .max(5, 'La puntuación máxima es 5'),
     comment: z
         .string()
