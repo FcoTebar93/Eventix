@@ -79,6 +79,12 @@ model User {
   name      String
   role      UserRole @default(BUYER)
   
+  // Perfil público
+  displayName String?  // Nombre mostrado públicamente (si no, se usa name)
+  bio         String?  @db.Text // Descripción corta del usuario/organizador
+  avatarUrl   String?  // URL de la imagen de perfil
+  location    String?  // Ciudad/país del usuario
+  
   // Relaciones
   organizedEvents Event[]       @relation("EventOrganizer")
   soldTickets     Ticket[]      @relation("TicketSeller")
@@ -87,6 +93,8 @@ model User {
   reviews         Review[]
   favorites       Favorite[]
   subscriptions   Subscription[] @relation("UserSubscriptions")
+  profileReviewsReceived UserReview[] @relation("UserProfileTarget")
+  profileReviewsGiven    UserReview[] @relation("UserProfileAuthor")
   
   // Auditoría
   createdAt DateTime @default(now())
@@ -291,6 +299,24 @@ model Favorite {
   @@index([userId])
   @@index([eventId])
   @@map("favorites")
+}
+
+model UserReview {
+  id            String   @id @default(uuid())
+  targetUserId  String
+  targetUser    User     @relation("UserProfileTarget", fields: [targetUserId], references: [id], onDelete: Cascade)
+  authorUserId  String
+  authorUser    User     @relation("UserProfileAuthor", fields: [authorUserId], references: [id], onDelete: Cascade)
+  rating        Int      // 1-5 estrellas
+  comment       String?  @db.Text
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([targetUserId])
+  @@index([authorUserId])
+  @@unique([targetUserId, authorUserId])
+  @@map("user_reviews")
 }
 
 model Tag {
