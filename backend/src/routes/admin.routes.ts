@@ -9,6 +9,8 @@ router.use(authenticate, requireRole('ADMIN'));
 
 router.get('/dashboard', adminController.getDashboard);
 router.get('/events', adminController.getEvents);
+router.patch('/users/:id/role', adminController.updateUserRole);
+router.patch('/events/:id/status', adminController.updateEventStatus);
 
 router.post('/release-expired-reservations', async (_req, res) => {
     try {
