@@ -195,6 +195,38 @@ export default function EventDetailPage() {
                             <p className="mt-4 text-[var(--text-secondary)]">{event.description}</p>
                         )}
 
+                        {event.venue && event.city && event.country && (
+                            <section className="mt-6 space-y-3">
+                                <h2 className="text-lg font-semibold text-white">
+                                    {t('locationTitle', { defaultMessage: 'Ubicación' })}
+                                </h2>
+                                {event.address && (
+                                    <p className="text-sm text-[var(--text-secondary)]">
+                                        {event.venue}
+                                        {' · '}
+                                        {event.address}, {event.city}, {event.country}
+                                    </p>
+                                )}
+                                <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)]">
+                                    <iframe
+                                        title="Ubicación del evento"
+                                        width="100%"
+                                        height="300"
+                                        loading="lazy"
+                                        referrerPolicy="no-referrer-when-downgrade"
+                                        src={`https://www.google.com/maps/embed/v1/place?key=${
+                                            process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? ''
+                                        }&q=${encodeURIComponent(
+                                            `${event.venue}${
+                                                event.address ? ', ' + event.address : ''
+                                            }, ${event.city}, ${event.country}`,
+                                        )}`}
+                                        className="w-full border-0"
+                                    />
+                                </div>
+                            </section>
+                        )}
+
                         {event.tags && event.tags.length > 0 && (
                             <div className="mt-4 flex flex-wrap gap-2">
                                 {event.tags.map((et) => (
