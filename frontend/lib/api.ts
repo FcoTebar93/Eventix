@@ -363,6 +363,14 @@ export async function getAllUsers(params?: { page?: number; limit?: number }): P
   return data.data;
 }
 
+export async function updateUserRoleAdmin(userId: string, role: string): Promise<AdminUser> {
+  const { data } = await api.patch<ApiResponse<{ user: AdminUser }>>(
+    `/admin/users/${userId}/role`,
+    { role },
+  );
+  return data.data.user;
+}
+
 export interface GetOrdersAdminParams {
   page?: number;
   limit?: number;
