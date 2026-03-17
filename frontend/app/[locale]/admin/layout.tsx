@@ -18,6 +18,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const t = useTranslations('admin');
   const pathname = usePathname();
 
+  const isCurrent = (href: string) =>
+    pathname === href || (href === '/admin' && pathname?.endsWith('/admin'));
+
   return (
     <AdminGuard>
       <div className="mx-auto max-w-6xl px-4 py-8">
@@ -27,12 +30,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Link
               href="/admin"
               className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                pathname === '/admin' || pathname?.endsWith('/admin')
+                isCurrent('/admin')
                   ? 'bg-[var(--accent)] text-white'
                   : 'bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-white'
               }`}
             >
               {t('dashboard')}
+            </Link>
+            <Link
+              href="/admin/users"
+              className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                isCurrent('/admin/users')
+                  ? 'bg-[var(--accent)] text-white'
+                  : 'bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-white'
+              }`}
+            >
+              {t('usersTitle')}
             </Link>
           </nav>
         </div>
