@@ -4,6 +4,8 @@ import { AppError } from '../middleware/errorHandler';
 import { CreateOrderInput, UpdateOrderInput, GetOrdersQuery, CancelOrderInput, PayOrderInput
 } from '../schemas/orders.schema';
 import { parsePagination } from '../utils/pagination';
+import { publishEmailJob } from './emailQueue.service';
+import { logger } from '../utils/logger';
 
 export const createOrder = async (
     userId: string,
@@ -528,6 +530,32 @@ export const payOrder = async (orderId: string, userId: string, data: PayOrderIn
 
         return orderUpdated;
     });
+
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            select: { email: true },
+        });
+
+        if (user?.email) {
+            await publishEmailJob({
+                type: 'ORDER_CONFIRMED',
+                payload: {
+                    orderId: updatedOrder.id,
+                    userId,
+                    email: user.email,
+                    totalAmount: Number(updatedOrder.totalAmount),
+                },
+            });
+        } else {
+            logger.warn('No se pudo enviar email de confirmación: usuario sin email', {
+                orderId: updatedOrder.id,
+                userId,
+            });
+        }
+    } catch (error) {
+        logger.error('Error publicando email de confirmación de pedido', error);
+    }
 
     return updatedOrder;
 };
