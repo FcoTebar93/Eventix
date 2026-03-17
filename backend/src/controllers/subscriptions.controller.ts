@@ -5,6 +5,27 @@ import { logger } from '../utils/logger';
 import { asyncHandler } from '../utils/asyncHandler';
 import { AppError } from '../middleware/errorHandler';
 
+export const confirmSubscription = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+        if (!req.user) {
+            throw new Error('User not authenticated');
+        }
+
+        const { subscriptionId } = req.body as { subscriptionId?: string };
+
+        if (!subscriptionId) {
+            throw new AppError('subscriptionId es requerido', 400);
+        }
+
+        await subscriptionsService.confirmSubscription(subscriptionId);
+
+        res.status(200).json({
+            success: true,
+            message: 'Suscripción confirmada',
+        });
+    },
+);
+
 export const createSubscription = asyncHandler(
     async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         if (!req.user) {
